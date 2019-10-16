@@ -1,0 +1,1344 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>azure.keyvault.certificates.client &mdash; Azure SDK for Python 2.0.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> Azure SDK for Python
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2.0.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">User Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../quickstart_authentication.html">Resource Management Authentication</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../multicloud.html">Multi-cloud - use Azure on all regions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../exceptions.html">Exception handling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../servicemanagement.html">Service Management (Legacy)</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Developer Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.common.html">azure.common package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.appconfiguration.html">azure.appconfiguration package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.applicationinsights.html">azure.applicationinsights package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.batch.html">azure.batch package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.cognitiveservices.anomalydetector.html">azure.cognitiveservices.anomalydetector package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.cognitiveservices.knowledge.qnamaker.html">azure.cognitiveservices.knowledge.qnamaker package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.cognitiveservices.language.luis.authoring.html">azure.cognitiveservices.language.luis.authoring package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.cognitiveservices.language.luis.runtime.html">azure.cognitiveservices.language.luis.runtime package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.cognitiveservices.language.spellcheck.html">azure.cognitiveservices.language.spellcheck package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.cognitiveservices.language.textanalytics.html">azure.cognitiveservices.language.textanalytics package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.cognitiveservices.search.autosuggest.html">azure.cognitiveservices.search.autosuggest package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.cognitiveservices.search.customimagesearch.html">azure.cognitiveservices.search.customimagesearch package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.cognitiveservices.search.customsearch.html">azure.cognitiveservices.search.customsearch package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.cognitiveservices.search.entitysearch.html">azure.cognitiveservices.search.entitysearch package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.cognitiveservices.search.imagesearch.html">azure.cognitiveservices.search.imagesearch package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.cognitiveservices.search.newssearch.html">azure.cognitiveservices.search.newssearch package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.cognitiveservices.search.videosearch.html">azure.cognitiveservices.search.videosearch package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.cognitiveservices.search.visualsearch.html">azure.cognitiveservices.search.visualsearch package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.cognitiveservices.search.websearch.html">azure.cognitiveservices.search.websearch package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.cognitiveservices.vision.computervision.html">azure.cognitiveservices.vision.computervision package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.cognitiveservices.vision.contentmoderator.html">azure.cognitiveservices.vision.contentmoderator package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.cognitiveservices.vision.customvision.prediction.html">azure.cognitiveservices.vision.customvision.prediction package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.cognitiveservices.vision.customvision.training.html">azure.cognitiveservices.vision.customvision.training package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.cognitiveservices.vision.face.html">azure.cognitiveservices.vision.face package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.core.html">azure.core package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.core.tracing.opencensus.html">azure-core-tracing-opencensus package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.cosmos.html">azure.cosmos package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.eventgrid.html">azure.eventgrid package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.eventhub.html">azure.eventhub package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.eventhub.extensions.html">azure.eventhub.extensions package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.graphrbac.html">azure.graphrbac package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.identity.html">azure.identity package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.keyvault.certificates.html">azure.keyvault.certificates package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.keyvault.keys.html">azure.keyvault.keys package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.keyvault.secrets.html">azure.keyvault.secrets package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.loganalytics.html">azure.loganalytics package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.advisor.html">azure.mgmt.advisor package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.alertsmanagement.html">azure.mgmt.alertsmanagement package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.apimanagement.html">azure.mgmt.apimanagement package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.applicationinsights.html">azure.mgmt.applicationinsights package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.authorization.html">azure.mgmt.authorization package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.automation.html">azure.mgmt.automation package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.batch.html">azure.mgmt.batch package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.batchai.html">azure.mgmt.batchai package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.billing.html">azure.mgmt.billing package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.cdn.html">azure.mgmt.cdn package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.cognitiveservices.html">azure.mgmt.cognitiveservices package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.commerce.html">azure.mgmt.commerce package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.compute.html">azure.mgmt.compute package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.consumption.html">azure.mgmt.consumption package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.containerinstance.html">azure.mgmt.containerinstance package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.containerregistry.html">azure.mgmt.containerregistry package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.containerservice.html">azure.mgmt.containerservice package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.cosmosdb.html">azure.mgmt.cosmosdb package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.databricks.html">azure.mgmt.databricks package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.datafactory.html">azure.mgmt.datafactory package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.datalake.analytics.account.html">azure.mgmt.datalake.analytics.account package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.datalake.analytics.catalog.html">azure.mgmt.datalake.analytics.catalog package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.datalake.analytics.job.html">azure.mgmt.datalake.analytics.job package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.datalake.store.html">azure.mgmt.datalake.store package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.datamigration.html">azure.mgmt.datamigration package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.devspaces.html">azure.mgmt.devspaces package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.devtestlabs.html">azure.mgmt.devtestlabs package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.dns.html">azure.mgmt.dns package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.eventgrid.html">azure.mgmt.eventgrid package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.eventhub.html">azure.mgmt.eventhub package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.hanaonazure.html">azure.mgmt.hanaonazure package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.hdinsight.html">azure.mgmt.hdinsight package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.imagebuilder.html">azure.mgmt.imagebuilder package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.iotcentral.html">azure.mgmt.iotcentral package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.iothub.html">azure.mgmt.iothub package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.iothubprovisioningservices.html">azure.mgmt.iothubprovisioningservices package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.keyvault.html">azure.mgmt.keyvault package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.kusto.html">azure.mgmt.kusto package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.labservices.html">azure.mgmt.labservices package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.loganalytics.html">azure.mgmt.loganalytics package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.logic.html">azure.mgmt.logic package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.machinelearningcompute.html">azure.mgmt.machinelearningcompute package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.managementgroups.html">azure.mgmt.managementgroups package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.managementpartner.html">azure.mgmt.managementpartner package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.maps.html">azure.mgmt.maps package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.marketplaceordering.html">azure.mgmt.marketplaceordering package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.media.html">azure.mgmt.media package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.mixedreality.html">azure.mgmt.mixedreality package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.monitor.html">azure.mgmt.monitor package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.msi.html">azure.mgmt.msi package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.netapp.html">azure.mgmt.netapp package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.network.html">azure.mgmt.network package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.notificationhubs.html">azure.mgmt.notificationhubs package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.policyinsights.html">azure.mgmt.policyinsights package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.powerbiembedded.html">azure.mgmt.powerbiembedded package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.rdbms.mariadb.html">azure.mgmt.rdbms.mariadb package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.rdbms.mysql.html">azure.mgmt.rdbms.mysql package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.rdbms.postgresql.html">azure.mgmt.rdbms.postgresql package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.recoveryservices.html">azure.mgmt.recoveryservices package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.recoveryservicesbackup.html">azure.mgmt.recoveryservicesbackup package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.redis.html">azure.mgmt.redis package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.relay.html">azure.mgmt.relay package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.resource.features.html">azure.mgmt.resource.features package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.resource.links.html">azure.mgmt.resource.links package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.resource.locks.html">azure.mgmt.resource.locks package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.resource.managedapplications.html">azure.mgmt.resource.managedapplications package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.resource.policy.html">azure.mgmt.resource.policy package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.resource.resources.html">azure.mgmt.resource.resources package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.resource.subscriptions.html">azure.mgmt.resource.subscriptions package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.resourcegraph.html">azure.mgmt.resourcegraph package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.scheduler.html">azure.mgmt.scheduler package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.search.html">azure.mgmt.search package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.security.html">azure.mgmt.security package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.servermanager.html">azure.mgmt.servermanager package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.servicebus.html">azure.mgmt.servicebus package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.servicefabric.html">azure.mgmt.servicefabric package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.signalr.html">azure.mgmt.signalr package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.sql.html">azure.mgmt.sql package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.sqlvirtualmachine.html">azure.mgmt.sqlvirtualmachine package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.storage.html">azure.mgmt.storage package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.subscription.html">azure.mgmt.subscription package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.trafficmanager.html">azure.mgmt.trafficmanager package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.mgmt.web.html">azure.mgmt.web package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.servicebus.html">azure.servicebus package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.servicefabric.html">azure.servicefabric package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.storage.blob.html">azure.storage.blob package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.storage.file.html">azure.storage.file package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.storage.queue.html">azure.storage.queue package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ref/azure.servicemanagement.html">azure.servicemanagement package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Azure SDK for Python</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+      <li>azure.keyvault.certificates.client</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for azure.keyvault.certificates.client</h1><div class="highlight"><pre>
+<span></span><span class="c1"># ------------------------------------</span>
+<span class="c1"># Copyright (c) Microsoft Corporation.</span>
+<span class="c1"># Licensed under the MIT License.</span>
+<span class="c1"># ------------------------------------</span>
+<span class="c1"># pylint:disable=too-many-lines,too-many-public-methods</span>
+<span class="kn">import</span> <span class="nn">base64</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="k">import</span> <span class="n">partial</span>
+
+<span class="kn">from</span> <span class="nn">azure.core.polling</span> <span class="k">import</span> <span class="n">LROPoller</span>
+<span class="kn">from</span> <span class="nn">azure.core.tracing.decorator</span> <span class="k">import</span> <span class="n">distributed_trace</span>
+
+<span class="kn">from</span> <span class="nn">._shared</span> <span class="k">import</span> <span class="n">KeyVaultClientBase</span>
+<span class="kn">from</span> <span class="nn">._shared.exceptions</span> <span class="k">import</span> <span class="n">error_map</span> <span class="k">as</span> <span class="n">_error_map</span>
+<span class="kn">from</span> <span class="nn">.models</span> <span class="k">import</span> <span class="p">(</span>
+    <span class="n">Certificate</span><span class="p">,</span>
+    <span class="n">CertificateProperties</span><span class="p">,</span>
+    <span class="n">CertificatePolicy</span><span class="p">,</span>
+    <span class="n">DeletedCertificate</span><span class="p">,</span>
+    <span class="n">Issuer</span><span class="p">,</span>
+    <span class="n">IssuerProperties</span><span class="p">,</span>
+    <span class="n">Contact</span><span class="p">,</span>
+    <span class="n">CertificateOperation</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">._polling</span> <span class="k">import</span> <span class="n">CreateCertificatePoller</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">TYPE_CHECKING</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">TYPE_CHECKING</span> <span class="o">=</span> <span class="kc">False</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="c1"># pylint:disable=unused-import</span>
+    <span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Iterable</span>
+
+
+<div class="viewcode-block" id="CertificateClient"><a class="viewcode-back" href="../../../../ref/azure.keyvault.certificates.html#azure.keyvault.certificates.client.CertificateClient">[docs]</a><span class="k">class</span> <span class="nc">CertificateClient</span><span class="p">(</span><span class="n">KeyVaultClientBase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A high-level interface for managing a vault&#39;s certificates.</span>
+
+<span class="sd">    :param str vault_endpoint: URL of the vault the client will access</span>
+<span class="sd">    :param credential: An object which can provide an access token for the vault, such as a credential from</span>
+<span class="sd">        :mod:`azure.identity`</span>
+
+<span class="sd">    Keyword arguments</span>
+<span class="sd">        - **api_version**: version of the Key Vault API to use. Defaults to the most recent.</span>
+<span class="sd">        - **transport**: :class:`~azure.core.pipeline.transport.HttpTransport` to use. Defaults to</span>
+<span class="sd">          :class:`~azure.core.pipeline.transport.RequestsTransport`.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        .. literalinclude:: ../tests/test_examples_certificates.py</span>
+<span class="sd">            :start-after: [START create_certificate_client]</span>
+<span class="sd">            :end-before: [END create_certificate_client]</span>
+<span class="sd">            :language: python</span>
+<span class="sd">            :caption: Create a new ``CertificateClient``</span>
+<span class="sd">            :dedent: 4</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># pylint:disable=protected-access</span>
+
+<div class="viewcode-block" id="CertificateClient.begin_create_certificate"><a class="viewcode-back" href="../../../../ref/azure.keyvault.certificates.html#azure.keyvault.certificates.client.CertificateClient.begin_create_certificate">[docs]</a>    <span class="nd">@distributed_trace</span>
+    <span class="k">def</span> <span class="nf">begin_create_certificate</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">,</span>  <span class="c1"># type: str</span>
+        <span class="n">policy</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># type: Optional[CertificatePolicy]</span>
+        <span class="o">**</span><span class="n">kwargs</span>  <span class="c1"># type: Any</span>
+    <span class="p">):</span>
+        <span class="c1"># type: (...) -&gt; LROPoller</span>
+        <span class="sd">&quot;&quot;&quot;Creates a new certificate.</span>
+
+<span class="sd">        If this is the first version, the certificate resource is created. This</span>
+<span class="sd">        operation requires the certificates/create permission.</span>
+
+<span class="sd">        :param str name: The name of the certificate.</span>
+<span class="sd">        :param policy: The management policy for the certificate.</span>
+<span class="sd">        :type policy:</span>
+<span class="sd">         ~azure.keyvault.certificates.models.CertificatePolicy</span>
+<span class="sd">        :returns: An LROPoller for the create certificate operation. Waiting on the poller</span>
+<span class="sd">         gives you the certificate if creation is successful, the CertificateOperation if not.</span>
+<span class="sd">        :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.certificates.models.Certificate or</span>
+<span class="sd">         ~azure.keyvault.certificates.models.CertificateOperation]</span>
+<span class="sd">        :raises: :class:`~azure.core.exceptions.HttpResponseError`</span>
+
+<span class="sd">        Keyword arguments</span>
+<span class="sd">            - *enabled (bool)* - Determines whether the object is enabled.</span>
+<span class="sd">            - *tags (dict[str, str])* - Application specific metadata in the form of key-value pairs.</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            .. literalinclude:: ../tests/test_examples_certificates.py</span>
+<span class="sd">                :start-after: [START create_certificate]</span>
+<span class="sd">                :end-before: [END create_certificate]</span>
+<span class="sd">                :language: python</span>
+<span class="sd">                :caption: Create a certificate</span>
+<span class="sd">                :dedent: 8</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">enabled</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;enabled&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">tags</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;tags&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">enabled</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">attributes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">CertificateAttributes</span><span class="p">(</span><span class="n">enabled</span><span class="o">=</span><span class="n">enabled</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">attributes</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">policy</span><span class="p">:</span>
+            <span class="c1"># pylint: disable=protected-access</span>
+            <span class="n">policy</span> <span class="o">=</span> <span class="n">CertificatePolicy</span><span class="o">.</span><span class="n">_get_default_certificate_policy</span><span class="p">()</span>
+
+        <span class="n">cert_bundle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">create_certificate</span><span class="p">(</span>
+            <span class="n">vault_base_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vault_endpoint</span><span class="p">,</span>
+            <span class="n">certificate_name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">certificate_policy</span><span class="o">=</span><span class="n">policy</span><span class="o">.</span><span class="n">_to_certificate_policy_bundle</span><span class="p">(),</span>
+            <span class="n">certificate_attributes</span><span class="o">=</span><span class="n">attributes</span><span class="p">,</span>
+            <span class="n">tags</span><span class="o">=</span><span class="n">tags</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span>
+
+        <span class="n">create_certificate_operation</span> <span class="o">=</span> <span class="n">CertificateOperation</span><span class="o">.</span><span class="n">_from_certificate_operation_bundle</span><span class="p">(</span><span class="n">cert_bundle</span><span class="p">)</span>
+
+        <span class="n">command</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_certificate_operation</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="n">get_certificate_command</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_certificate_with_policy</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="n">create_certificate_polling</span> <span class="o">=</span> <span class="n">CreateCertificatePoller</span><span class="p">(</span><span class="n">get_certificate_command</span><span class="o">=</span><span class="n">get_certificate_command</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">LROPoller</span><span class="p">(</span><span class="n">command</span><span class="p">,</span> <span class="n">create_certificate_operation</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">create_certificate_polling</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CertificateClient.get_certificate_with_policy"><a class="viewcode-back" href="../../../../ref/azure.keyvault.certificates.html#azure.keyvault.certificates.client.CertificateClient.get_certificate_with_policy">[docs]</a>    <span class="nd">@distributed_trace</span>
+    <span class="k">def</span> <span class="nf">get_certificate_with_policy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="c1"># type: (str, **Any) -&gt; Certificate</span>
+        <span class="sd">&quot;&quot;&quot;Gets a certificate and returns it&#39;s management policy as well.</span>
+
+
+<span class="sd">        This operation requires the certificates/get permission. Does not accept the</span>
+<span class="sd">        version of the certificate as a parameter. If you wish to specify version, use</span>
+<span class="sd">        the get_certificate function and specify version.</span>
+
+<span class="sd">        :param str name: The name of the certificate in the given vault.</span>
+<span class="sd">        :returns: An instance of Certificate</span>
+<span class="sd">        :rtype: ~azure.keyvault.certificates.models.Certificate</span>
+<span class="sd">        :raises:</span>
+<span class="sd">            :class:`~azure.core.exceptions.ResourceNotFoundError` if the certificate doesn&#39;t exist,</span>
+<span class="sd">            :class:`~azure.core.exceptions.HttpResponseError` for other errors</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            .. literalinclude:: ../tests/test_examples_certificates.py</span>
+<span class="sd">                :start-after: [START get_certificate]</span>
+<span class="sd">                :end-before: [END get_certificate]</span>
+<span class="sd">                :language: python</span>
+<span class="sd">                :caption: Get a certificate</span>
+<span class="sd">                :dedent: 8</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">bundle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">get_certificate</span><span class="p">(</span>
+            <span class="n">vault_base_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vault_endpoint</span><span class="p">,</span>
+            <span class="n">certificate_name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">certificate_version</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="n">error_map</span><span class="o">=</span><span class="n">_error_map</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">Certificate</span><span class="o">.</span><span class="n">_from_certificate_bundle</span><span class="p">(</span><span class="n">certificate_bundle</span><span class="o">=</span><span class="n">bundle</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CertificateClient.get_certificate"><a class="viewcode-back" href="../../../../ref/azure.keyvault.certificates.html#azure.keyvault.certificates.client.CertificateClient.get_certificate">[docs]</a>    <span class="nd">@distributed_trace</span>
+    <span class="k">def</span> <span class="nf">get_certificate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">version</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="c1"># type: (str, str, **Any) -&gt; Certificate</span>
+        <span class="sd">&quot;&quot;&quot;Gets a certificate by version without returning it&#39;s management policy.</span>
+
+<span class="sd">        If you wish to not specify a version or to get the certificate&#39;s policy as well,</span>
+<span class="sd">        use the get_certificate_with_policy function.</span>
+
+<span class="sd">        :param str name: The name of the certificate in the given vault.</span>
+<span class="sd">        :param str version: The version of the certificate.</span>
+<span class="sd">        :returns: An instance of Certificate</span>
+<span class="sd">        :rtype: ~azure.keyvault.certificates.models.Certificate</span>
+<span class="sd">        :raises:</span>
+<span class="sd">            :class:`~azure.core.exceptions.ResourceNotFoundError` if the certificate doesn&#39;t exist,</span>
+<span class="sd">            :class:`~azure.core.exceptions.HttpResponseError` for other errors</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            .. literalinclude:: ../tests/test_examples_certificates.py</span>
+<span class="sd">                :start-after: [START get_certificate]</span>
+<span class="sd">                :end-before: [END get_certificate]</span>
+<span class="sd">                :language: python</span>
+<span class="sd">                :caption: Get a certificate</span>
+<span class="sd">                :dedent: 8</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">bundle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">get_certificate</span><span class="p">(</span>
+            <span class="n">vault_base_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vault_endpoint</span><span class="p">,</span>
+            <span class="n">certificate_name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">certificate_version</span><span class="o">=</span><span class="n">version</span><span class="p">,</span>
+            <span class="n">error_map</span><span class="o">=</span><span class="n">_error_map</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">Certificate</span><span class="o">.</span><span class="n">_from_certificate_bundle</span><span class="p">(</span><span class="n">certificate_bundle</span><span class="o">=</span><span class="n">bundle</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CertificateClient.delete_certificate"><a class="viewcode-back" href="../../../../ref/azure.keyvault.certificates.html#azure.keyvault.certificates.client.CertificateClient.delete_certificate">[docs]</a>    <span class="nd">@distributed_trace</span>
+    <span class="k">def</span> <span class="nf">delete_certificate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="c1"># type: (str, **Any) -&gt; DeletedCertificate</span>
+        <span class="sd">&quot;&quot;&quot;Deletes a certificate from the key vault.</span>
+
+<span class="sd">        Deletes all versions of a certificate object along with its associated</span>
+<span class="sd">        policy. Delete certificate cannot be used to remove individual versions</span>
+<span class="sd">        of a certificate object. This operation requires the</span>
+<span class="sd">        certificates/delete permission.</span>
+
+<span class="sd">        :param str name: The name of the certificate.</span>
+<span class="sd">        :returns: The deleted certificate</span>
+<span class="sd">        :rtype: ~azure.keyvault.certificates.models.DeletedCertificate</span>
+<span class="sd">        :raises:</span>
+<span class="sd">            :class:`~azure.core.exceptions.ResourceNotFoundError` if the certificate doesn&#39;t exist,</span>
+<span class="sd">            :class:`~azure.core.exceptions.HttpResponseError` for other errors</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            .. literalinclude:: ../tests/test_examples_certificates.py</span>
+<span class="sd">                :start-after: [START delete_certificate]</span>
+<span class="sd">                :end-before: [END delete_certificate]</span>
+<span class="sd">                :language: python</span>
+<span class="sd">                :caption: Delete a certificate</span>
+<span class="sd">                :dedent: 8</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">bundle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">delete_certificate</span><span class="p">(</span>
+            <span class="n">vault_base_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vault_endpoint</span><span class="p">,</span> <span class="n">certificate_name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">error_map</span><span class="o">=</span><span class="n">_error_map</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">DeletedCertificate</span><span class="o">.</span><span class="n">_from_deleted_certificate_bundle</span><span class="p">(</span><span class="n">deleted_certificate_bundle</span><span class="o">=</span><span class="n">bundle</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CertificateClient.get_deleted_certificate"><a class="viewcode-back" href="../../../../ref/azure.keyvault.certificates.html#azure.keyvault.certificates.client.CertificateClient.get_deleted_certificate">[docs]</a>    <span class="nd">@distributed_trace</span>
+    <span class="k">def</span> <span class="nf">get_deleted_certificate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="c1"># type: (str, **Any) -&gt; DeletedCertificate</span>
+        <span class="sd">&quot;&quot;&quot;Retrieves information about the specified deleted certificate.</span>
+
+<span class="sd">        Retrieves the deleted certificate information plus its attributes,</span>
+<span class="sd">        such as retention interval, scheduled permanent deletion, and the</span>
+<span class="sd">        current deletion recovery level. This operation requires the certificates/</span>
+<span class="sd">        get permission.</span>
+
+<span class="sd">        :param str name: The name of the certificate.</span>
+<span class="sd">        :return: The deleted certificate</span>
+<span class="sd">        :rtype: ~azure.keyvault.certificates.models.DeletedCertificate</span>
+<span class="sd">        :raises:</span>
+<span class="sd">            :class:`~azure.core.exceptions.ResourceNotFoundError` if the certificate doesn&#39;t exist,</span>
+<span class="sd">            :class:`~azure.core.exceptions.HttpResponseError` for other errors</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            .. literalinclude:: ../tests/test_examples_certificates.py</span>
+<span class="sd">                :start-after: [START get_deleted_certificate]</span>
+<span class="sd">                :end-before: [END get_deleted_certificate]</span>
+<span class="sd">                :language: python</span>
+<span class="sd">                :caption: Get a deleted certificate</span>
+<span class="sd">                :dedent: 8</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">bundle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">get_deleted_certificate</span><span class="p">(</span>
+            <span class="n">vault_base_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vault_endpoint</span><span class="p">,</span> <span class="n">certificate_name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">error_map</span><span class="o">=</span><span class="n">_error_map</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">DeletedCertificate</span><span class="o">.</span><span class="n">_from_deleted_certificate_bundle</span><span class="p">(</span><span class="n">deleted_certificate_bundle</span><span class="o">=</span><span class="n">bundle</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CertificateClient.purge_deleted_certificate"><a class="viewcode-back" href="../../../../ref/azure.keyvault.certificates.html#azure.keyvault.certificates.client.CertificateClient.purge_deleted_certificate">[docs]</a>    <span class="nd">@distributed_trace</span>
+    <span class="k">def</span> <span class="nf">purge_deleted_certificate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="c1"># type: (str, **Any) -&gt; None</span>
+        <span class="sd">&quot;&quot;&quot;Permanently deletes the specified deleted certificate.</span>
+
+<span class="sd">        Performs an irreversible deletion of the specified certificate, without</span>
+<span class="sd">        possibility for recovery. The operation is not available if the recovery</span>
+<span class="sd">        level does not specified &#39;Purgeable&#39;. This operation requires the</span>
+<span class="sd">        certificate/purge permission.</span>
+
+<span class="sd">        :param str name: The name of the certificate</span>
+<span class="sd">        :return: None</span>
+<span class="sd">        :rtype: None</span>
+<span class="sd">        :raises: :class:`~azure.core.exceptions.HttpResponseError`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">purge_deleted_certificate</span><span class="p">(</span><span class="n">vault_base_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vault_endpoint</span><span class="p">,</span> <span class="n">certificate_name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CertificateClient.recover_deleted_certificate"><a class="viewcode-back" href="../../../../ref/azure.keyvault.certificates.html#azure.keyvault.certificates.client.CertificateClient.recover_deleted_certificate">[docs]</a>    <span class="nd">@distributed_trace</span>
+    <span class="k">def</span> <span class="nf">recover_deleted_certificate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="c1"># type: (str, **Any) -&gt; Certificate</span>
+        <span class="sd">&quot;&quot;&quot;Recovers the deleted certificate back to its current version under</span>
+<span class="sd">        /certificates.</span>
+
+<span class="sd">        Performs the reversal of the Delete operation. THe operation is applicable</span>
+<span class="sd">        in vaults enabled for soft-delete, and must be issued during the retention</span>
+<span class="sd">        interval (available in the deleted certificate&#39;s attributes). This operation</span>
+<span class="sd">        requires the certificates/recover permission.</span>
+
+<span class="sd">        :param str name: The name of the deleted certificate</span>
+<span class="sd">        :return: The recovered certificate</span>
+<span class="sd">        :rtype: ~azure.keyvault.certificates.models.Certificate</span>
+<span class="sd">        :raises: :class:`~azure.core.exceptions.HttpResponseError`</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            .. literalinclude:: ../tests/test_examples_certificates.py</span>
+<span class="sd">                :start-after: [START recover_deleted_certificate]</span>
+<span class="sd">                :end-before: [END recover_deleted_certificate]</span>
+<span class="sd">                :language: python</span>
+<span class="sd">                :caption: Recover a deleted certificate</span>
+<span class="sd">                :dedent: 8</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">bundle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">recover_deleted_certificate</span><span class="p">(</span>
+            <span class="n">vault_base_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vault_endpoint</span><span class="p">,</span> <span class="n">certificate_name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">Certificate</span><span class="o">.</span><span class="n">_from_certificate_bundle</span><span class="p">(</span><span class="n">certificate_bundle</span><span class="o">=</span><span class="n">bundle</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CertificateClient.import_certificate"><a class="viewcode-back" href="../../../../ref/azure.keyvault.certificates.html#azure.keyvault.certificates.client.CertificateClient.import_certificate">[docs]</a>    <span class="nd">@distributed_trace</span>
+    <span class="k">def</span> <span class="nf">import_certificate</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">,</span>  <span class="c1"># type: str</span>
+        <span class="n">certificate_bytes</span><span class="p">,</span>  <span class="c1"># type: bytes</span>
+        <span class="n">password</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># type: Optional[str]</span>
+        <span class="n">policy</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># type: Optional[CertificatePolicy]</span>
+        <span class="o">**</span><span class="n">kwargs</span>  <span class="c1"># type: **Any</span>
+    <span class="p">):</span>
+        <span class="c1"># type: (...) -&gt; Certificate</span>
+        <span class="sd">&quot;&quot;&quot;Imports a certificate into a specified key vault.</span>
+
+<span class="sd">        Imports an existing valid certificate, containing a private key, into</span>
+<span class="sd">        Azure Key Vault. The certificate to be imported can be in either PFX or</span>
+<span class="sd">        PEM format. If the certificate is in PEM format the PEM file must</span>
+<span class="sd">        contain the key as well as x509 certificates. This operation requires</span>
+<span class="sd">        the certificates/import permission.</span>
+
+<span class="sd">        :param str name: The name of the certificate.</span>
+<span class="sd">        :param bytes certificate_bytes: Bytes of the certificate object to import. This certificate</span>
+<span class="sd">            needs to contain the private key.</span>
+<span class="sd">        :param str password: If the private key in the passed in certificate is encrypted, it is the</span>
+<span class="sd">            password used for encryption.</span>
+<span class="sd">        :param policy: The management policy for the certificate.</span>
+<span class="sd">        :type policy:</span>
+<span class="sd">         ~azure.keyvault.certificates.models.CertificatePolicy</span>
+<span class="sd">        :returns: The imported Certificate</span>
+<span class="sd">        :rtype: ~azure.keyvault.certificates.models.Certificate</span>
+<span class="sd">        :raises: :class:`~azure.core.exceptions.HttpResponseError`</span>
+
+<span class="sd">        Keyword arguments</span>
+<span class="sd">            - *enabled (bool)* - Determines whether the object is enabled.</span>
+<span class="sd">            - *tags (dict[str, str])* - Application specific metadata in the form of key-value pairs.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">enabled</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;enabled&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">enabled</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">attributes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">CertificateAttributes</span><span class="p">(</span><span class="n">enabled</span><span class="o">=</span><span class="n">enabled</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">attributes</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">base64_encoded_certificate</span> <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64encode</span><span class="p">(</span><span class="n">certificate_bytes</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+        <span class="n">bundle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">import_certificate</span><span class="p">(</span>
+            <span class="n">vault_base_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vault_endpoint</span><span class="p">,</span>
+            <span class="n">certificate_name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">base64_encoded_certificate</span><span class="o">=</span><span class="n">base64_encoded_certificate</span><span class="p">,</span>
+            <span class="n">password</span><span class="o">=</span><span class="n">password</span><span class="p">,</span>
+            <span class="n">certificate_policy</span><span class="o">=</span><span class="n">policy</span><span class="o">.</span><span class="n">_to_certificate_policy_bundle</span><span class="p">(),</span>
+            <span class="n">certificate_attributes</span><span class="o">=</span><span class="n">attributes</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">Certificate</span><span class="o">.</span><span class="n">_from_certificate_bundle</span><span class="p">(</span><span class="n">certificate_bundle</span><span class="o">=</span><span class="n">bundle</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CertificateClient.get_policy"><a class="viewcode-back" href="../../../../ref/azure.keyvault.certificates.html#azure.keyvault.certificates.client.CertificateClient.get_policy">[docs]</a>    <span class="nd">@distributed_trace</span>
+    <span class="k">def</span> <span class="nf">get_policy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">certificate_name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="c1"># type: (str, **Any) -&gt; CertificatePolicy</span>
+        <span class="sd">&quot;&quot;&quot;Gets the policy for a certificate.</span>
+
+<span class="sd">        Returns the specified certificate policy resources in the key</span>
+<span class="sd">        vault. This operation requires the certificates/get permission.</span>
+
+<span class="sd">        :param str certificate_name: The name of the certificate in a given key vault.</span>
+<span class="sd">        :return: The certificate policy</span>
+<span class="sd">        :rtype: ~azure.keyvault.certificates.models.CertificatePolicy</span>
+<span class="sd">        :raises: :class:`~azure.core.exceptions.HttpResponseError`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">bundle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">get_certificate_policy</span><span class="p">(</span>
+            <span class="n">vault_base_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vault_endpoint</span><span class="p">,</span> <span class="n">certificate_name</span><span class="o">=</span><span class="n">certificate_name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">CertificatePolicy</span><span class="o">.</span><span class="n">_from_certificate_policy_bundle</span><span class="p">(</span><span class="n">certificate_policy_bundle</span><span class="o">=</span><span class="n">bundle</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CertificateClient.update_policy"><a class="viewcode-back" href="../../../../ref/azure.keyvault.certificates.html#azure.keyvault.certificates.client.CertificateClient.update_policy">[docs]</a>    <span class="nd">@distributed_trace</span>
+    <span class="k">def</span> <span class="nf">update_policy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">certificate_name</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="c1"># type: (str, CertificatePolicy, **Any) -&gt; CertificatePolicy</span>
+        <span class="sd">&quot;&quot;&quot;Updates the policy for a certificate.</span>
+
+<span class="sd">        Set specified members in the certificate policy. Leaves others as null.</span>
+<span class="sd">        This operation requires the certificates/update permission.</span>
+
+<span class="sd">        :param str certificate_name: The name of the certificate in the given vault.</span>
+<span class="sd">        :param policy: The policy for the certificate.</span>
+<span class="sd">        :type policy: ~azure.keyvault.certificates.models.CertificatePolicy</span>
+<span class="sd">        :return: The certificate policy</span>
+<span class="sd">        :rtype: ~azure.keyvault.certificates.models.CertificatePolicy</span>
+<span class="sd">        :raises: :class:`~azure.core.exceptions.HttpResponseError`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">bundle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">update_certificate_policy</span><span class="p">(</span>
+            <span class="n">vault_base_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vault_endpoint</span><span class="p">,</span>
+            <span class="n">certificate_name</span><span class="o">=</span><span class="n">certificate_name</span><span class="p">,</span>
+            <span class="n">certificate_policy</span><span class="o">=</span><span class="n">policy</span><span class="o">.</span><span class="n">_to_certificate_policy_bundle</span><span class="p">(),</span>
+            <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">CertificatePolicy</span><span class="o">.</span><span class="n">_from_certificate_policy_bundle</span><span class="p">(</span><span class="n">certificate_policy_bundle</span><span class="o">=</span><span class="n">bundle</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CertificateClient.update_certificate_properties"><a class="viewcode-back" href="../../../../ref/azure.keyvault.certificates.html#azure.keyvault.certificates.client.CertificateClient.update_certificate_properties">[docs]</a>    <span class="nd">@distributed_trace</span>
+    <span class="k">def</span> <span class="nf">update_certificate_properties</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">,</span>  <span class="c1"># type: str</span>
+        <span class="n">version</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># type: Optional[str]</span>
+        <span class="o">**</span><span class="n">kwargs</span>  <span class="c1"># type: **Any</span>
+    <span class="p">):</span>
+        <span class="c1"># type: (...) -&gt; Certificate</span>
+        <span class="sd">&quot;&quot;&quot;Updates the specified attributes associated with the given certificate.</span>
+
+<span class="sd">        The UpdateCertificate operation applies the specified update on the</span>
+<span class="sd">        given certificate; the only elements updated are the certificate&#39;s</span>
+<span class="sd">        attributes. This operation requires the certificates/update permission.</span>
+
+<span class="sd">        :param str name: The name of the certificate in the given key</span>
+<span class="sd">            vault.</span>
+<span class="sd">        :param str version: The version of the certificate.</span>
+<span class="sd">        :returns: The updated Certificate</span>
+<span class="sd">        :rtype: ~azure.keyvault.certificates.models.Certificate</span>
+<span class="sd">        :raises: :class:`~azure.core.exceptions.HttpResponseError`</span>
+
+<span class="sd">        Keyword arguments</span>
+<span class="sd">            - *enabled (bool)* - Determines whether the object is enabled.</span>
+<span class="sd">            - *tags (dict[str, str])* - Application specific metadata in the form of key-value pairs.</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            .. literalinclude:: ../tests/test_examples_certificates.py</span>
+<span class="sd">                :start-after: [START update_certificate]</span>
+<span class="sd">                :end-before: [END update_certificate]</span>
+<span class="sd">                :language: python</span>
+<span class="sd">                :caption: Update a certificate&#39;s attributes</span>
+<span class="sd">                :dedent: 8</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">enabled</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;enabled&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">enabled</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">attributes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">CertificateAttributes</span><span class="p">(</span><span class="n">enabled</span><span class="o">=</span><span class="n">enabled</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">attributes</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="n">bundle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">update_certificate</span><span class="p">(</span>
+            <span class="n">vault_base_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vault_endpoint</span><span class="p">,</span>
+            <span class="n">certificate_name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">certificate_version</span><span class="o">=</span><span class="n">version</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="n">certificate_attributes</span><span class="o">=</span><span class="n">attributes</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">Certificate</span><span class="o">.</span><span class="n">_from_certificate_bundle</span><span class="p">(</span><span class="n">certificate_bundle</span><span class="o">=</span><span class="n">bundle</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CertificateClient.backup_certificate"><a class="viewcode-back" href="../../../../ref/azure.keyvault.certificates.html#azure.keyvault.certificates.client.CertificateClient.backup_certificate">[docs]</a>    <span class="nd">@distributed_trace</span>
+    <span class="k">def</span> <span class="nf">backup_certificate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="c1"># type: (str, **Any) -&gt; bytes</span>
+        <span class="sd">&quot;&quot;&quot;Backs up the specified certificate.</span>
+
+<span class="sd">        Requests that a backup of the specified certificate be downloaded</span>
+<span class="sd">        to the client. All versions of the certificate will be downloaded.</span>
+<span class="sd">        This operation requires the certificates/backup permission.</span>
+
+<span class="sd">        :param str name: The name of the certificate.</span>
+<span class="sd">        :return: the backup blob containing the backed up certificate.</span>
+<span class="sd">        :rtype: bytes</span>
+<span class="sd">        :raises:</span>
+<span class="sd">            :class:`~azure.core.exceptions.ResourceNotFoundError` if the certificate doesn&#39;t exist,</span>
+<span class="sd">            :class:`~azure.core.exceptions.HttpResponseError` for other errors</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            .. literalinclude:: ../tests/test_examples_certificates.py</span>
+<span class="sd">                :start-after: [START backup_certificate]</span>
+<span class="sd">                :end-before: [END backup_certificate]</span>
+<span class="sd">                :language: python</span>
+<span class="sd">                :caption: Get a certificate backup</span>
+<span class="sd">                :dedent: 8</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">backup_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">backup_certificate</span><span class="p">(</span>
+            <span class="n">vault_base_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vault_endpoint</span><span class="p">,</span> <span class="n">certificate_name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">error_map</span><span class="o">=</span><span class="n">_error_map</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">backup_result</span><span class="o">.</span><span class="n">value</span></div>
+
+<div class="viewcode-block" id="CertificateClient.restore_certificate"><a class="viewcode-back" href="../../../../ref/azure.keyvault.certificates.html#azure.keyvault.certificates.client.CertificateClient.restore_certificate">[docs]</a>    <span class="nd">@distributed_trace</span>
+    <span class="k">def</span> <span class="nf">restore_certificate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">backup</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="c1"># type: (bytes, **Any) -&gt; Certificate</span>
+        <span class="sd">&quot;&quot;&quot;Restores a backed up certificate to a vault.</span>
+
+<span class="sd">        Restores a backed up certificate, and all its versions, to a vault.</span>
+<span class="sd">        this operation requires the certificates/restore permission.</span>
+
+<span class="sd">        :param bytes backup: The backup blob associated with a certificate bundle.</span>
+<span class="sd">        :return: The restored Certificate</span>
+<span class="sd">        :rtype: ~azure.keyvault.certificates.models.Certificate</span>
+<span class="sd">        :raises: :class:`~azure.core.exceptions.HttpResponseError`</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            .. literalinclude:: ../tests/test_examples_certificates.py</span>
+<span class="sd">                :start-after: [START restore_certificate]</span>
+<span class="sd">                :end-before: [END restore_certificate]</span>
+<span class="sd">                :language: python</span>
+<span class="sd">                :caption: Restore a certificate backup</span>
+<span class="sd">                :dedent: 8</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">bundle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">restore_certificate</span><span class="p">(</span>
+            <span class="n">vault_base_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vault_endpoint</span><span class="p">,</span> <span class="n">certificate_bundle_backup</span><span class="o">=</span><span class="n">backup</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">Certificate</span><span class="o">.</span><span class="n">_from_certificate_bundle</span><span class="p">(</span><span class="n">certificate_bundle</span><span class="o">=</span><span class="n">bundle</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CertificateClient.list_deleted_certificates"><a class="viewcode-back" href="../../../../ref/azure.keyvault.certificates.html#azure.keyvault.certificates.client.CertificateClient.list_deleted_certificates">[docs]</a>    <span class="nd">@distributed_trace</span>
+    <span class="k">def</span> <span class="nf">list_deleted_certificates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">include_pending</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="c1"># type: (Optional[bool], **Any) -&gt; Iterable[DeletedCertificate]</span>
+        <span class="sd">&quot;&quot;&quot;Lists the deleted certificates in the specified vault currently</span>
+<span class="sd">        available for recovery.</span>
+
+<span class="sd">        Retrieves the certificates in the current vault which are in a deleted</span>
+<span class="sd">        state and ready for recovery or purging. This operation includes</span>
+<span class="sd">        deletion-specific information. This operation requires the certificates/get/list</span>
+<span class="sd">        permission. This operation can only be enabled on soft-delete enabled vaults.</span>
+
+<span class="sd">        :param bool include_pending: Specifies whether to include certificates which are not</span>
+<span class="sd">            completely provisioned.</span>
+<span class="sd">        :return: An iterator like instance of DeletedCertificate</span>
+<span class="sd">        :rtype:</span>
+<span class="sd">         ~azure.core.paging.ItemPaged[~azure.keyvault.certificates.models.DeletedCertificate]</span>
+<span class="sd">        :raises: :class:`~azure.core.exceptions.HttpResponseError`</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            .. literalinclude:: ../tests/test_examples_certificates.py</span>
+<span class="sd">                :start-after: [START list_deleted_certificates]</span>
+<span class="sd">                :end-before: [END list_deleted_certificates]</span>
+<span class="sd">                :language: python</span>
+<span class="sd">                :caption: List all the deleted certificates</span>
+<span class="sd">                :dedent: 8</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">max_page_size</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;max_page_size&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">get_deleted_certificates</span><span class="p">(</span>
+            <span class="n">vault_base_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_vault_endpoint</span><span class="p">,</span>
+            <span class="n">maxresults</span><span class="o">=</span><span class="n">max_page_size</span><span class="p">,</span>
+            <span class="n">include_pending</span><span class="o">=</span><span class="n">include_pending</span><span class="p">,</span>
+            <span class="bp">cls</span><span class="o">=</span><span class="k">lambda</span> <span class="n">objs</span><span class="p">:</span> <span class="p">[</span>
+                <span class="n">DeletedCertificate</span><span class="o">.</span><span class="n">_from_deleted_certificate_item</span><span class="p">(</span><span class="n">deleted_certificate_item</span><span class="o">=</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">objs</span>
+            <span class="p">],</span>
+            <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="CertificateClient.list_certificates"><a class="viewcode-back" href="../../../../ref/azure.keyvault.certificates.html#azure.keyvault.certificates.client.CertificateClient.list_certificates">[docs]</a>    <span class="nd">@distributed_trace</span>
+    <span class="k">def</span> <span class="nf">list_certificates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">include_pending</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="c1"># type: (Optional[bool], **Any) -&gt; Iterable[CertificateProperties]</span>
+        <span class="sd">&quot;&quot;&quot;List certificates in the key vault.</span>
+
+<span class="sd">        The GetCertificates operation returns the set of certificates resources</span>
+<span class="sd">        in the key vault. This operation requires the</span>
+<span class="sd">        certificates/list permission.</span>
+
+<span class="sd">        :param bool include_pending: Specifies whether to include certificates</span>
+<span class="sd">            which are not completely provisioned.</span>
+<span class="sd">        :returns: An iterator like instance of CertificateProperties</span>
+<span class="sd">        :rtype:</span>
+<span class="sd">         ~azure.core.paging.ItemPaged[~azure.keyvault.certificates.models.CertificateProperties]</span>
+<span class="sd">        :raises: :class:`~azure.core.exceptions.HttpResponseError`</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            .. literalinclude:: ../tests/test_examples_certificates.py</span>
+<span class="sd">                :start-after: [START list_certificates]</span>
+<span class="sd">                :end-before: [END list_certificates]</span>
+<span class="sd">                :language: python</span>
+<span class="sd">                :caption: List all certificates</span>
+<span class="sd">                :dedent: 8</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">max_page_size</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;max_page_size&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">get_certificates</span><span class="p">(</span>
+            <span class="n">vault_base_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_vault_endpoint</span><span class="p">,</span>
+            <span class="n">maxresults</span><span class="o">=</span><span class="n">max_page_size</span><span class="p">,</span>
+            <span class="n">include_pending</span><span class="o">=</span><span class="n">include_pending</span><span class="p">,</span>
+            <span class="bp">cls</span><span class="o">=</span><span class="k">lambda</span> <span class="n">objs</span><span class="p">:</span> <span class="p">[</span><span class="n">CertificateProperties</span><span class="o">.</span><span class="n">_from_certificate_item</span><span class="p">(</span><span class="n">certificate_item</span><span class="o">=</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">objs</span><span class="p">],</span>
+            <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="CertificateClient.list_certificate_versions"><a class="viewcode-back" href="../../../../ref/azure.keyvault.certificates.html#azure.keyvault.certificates.client.CertificateClient.list_certificate_versions">[docs]</a>    <span class="nd">@distributed_trace</span>
+    <span class="k">def</span> <span class="nf">list_certificate_versions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="c1"># type: (str, **Any) -&gt; Iterable[CertificateProperties]</span>
+        <span class="sd">&quot;&quot;&quot;List the versions of a certificate.</span>
+
+<span class="sd">        The GetCertificateVersions operation returns the versions of a</span>
+<span class="sd">        certificate in the key vault. This operation requires the</span>
+<span class="sd">        certificates/list permission.</span>
+
+<span class="sd">        :param str name: The name of the certificate.</span>
+<span class="sd">        :returns: An iterator like instance of CertificateProperties</span>
+<span class="sd">        :rtype:</span>
+<span class="sd">         ~azure.core.paging.ItemPaged[~azure.keyvault.certificates.models.CertificateProperties]</span>
+<span class="sd">        :raises: :class:`~azure.core.exceptions.HttpResponseError`</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            .. literalinclude:: ../tests/test_examples_certificates.py</span>
+<span class="sd">                :start-after: [START list_certificate_versions]</span>
+<span class="sd">                :end-before: [END list_certificate_versions]</span>
+<span class="sd">                :language: python</span>
+<span class="sd">                :caption: List all versions of a certificate</span>
+<span class="sd">                :dedent: 8</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">max_page_size</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;max_page_size&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">get_certificate_versions</span><span class="p">(</span>
+            <span class="n">vault_base_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_vault_endpoint</span><span class="p">,</span>
+            <span class="n">certificate_name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">maxresults</span><span class="o">=</span><span class="n">max_page_size</span><span class="p">,</span>
+            <span class="bp">cls</span><span class="o">=</span><span class="k">lambda</span> <span class="n">objs</span><span class="p">:</span> <span class="p">[</span><span class="n">CertificateProperties</span><span class="o">.</span><span class="n">_from_certificate_item</span><span class="p">(</span><span class="n">certificate_item</span><span class="o">=</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">objs</span><span class="p">],</span>
+            <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="CertificateClient.create_contacts"><a class="viewcode-back" href="../../../../ref/azure.keyvault.certificates.html#azure.keyvault.certificates.client.CertificateClient.create_contacts">[docs]</a>    <span class="nd">@distributed_trace</span>
+    <span class="k">def</span> <span class="nf">create_contacts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">contacts</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="c1"># type: (Iterable[Contact], **Any) -&gt; List[Contact]</span>
+        <span class="sd">&quot;&quot;&quot;Sets the certificate contacts for the key vault.</span>
+
+<span class="sd">        Sets the certificate contacts for the key vault. This</span>
+<span class="sd">        operation requires the certificates/managecontacts permission.</span>
+
+<span class="sd">        :param contacts: The contact list for the vault certificates.</span>
+<span class="sd">        :type contacts: list[~azure.keyvault.certificates.models.Contact]</span>
+<span class="sd">        :returns: The created list of contacts</span>
+<span class="sd">        :rtype: list[~azure.keyvault.certificates.models.Contact]</span>
+<span class="sd">        :raises: :class:`~azure.core.exceptions.HttpResponseError`</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            .. literalinclude:: ../tests/test_examples_certificates.py</span>
+<span class="sd">                :start-after: [START create_contacts]</span>
+<span class="sd">                :end-before: [END create_contacts]</span>
+<span class="sd">                :language: python</span>
+<span class="sd">                :caption: Create contacts</span>
+<span class="sd">                :dedent: 8</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">contacts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">set_certificate_contacts</span><span class="p">(</span>
+            <span class="n">vault_base_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vault_endpoint</span><span class="p">,</span>
+            <span class="n">contact_list</span><span class="o">=</span><span class="p">[</span><span class="n">c</span><span class="o">.</span><span class="n">_to_certificate_contacts_item</span><span class="p">()</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">contacts</span><span class="p">],</span>
+            <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">Contact</span><span class="o">.</span><span class="n">_from_certificate_contacts_item</span><span class="p">(</span><span class="n">contact_item</span><span class="o">=</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">contacts</span><span class="o">.</span><span class="n">contact_list</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="CertificateClient.get_contacts"><a class="viewcode-back" href="../../../../ref/azure.keyvault.certificates.html#azure.keyvault.certificates.client.CertificateClient.get_contacts">[docs]</a>    <span class="nd">@distributed_trace</span>
+    <span class="k">def</span> <span class="nf">get_contacts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="c1"># type: (**Any) -&gt; List[Contact]</span>
+        <span class="sd">&quot;&quot;&quot;Gets the certificate contacts for the key vault.</span>
+
+<span class="sd">        Returns the set of certificate contact resources in the specified</span>
+<span class="sd">        key vault. This operation requires the certificates/managecontacts</span>
+<span class="sd">        permission.</span>
+
+<span class="sd">        :return: The certificate contacts for the key vault.</span>
+<span class="sd">        :rtype: list[~azure.keyvault.certificates.models.Contact]</span>
+<span class="sd">        :raises: :class:`~azure.core.exceptions.HttpResponseError`</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            .. literalinclude:: ../tests/test_examples_certificates.py</span>
+<span class="sd">                :start-after: [START get_contacts]</span>
+<span class="sd">                :end-before: [END get_contacts]</span>
+<span class="sd">                :language: python</span>
+<span class="sd">                :caption: Get contacts</span>
+<span class="sd">                :dedent: 8</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">contacts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">get_certificate_contacts</span><span class="p">(</span><span class="n">vault_base_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_vault_endpoint</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">Contact</span><span class="o">.</span><span class="n">_from_certificate_contacts_item</span><span class="p">(</span><span class="n">contact_item</span><span class="o">=</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">contacts</span><span class="o">.</span><span class="n">contact_list</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="CertificateClient.delete_contacts"><a class="viewcode-back" href="../../../../ref/azure.keyvault.certificates.html#azure.keyvault.certificates.client.CertificateClient.delete_contacts">[docs]</a>    <span class="nd">@distributed_trace</span>
+    <span class="k">def</span> <span class="nf">delete_contacts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="c1"># type: (**Any) -&gt; List[Contact]</span>
+        <span class="sd">&quot;&quot;&quot;Deletes the certificate contacts for the key vault.</span>
+
+<span class="sd">        Deletes the certificate contacts for the key vault certificate.</span>
+<span class="sd">        This operation requires the certificates/managecontacts permission.</span>
+
+<span class="sd">        :return: Contacts</span>
+<span class="sd">        :rtype: list[~azure.keyvault.certificates.models.Contact]</span>
+<span class="sd">        :raises: :class:`~azure.core.exceptions.HttpResponseError`</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            .. literalinclude:: ../tests/test_examples_certificates.py</span>
+<span class="sd">                :start-after: [START delete_contacts]</span>
+<span class="sd">                :end-before: [END delete_contacts]</span>
+<span class="sd">                :language: python</span>
+<span class="sd">                :caption: Delete contacts</span>
+<span class="sd">                :dedent: 8</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">contacts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">delete_certificate_contacts</span><span class="p">(</span><span class="n">vault_base_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vault_endpoint</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">Contact</span><span class="o">.</span><span class="n">_from_certificate_contacts_item</span><span class="p">(</span><span class="n">contact_item</span><span class="o">=</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">contacts</span><span class="o">.</span><span class="n">contact_list</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="CertificateClient.get_certificate_operation"><a class="viewcode-back" href="../../../../ref/azure.keyvault.certificates.html#azure.keyvault.certificates.client.CertificateClient.get_certificate_operation">[docs]</a>    <span class="nd">@distributed_trace</span>
+    <span class="k">def</span> <span class="nf">get_certificate_operation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="c1"># type: (str, **Any) -&gt; CertificateOperation</span>
+        <span class="sd">&quot;&quot;&quot;Gets the creation operation of a certificate.</span>
+
+<span class="sd">        Gets the creation operation associated with a specified certificate.</span>
+<span class="sd">        This operation requires the certificates/get permission.</span>
+
+<span class="sd">        :param str name: The name of the certificate.</span>
+<span class="sd">        :returns: The created CertificateOperation</span>
+<span class="sd">        :rtype: ~azure.keyvault.certificates.models.CertificateOperation</span>
+<span class="sd">        :raises:</span>
+<span class="sd">            :class:`~azure.core.exceptions.ResourceNotFoundError` if the certificate doesn&#39;t exist,</span>
+<span class="sd">            :class:`~azure.core.exceptions.HttpResponseError` for other errors</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">bundle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">get_certificate_operation</span><span class="p">(</span>
+            <span class="n">vault_base_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vault_endpoint</span><span class="p">,</span> <span class="n">certificate_name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">error_map</span><span class="o">=</span><span class="n">_error_map</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">CertificateOperation</span><span class="o">.</span><span class="n">_from_certificate_operation_bundle</span><span class="p">(</span><span class="n">certificate_operation_bundle</span><span class="o">=</span><span class="n">bundle</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CertificateClient.delete_certificate_operation"><a class="viewcode-back" href="../../../../ref/azure.keyvault.certificates.html#azure.keyvault.certificates.client.CertificateClient.delete_certificate_operation">[docs]</a>    <span class="nd">@distributed_trace</span>
+    <span class="k">def</span> <span class="nf">delete_certificate_operation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="c1"># type: (str, **Any) -&gt; CertificateOperation</span>
+        <span class="sd">&quot;&quot;&quot;Deletes the creation operation for a specific certificate.</span>
+
+<span class="sd">        Deletes the creation operation for a specified certificate that is in</span>
+<span class="sd">        the process of being created. The certificate is no longer created.</span>
+<span class="sd">        This operation requires the certificates/update permission.</span>
+
+<span class="sd">        :param str name: The name of the certificate.</span>
+<span class="sd">        :return: The deleted CertificateOperation</span>
+<span class="sd">        :rtype: ~azure.keyvault.certificates.models.CertificateOperation</span>
+<span class="sd">        :raises: :class:`~azure.core.exceptions.HttpResponseError`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">bundle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">delete_certificate_operation</span><span class="p">(</span>
+            <span class="n">vault_base_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vault_endpoint</span><span class="p">,</span> <span class="n">certificate_name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">CertificateOperation</span><span class="o">.</span><span class="n">_from_certificate_operation_bundle</span><span class="p">(</span><span class="n">certificate_operation_bundle</span><span class="o">=</span><span class="n">bundle</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CertificateClient.cancel_certificate_operation"><a class="viewcode-back" href="../../../../ref/azure.keyvault.certificates.html#azure.keyvault.certificates.client.CertificateClient.cancel_certificate_operation">[docs]</a>    <span class="nd">@distributed_trace</span>
+    <span class="k">def</span> <span class="nf">cancel_certificate_operation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="c1"># type: (str, **Any) -&gt; CertificateOperation</span>
+        <span class="sd">&quot;&quot;&quot;Cancels a certificate operation.</span>
+
+<span class="sd">        Cancels a certificate creation operation that is already in progress.</span>
+<span class="sd">        This operation requires the certificates/update permission.</span>
+
+<span class="sd">        :param str name: The name of the certificate.</span>
+<span class="sd">        :returns: The cancelled certificate operation</span>
+<span class="sd">        :rtype: ~azure.keyvault.certificates.models.CertificateOperation</span>
+<span class="sd">        :raises: :class:`~azure.core.exceptions.HttpResponseError`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">bundle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">update_certificate_operation</span><span class="p">(</span>
+            <span class="n">vault_base_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vault_endpoint</span><span class="p">,</span> <span class="n">certificate_name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">cancellation_requested</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">CertificateOperation</span><span class="o">.</span><span class="n">_from_certificate_operation_bundle</span><span class="p">(</span><span class="n">certificate_operation_bundle</span><span class="o">=</span><span class="n">bundle</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CertificateClient.merge_certificate"><a class="viewcode-back" href="../../../../ref/azure.keyvault.certificates.html#azure.keyvault.certificates.client.CertificateClient.merge_certificate">[docs]</a>    <span class="nd">@distributed_trace</span>
+    <span class="k">def</span> <span class="nf">merge_certificate</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">,</span>  <span class="c1"># type: str</span>
+        <span class="n">x509_certificates</span><span class="p">,</span>  <span class="c1"># type: List[bytearray]</span>
+        <span class="o">**</span><span class="n">kwargs</span>  <span class="c1"># type: **Any</span>
+    <span class="p">):</span>
+        <span class="c1"># type: (...) -&gt; Certificate</span>
+        <span class="sd">&quot;&quot;&quot;Merges a certificate or a certificate chain with a key pair existing on the server.</span>
+
+<span class="sd">        Performs the merging of a certificate or certificate chain with a key pair currently</span>
+<span class="sd">        available in the service. This operation requires the certificates/create permission.</span>
+<span class="sd">        Make sure when creating the certificate to merge using create_certificate that you set</span>
+<span class="sd">        it&#39;s issuer to &#39;Unknown&#39;. This way Key Vault knows that the certificate will not be signed</span>
+<span class="sd">        by an issuer known to it.</span>
+
+<span class="sd">        :param str name: The name of the certificate</span>
+<span class="sd">        :param x509_certificates: The certificate or the certificate chain to merge.</span>
+<span class="sd">        :type x509_certificates: list[bytearray]</span>
+<span class="sd">        :return: The merged certificate</span>
+<span class="sd">        :rtype: ~azure.keyvault.certificates.models.Certificate</span>
+<span class="sd">        :raises: :class:`~azure.core.exceptions.HttpResponseError`</span>
+
+<span class="sd">        Keyword arguments</span>
+<span class="sd">            - *enabled (bool)* - Determines whether the object is enabled.</span>
+<span class="sd">            - *tags (dict[str, str])* - Application specific metadata in the form of key-value pairs.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">enabled</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;enabled&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">enabled</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">attributes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">CertificateAttributes</span><span class="p">(</span><span class="n">enabled</span><span class="o">=</span><span class="n">enabled</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">attributes</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">bundle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">merge_certificate</span><span class="p">(</span>
+            <span class="n">vault_base_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vault_endpoint</span><span class="p">,</span>
+            <span class="n">certificate_name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">x509_certificates</span><span class="o">=</span><span class="n">x509_certificates</span><span class="p">,</span>
+            <span class="n">certificate_attributes</span><span class="o">=</span><span class="n">attributes</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">Certificate</span><span class="o">.</span><span class="n">_from_certificate_bundle</span><span class="p">(</span><span class="n">certificate_bundle</span><span class="o">=</span><span class="n">bundle</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CertificateClient.get_issuer"><a class="viewcode-back" href="../../../../ref/azure.keyvault.certificates.html#azure.keyvault.certificates.client.CertificateClient.get_issuer">[docs]</a>    <span class="nd">@distributed_trace</span>
+    <span class="k">def</span> <span class="nf">get_issuer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="c1"># type: (str, **Any) -&gt; Issuer</span>
+        <span class="sd">&quot;&quot;&quot;Gets the specified certificate issuer.</span>
+
+<span class="sd">        Returns the specified certificate issuer resources in the key vault.</span>
+<span class="sd">        This operation requires the certificates/manageissuers/getissuers permission.</span>
+
+<span class="sd">        :param str name: The name of the issuer.</span>
+<span class="sd">        :return: The specified certificate issuer.</span>
+<span class="sd">        :rtype: ~azure.keyvault.certificates.models.Issuer</span>
+<span class="sd">        :raises:</span>
+<span class="sd">            :class:`~azure.core.exceptions.ResourceNotFoundError` if the issuer doesn&#39;t exist,</span>
+<span class="sd">            :class:`~azure.core.exceptions.HttpResponseError` for other errors</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            .. literalinclude:: ../tests/test_examples_certificates.py</span>
+<span class="sd">                :start-after: [START get_issuer]</span>
+<span class="sd">                :end-before: [END get_issuer]</span>
+<span class="sd">                :language: python</span>
+<span class="sd">                :caption: Get an issuer</span>
+<span class="sd">                :dedent: 8</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">issuer_bundle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">get_certificate_issuer</span><span class="p">(</span>
+            <span class="n">vault_base_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vault_endpoint</span><span class="p">,</span> <span class="n">issuer_name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">error_map</span><span class="o">=</span><span class="n">_error_map</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">Issuer</span><span class="o">.</span><span class="n">_from_issuer_bundle</span><span class="p">(</span><span class="n">issuer_bundle</span><span class="o">=</span><span class="n">issuer_bundle</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CertificateClient.create_issuer"><a class="viewcode-back" href="../../../../ref/azure.keyvault.certificates.html#azure.keyvault.certificates.client.CertificateClient.create_issuer">[docs]</a>    <span class="nd">@distributed_trace</span>
+    <span class="k">def</span> <span class="nf">create_issuer</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">,</span>  <span class="c1"># type: str,</span>
+        <span class="n">provider</span><span class="p">,</span>  <span class="c1"># type: str,</span>
+        <span class="n">account_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># type: Optional[str]</span>
+        <span class="n">password</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># type: Optional[str]</span>
+        <span class="n">organization_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># type: Optional[str]</span>
+        <span class="n">admin_details</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># type: Optional[List[AdministratorDetails]]</span>
+        <span class="o">**</span><span class="n">kwargs</span>  <span class="c1"># type: **Any</span>
+    <span class="p">):</span>
+        <span class="c1"># type: (...) -&gt; Issuer</span>
+        <span class="sd">&quot;&quot;&quot;Sets the specified certificate issuer.</span>
+
+<span class="sd">        The SetCertificateIssuer operation adds or updates the specified</span>
+<span class="sd">        certificate issuer. This operation requires the certificates/setissuers</span>
+<span class="sd">        permission.</span>
+
+<span class="sd">        :param str name: The name of the issuer.</span>
+<span class="sd">        :param str provider: The issuer provider.</span>
+<span class="sd">        :param str account_id: The user name/account name/account id.</span>
+<span class="sd">        :param str password: The password/secret/account key.</span>
+<span class="sd">        :param str organization_id: Id of the organization.</span>
+<span class="sd">        :param admin_details: Details of the organization administrators of the certificate issuer.</span>
+<span class="sd">        :type admin_details: list[~azure.keyvault.certificates.models.AdministratorDetails]</span>
+<span class="sd">        :returns: The created Issuer</span>
+<span class="sd">        :rtype: ~azure.keyvault.certificates.models.Issuer</span>
+<span class="sd">        :raises: :class:`~azure.core.exceptions.HttpResponseError`</span>
+
+<span class="sd">        Keyword arguments</span>
+<span class="sd">            - *enabled (bool)* - Determines whether the object is enabled.</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            .. literalinclude:: ../tests/test_examples_certificates.py</span>
+<span class="sd">                :start-after: [START create_issuer]</span>
+<span class="sd">                :end-before: [END create_issuer]</span>
+<span class="sd">                :language: python</span>
+<span class="sd">                :caption: Create an issuer</span>
+<span class="sd">                :dedent: 8</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">enabled</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;enabled&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">account_id</span> <span class="ow">or</span> <span class="n">password</span><span class="p">:</span>
+            <span class="n">issuer_credentials</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">IssuerCredentials</span><span class="p">(</span><span class="n">account_id</span><span class="o">=</span><span class="n">account_id</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="n">password</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">issuer_credentials</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">admin_details</span> <span class="ow">and</span> <span class="n">admin_details</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="n">admin_details_to_pass</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">AdministratorDetails</span><span class="p">(</span>
+                    <span class="n">first_name</span><span class="o">=</span><span class="n">admin_detail</span><span class="o">.</span><span class="n">first_name</span><span class="p">,</span>
+                    <span class="n">last_name</span><span class="o">=</span><span class="n">admin_detail</span><span class="o">.</span><span class="n">last_name</span><span class="p">,</span>
+                    <span class="n">email_address</span><span class="o">=</span><span class="n">admin_detail</span><span class="o">.</span><span class="n">email</span><span class="p">,</span>
+                    <span class="n">phone</span><span class="o">=</span><span class="n">admin_detail</span><span class="o">.</span><span class="n">phone</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="k">for</span> <span class="n">admin_detail</span> <span class="ow">in</span> <span class="n">admin_details</span>
+            <span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">admin_details_to_pass</span> <span class="o">=</span> <span class="n">admin_details</span>
+        <span class="k">if</span> <span class="n">organization_id</span> <span class="ow">or</span> <span class="n">admin_details</span><span class="p">:</span>
+            <span class="n">organization_details</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">OrganizationDetails</span><span class="p">(</span>
+                <span class="nb">id</span><span class="o">=</span><span class="n">organization_id</span><span class="p">,</span> <span class="n">admin_details</span><span class="o">=</span><span class="n">admin_details_to_pass</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">organization_details</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">enabled</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">issuer_attributes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">IssuerAttributes</span><span class="p">(</span><span class="n">enabled</span><span class="o">=</span><span class="n">enabled</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">issuer_attributes</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">issuer_bundle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">set_certificate_issuer</span><span class="p">(</span>
+            <span class="n">vault_base_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vault_endpoint</span><span class="p">,</span>
+            <span class="n">issuer_name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">provider</span><span class="o">=</span><span class="n">provider</span><span class="p">,</span>
+            <span class="n">credentials</span><span class="o">=</span><span class="n">issuer_credentials</span><span class="p">,</span>
+            <span class="n">organization_details</span><span class="o">=</span><span class="n">organization_details</span><span class="p">,</span>
+            <span class="n">attributes</span><span class="o">=</span><span class="n">issuer_attributes</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">Issuer</span><span class="o">.</span><span class="n">_from_issuer_bundle</span><span class="p">(</span><span class="n">issuer_bundle</span><span class="o">=</span><span class="n">issuer_bundle</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CertificateClient.update_issuer"><a class="viewcode-back" href="../../../../ref/azure.keyvault.certificates.html#azure.keyvault.certificates.client.CertificateClient.update_issuer">[docs]</a>    <span class="nd">@distributed_trace</span>
+    <span class="k">def</span> <span class="nf">update_issuer</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">,</span>  <span class="c1"># type: str,</span>
+        <span class="n">provider</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># type: Optional[str],</span>
+        <span class="n">account_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># type: Optional[str]</span>
+        <span class="n">password</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># type: Optional[str]</span>
+        <span class="n">organization_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># type: Optional[str]</span>
+        <span class="n">admin_details</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># type: Optional[List[AdministratorDetails]]</span>
+        <span class="o">**</span><span class="n">kwargs</span>  <span class="c1"># type: **Any</span>
+    <span class="p">):</span>
+        <span class="c1"># type: (...) -&gt; Issuer</span>
+        <span class="sd">&quot;&quot;&quot;Updates the specified certificate issuer.</span>
+
+<span class="sd">        Performs an update on the specified certificate issuer entity.</span>
+<span class="sd">        This operation requires the certificates/setissuers permission.</span>
+
+<span class="sd">        :param str name: The name of the issuer.</span>
+<span class="sd">        :param str provider: The issuer provider.</span>
+<span class="sd">        :param str account_id: The username / account name / account key.</span>
+<span class="sd">        :param str password: The password / secret / account key.</span>
+<span class="sd">        :param str organization_id: Id of the organization</span>
+<span class="sd">        :param admin_details: Details of the organization administrators of the certificate issuer.</span>
+<span class="sd">        :type admin_details: list[~azure.keyvault.certificates.models.AdministratorDetails]</span>
+<span class="sd">        :param bool enabled: Determines whether the issuer is enabled.</span>
+<span class="sd">        :return: The updated issuer</span>
+<span class="sd">        :rtype: ~azure.keyvault.certificates.models.Issuer</span>
+<span class="sd">        :raises: :class:`~azure.core.exceptions.HttpResponseError`</span>
+
+<span class="sd">        Keyword arguments</span>
+<span class="sd">            - *enabled (bool)* - Determines whether the object is enabled.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">enabled</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;enabled&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">account_id</span> <span class="ow">or</span> <span class="n">password</span><span class="p">:</span>
+            <span class="n">issuer_credentials</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">IssuerCredentials</span><span class="p">(</span><span class="n">account_id</span><span class="o">=</span><span class="n">account_id</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="n">password</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">issuer_credentials</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">admin_details</span> <span class="ow">and</span> <span class="n">admin_details</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="n">admin_details_to_pass</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">AdministratorDetails</span><span class="p">(</span>
+                    <span class="n">first_name</span><span class="o">=</span><span class="n">admin_detail</span><span class="o">.</span><span class="n">first_name</span><span class="p">,</span>
+                    <span class="n">last_name</span><span class="o">=</span><span class="n">admin_detail</span><span class="o">.</span><span class="n">last_name</span><span class="p">,</span>
+                    <span class="n">email_address</span><span class="o">=</span><span class="n">admin_detail</span><span class="o">.</span><span class="n">email</span><span class="p">,</span>
+                    <span class="n">phone</span><span class="o">=</span><span class="n">admin_detail</span><span class="o">.</span><span class="n">phone</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="k">for</span> <span class="n">admin_detail</span> <span class="ow">in</span> <span class="n">admin_details</span>
+            <span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">admin_details_to_pass</span> <span class="o">=</span> <span class="n">admin_details</span>
+        <span class="k">if</span> <span class="n">organization_id</span> <span class="ow">or</span> <span class="n">admin_details</span><span class="p">:</span>
+            <span class="n">organization_details</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">OrganizationDetails</span><span class="p">(</span>
+                <span class="nb">id</span><span class="o">=</span><span class="n">organization_id</span><span class="p">,</span> <span class="n">admin_details</span><span class="o">=</span><span class="n">admin_details_to_pass</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">organization_details</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">enabled</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">issuer_attributes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">IssuerAttributes</span><span class="p">(</span><span class="n">enabled</span><span class="o">=</span><span class="n">enabled</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">issuer_attributes</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">issuer_bundle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">update_certificate_issuer</span><span class="p">(</span>
+            <span class="n">vault_base_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vault_endpoint</span><span class="p">,</span>
+            <span class="n">issuer_name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">provider</span><span class="o">=</span><span class="n">provider</span><span class="p">,</span>
+            <span class="n">credentials</span><span class="o">=</span><span class="n">issuer_credentials</span><span class="p">,</span>
+            <span class="n">organization_details</span><span class="o">=</span><span class="n">organization_details</span><span class="p">,</span>
+            <span class="n">attributes</span><span class="o">=</span><span class="n">issuer_attributes</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">Issuer</span><span class="o">.</span><span class="n">_from_issuer_bundle</span><span class="p">(</span><span class="n">issuer_bundle</span><span class="o">=</span><span class="n">issuer_bundle</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CertificateClient.delete_issuer"><a class="viewcode-back" href="../../../../ref/azure.keyvault.certificates.html#azure.keyvault.certificates.client.CertificateClient.delete_issuer">[docs]</a>    <span class="nd">@distributed_trace</span>
+    <span class="k">def</span> <span class="nf">delete_issuer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="c1"># type: (str, **Any) -&gt; Issuer</span>
+        <span class="sd">&quot;&quot;&quot;Deletes the specified certificate issuer.</span>
+
+<span class="sd">        Permanently removes the specified certificate issuer from the vault.</span>
+<span class="sd">        This operation requires the certificates/manageissuers/deleteissuers permission.</span>
+
+<span class="sd">        :param str name: The name of the issuer.</span>
+<span class="sd">        :return: Issuer</span>
+<span class="sd">        :rtype: ~azure.keyvault.certificates.models.Issuer</span>
+<span class="sd">        :raises: :class:`~azure.core.exceptions.HttpResponseError`</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            .. literalinclude:: ../tests/test_examples_certificates.py</span>
+<span class="sd">                :start-after: [START delete_issuer]</span>
+<span class="sd">                :end-before: [END delete_issuer]</span>
+<span class="sd">                :language: python</span>
+<span class="sd">                :caption: Delete an issuer</span>
+<span class="sd">                :dedent: 8</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">issuer_bundle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">delete_certificate_issuer</span><span class="p">(</span>
+            <span class="n">vault_base_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vault_endpoint</span><span class="p">,</span> <span class="n">issuer_name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">Issuer</span><span class="o">.</span><span class="n">_from_issuer_bundle</span><span class="p">(</span><span class="n">issuer_bundle</span><span class="o">=</span><span class="n">issuer_bundle</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CertificateClient.list_issuers"><a class="viewcode-back" href="../../../../ref/azure.keyvault.certificates.html#azure.keyvault.certificates.client.CertificateClient.list_issuers">[docs]</a>    <span class="nd">@distributed_trace</span>
+    <span class="k">def</span> <span class="nf">list_issuers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="c1"># type: (**Any) -&gt; Iterable[IssuerProperties]</span>
+        <span class="sd">&quot;&quot;&quot;List certificate issuers for the key vault.</span>
+
+<span class="sd">        Returns the set of certificate issuer resources in the key</span>
+<span class="sd">        vault. This operation requires the certificates/manageissuers/getissuers</span>
+<span class="sd">        permission.</span>
+
+<span class="sd">        :return: An iterator like instance of Issuers</span>
+<span class="sd">        :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.certificates.models.Issuer]</span>
+<span class="sd">        :raises: :class:`~azure.core.exceptions.HttpResponseError`</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            .. literalinclude:: ../tests/test_examples_certificates.py</span>
+<span class="sd">                :start-after: [START list_issuers]</span>
+<span class="sd">                :end-before: [END list_issuers]</span>
+<span class="sd">                :language: python</span>
+<span class="sd">                :caption: List issuers of a vault</span>
+<span class="sd">                :dedent: 8</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">max_page_size</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;max_page_size&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">get_certificate_issuers</span><span class="p">(</span>
+            <span class="n">vault_base_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vault_endpoint</span><span class="p">,</span>
+            <span class="n">maxresults</span><span class="o">=</span><span class="n">max_page_size</span><span class="p">,</span>
+            <span class="bp">cls</span><span class="o">=</span><span class="k">lambda</span> <span class="n">objs</span><span class="p">:</span> <span class="p">[</span><span class="n">IssuerProperties</span><span class="o">.</span><span class="n">_from_issuer_item</span><span class="p">(</span><span class="n">issuer_item</span><span class="o">=</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">objs</span><span class="p">],</span>
+            <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Microsoft
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+  
+ 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-62780441-36"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-62780441-36');
+</script>
+
+
+</body>
+</html>
