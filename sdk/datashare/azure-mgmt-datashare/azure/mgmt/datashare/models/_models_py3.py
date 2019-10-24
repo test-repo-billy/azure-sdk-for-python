@@ -212,7 +212,7 @@ class DataSet(ProxyDto):
 
 
 class ADLSGen1FileDataSet(DataSet):
-    """An ADLS Gen 1 file dataset.
+    """An ADLS Gen 1 file data set.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -279,7 +279,7 @@ class ADLSGen1FileDataSet(DataSet):
 
 
 class ADLSGen1FolderDataSet(DataSet):
-    """An ADLS Gen 1 folder dataset.
+    """An ADLS Gen 1 folder data set.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -341,7 +341,7 @@ class ADLSGen1FolderDataSet(DataSet):
 
 
 class ADLSGen2FileDataSet(DataSet):
-    """An ADLS Gen 2 file dataset.
+    """An ADLS Gen 2 file data set.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -409,7 +409,7 @@ class ADLSGen2FileDataSet(DataSet):
 
 
 class DataSetMapping(ProxyDto):
-    """A dataset mapping data transfer object.
+    """A data set mapping data transfer object.
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: BlobDataSetMapping, BlobFolderDataSetMapping,
@@ -457,7 +457,7 @@ class DataSetMapping(ProxyDto):
 
 
 class ADLSGen2FileDataSetMapping(DataSetMapping):
-    """An ADLS Gen2 file dataset mapping.
+    """An ADLS Gen2 file data set mapping.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -472,9 +472,9 @@ class ADLSGen2FileDataSetMapping(DataSetMapping):
     :vartype type: str
     :param kind: Required. Constant filled by server.
     :type kind: str
-    :param data_set_id: Gets the id of source dataset.
+    :param data_set_id: Required. The id of the source data set.
     :type data_set_id: str
-    :param data_set_mapping_status: Gets the status of the dataset mapping.
+    :param data_set_mapping_status: Gets the status of the data set mapping.
      Possible values include: 'Ok', 'Broken'
     :type data_set_mapping_status: str or
      ~azure.mgmt.datashare.models.DataSetMappingStatus
@@ -499,6 +499,7 @@ class ADLSGen2FileDataSetMapping(DataSetMapping):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'kind': {'required': True},
+        'data_set_id': {'required': True},
         'file_path': {'required': True},
         'file_system': {'required': True},
         'resource_group': {'required': True},
@@ -521,7 +522,7 @@ class ADLSGen2FileDataSetMapping(DataSetMapping):
         'subscription_id': {'key': 'properties.subscriptionId', 'type': 'str'},
     }
 
-    def __init__(self, *, file_path: str, file_system: str, resource_group: str, storage_account_name: str, subscription_id: str, data_set_id: str=None, data_set_mapping_status=None, output_type=None, **kwargs) -> None:
+    def __init__(self, *, data_set_id: str, file_path: str, file_system: str, resource_group: str, storage_account_name: str, subscription_id: str, data_set_mapping_status=None, output_type=None, **kwargs) -> None:
         super(ADLSGen2FileDataSetMapping, self).__init__(**kwargs)
         self.data_set_id = data_set_id
         self.data_set_mapping_status = data_set_mapping_status
@@ -535,7 +536,7 @@ class ADLSGen2FileDataSetMapping(DataSetMapping):
 
 
 class ADLSGen2FileSystemDataSet(DataSet):
-    """An ADLS Gen 2 file system dataset.
+    """An ADLS Gen 2 file system data set.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -598,7 +599,7 @@ class ADLSGen2FileSystemDataSet(DataSet):
 
 
 class ADLSGen2FileSystemDataSetMapping(DataSetMapping):
-    """An ADLS Gen2 file system dataset mapping.
+    """An ADLS Gen2 file system data set mapping.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -613,9 +614,9 @@ class ADLSGen2FileSystemDataSetMapping(DataSetMapping):
     :vartype type: str
     :param kind: Required. Constant filled by server.
     :type kind: str
-    :param data_set_id: Gets the id of source dataset.
+    :param data_set_id: Required. The id of the source data set.
     :type data_set_id: str
-    :param data_set_mapping_status: Gets the status of the dataset mapping.
+    :param data_set_mapping_status: Gets the status of the data set mapping.
      Possible values include: 'Ok', 'Broken'
     :type data_set_mapping_status: str or
      ~azure.mgmt.datashare.models.DataSetMappingStatus
@@ -635,6 +636,7 @@ class ADLSGen2FileSystemDataSetMapping(DataSetMapping):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'kind': {'required': True},
+        'data_set_id': {'required': True},
         'file_system': {'required': True},
         'resource_group': {'required': True},
         'storage_account_name': {'required': True},
@@ -654,7 +656,7 @@ class ADLSGen2FileSystemDataSetMapping(DataSetMapping):
         'subscription_id': {'key': 'properties.subscriptionId', 'type': 'str'},
     }
 
-    def __init__(self, *, file_system: str, resource_group: str, storage_account_name: str, subscription_id: str, data_set_id: str=None, data_set_mapping_status=None, **kwargs) -> None:
+    def __init__(self, *, data_set_id: str, file_system: str, resource_group: str, storage_account_name: str, subscription_id: str, data_set_mapping_status=None, **kwargs) -> None:
         super(ADLSGen2FileSystemDataSetMapping, self).__init__(**kwargs)
         self.data_set_id = data_set_id
         self.data_set_mapping_status = data_set_mapping_status
@@ -666,7 +668,7 @@ class ADLSGen2FileSystemDataSetMapping(DataSetMapping):
 
 
 class ADLSGen2FolderDataSet(DataSet):
-    """An ADLS Gen 2 folder dataset.
+    """An ADLS Gen 2 folder data set.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -734,7 +736,7 @@ class ADLSGen2FolderDataSet(DataSet):
 
 
 class ADLSGen2FolderDataSetMapping(DataSetMapping):
-    """An ADLS Gen2 folder dataset mapping.
+    """An ADLS Gen2 folder data set mapping.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -749,9 +751,9 @@ class ADLSGen2FolderDataSetMapping(DataSetMapping):
     :vartype type: str
     :param kind: Required. Constant filled by server.
     :type kind: str
-    :param data_set_id: Gets the id of source dataset.
+    :param data_set_id: Required. The id of the source data set.
     :type data_set_id: str
-    :param data_set_mapping_status: Gets the status of the dataset mapping.
+    :param data_set_mapping_status: Gets the status of the data set mapping.
      Possible values include: 'Ok', 'Broken'
     :type data_set_mapping_status: str or
      ~azure.mgmt.datashare.models.DataSetMappingStatus
@@ -773,6 +775,7 @@ class ADLSGen2FolderDataSetMapping(DataSetMapping):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'kind': {'required': True},
+        'data_set_id': {'required': True},
         'file_system': {'required': True},
         'folder_path': {'required': True},
         'resource_group': {'required': True},
@@ -794,7 +797,7 @@ class ADLSGen2FolderDataSetMapping(DataSetMapping):
         'subscription_id': {'key': 'properties.subscriptionId', 'type': 'str'},
     }
 
-    def __init__(self, *, file_system: str, folder_path: str, resource_group: str, storage_account_name: str, subscription_id: str, data_set_id: str=None, data_set_mapping_status=None, **kwargs) -> None:
+    def __init__(self, *, data_set_id: str, file_system: str, folder_path: str, resource_group: str, storage_account_name: str, subscription_id: str, data_set_mapping_status=None, **kwargs) -> None:
         super(ADLSGen2FolderDataSetMapping, self).__init__(**kwargs)
         self.data_set_id = data_set_id
         self.data_set_mapping_status = data_set_mapping_status
@@ -807,7 +810,7 @@ class ADLSGen2FolderDataSetMapping(DataSetMapping):
 
 
 class BlobContainerDataSet(DataSet):
-    """An Azure storage blob container dataset.
+    """An Azure storage blob container data set.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -870,7 +873,7 @@ class BlobContainerDataSet(DataSet):
 
 
 class BlobContainerDataSetMapping(DataSetMapping):
-    """A Blob container dataset mapping.
+    """A Blob container data set mapping.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -887,9 +890,9 @@ class BlobContainerDataSetMapping(DataSetMapping):
     :type kind: str
     :param container_name: Required. BLOB Container name.
     :type container_name: str
-    :param data_set_id: Gets the id of source dataset.
+    :param data_set_id: Required. The id of the source data set.
     :type data_set_id: str
-    :param data_set_mapping_status: Gets the status of the dataset mapping.
+    :param data_set_mapping_status: Gets the status of the data set mapping.
      Possible values include: 'Ok', 'Broken'
     :type data_set_mapping_status: str or
      ~azure.mgmt.datashare.models.DataSetMappingStatus
@@ -908,6 +911,7 @@ class BlobContainerDataSetMapping(DataSetMapping):
         'type': {'readonly': True},
         'kind': {'required': True},
         'container_name': {'required': True},
+        'data_set_id': {'required': True},
         'resource_group': {'required': True},
         'storage_account_name': {'required': True},
         'subscription_id': {'required': True},
@@ -926,7 +930,7 @@ class BlobContainerDataSetMapping(DataSetMapping):
         'subscription_id': {'key': 'properties.subscriptionId', 'type': 'str'},
     }
 
-    def __init__(self, *, container_name: str, resource_group: str, storage_account_name: str, subscription_id: str, data_set_id: str=None, data_set_mapping_status=None, **kwargs) -> None:
+    def __init__(self, *, container_name: str, data_set_id: str, resource_group: str, storage_account_name: str, subscription_id: str, data_set_mapping_status=None, **kwargs) -> None:
         super(BlobContainerDataSetMapping, self).__init__(**kwargs)
         self.container_name = container_name
         self.data_set_id = data_set_id
@@ -938,7 +942,7 @@ class BlobContainerDataSetMapping(DataSetMapping):
 
 
 class BlobDataSet(DataSet):
-    """An Azure storage blob dataset.
+    """An Azure storage blob data set.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -1006,7 +1010,7 @@ class BlobDataSet(DataSet):
 
 
 class BlobDataSetMapping(DataSetMapping):
-    """A Blob dataset mapping.
+    """A Blob data set mapping.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -1023,9 +1027,9 @@ class BlobDataSetMapping(DataSetMapping):
     :type kind: str
     :param container_name: Required. Container that has the file path.
     :type container_name: str
-    :param data_set_id: Gets the id of source dataset.
+    :param data_set_id: Required. The id of the source data set.
     :type data_set_id: str
-    :param data_set_mapping_status: Gets the status of the dataset mapping.
+    :param data_set_mapping_status: Gets the status of the data set mapping.
      Possible values include: 'Ok', 'Broken'
     :type data_set_mapping_status: str or
      ~azure.mgmt.datashare.models.DataSetMappingStatus
@@ -1049,6 +1053,7 @@ class BlobDataSetMapping(DataSetMapping):
         'type': {'readonly': True},
         'kind': {'required': True},
         'container_name': {'required': True},
+        'data_set_id': {'required': True},
         'file_path': {'required': True},
         'resource_group': {'required': True},
         'storage_account_name': {'required': True},
@@ -1070,7 +1075,7 @@ class BlobDataSetMapping(DataSetMapping):
         'subscription_id': {'key': 'properties.subscriptionId', 'type': 'str'},
     }
 
-    def __init__(self, *, container_name: str, file_path: str, resource_group: str, storage_account_name: str, subscription_id: str, data_set_id: str=None, data_set_mapping_status=None, output_type=None, **kwargs) -> None:
+    def __init__(self, *, container_name: str, data_set_id: str, file_path: str, resource_group: str, storage_account_name: str, subscription_id: str, data_set_mapping_status=None, output_type=None, **kwargs) -> None:
         super(BlobDataSetMapping, self).__init__(**kwargs)
         self.container_name = container_name
         self.data_set_id = data_set_id
@@ -1084,7 +1089,7 @@ class BlobDataSetMapping(DataSetMapping):
 
 
 class BlobFolderDataSet(DataSet):
-    """An Azure storage blob folder dataset.
+    """An Azure storage blob folder data set.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -1152,7 +1157,7 @@ class BlobFolderDataSet(DataSet):
 
 
 class BlobFolderDataSetMapping(DataSetMapping):
-    """A Blob folder dataset mapping.
+    """A Blob folder data set mapping.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -1169,9 +1174,9 @@ class BlobFolderDataSetMapping(DataSetMapping):
     :type kind: str
     :param container_name: Required. Container that has the file path.
     :type container_name: str
-    :param data_set_id: Gets the id of source dataset.
+    :param data_set_id: Required. The id of the source data set.
     :type data_set_id: str
-    :param data_set_mapping_status: Gets the status of the dataset mapping.
+    :param data_set_mapping_status: Gets the status of the data set mapping.
      Possible values include: 'Ok', 'Broken'
     :type data_set_mapping_status: str or
      ~azure.mgmt.datashare.models.DataSetMappingStatus
@@ -1192,6 +1197,7 @@ class BlobFolderDataSetMapping(DataSetMapping):
         'type': {'readonly': True},
         'kind': {'required': True},
         'container_name': {'required': True},
+        'data_set_id': {'required': True},
         'prefix': {'required': True},
         'resource_group': {'required': True},
         'storage_account_name': {'required': True},
@@ -1212,7 +1218,7 @@ class BlobFolderDataSetMapping(DataSetMapping):
         'subscription_id': {'key': 'properties.subscriptionId', 'type': 'str'},
     }
 
-    def __init__(self, *, container_name: str, prefix: str, resource_group: str, storage_account_name: str, subscription_id: str, data_set_id: str=None, data_set_mapping_status=None, **kwargs) -> None:
+    def __init__(self, *, container_name: str, data_set_id: str, prefix: str, resource_group: str, storage_account_name: str, subscription_id: str, data_set_mapping_status=None, **kwargs) -> None:
         super(BlobFolderDataSetMapping, self).__init__(**kwargs)
         self.container_name = container_name
         self.data_set_id = data_set_id
@@ -2369,7 +2375,7 @@ class ShareSynchronization(Model):
 
 
 class SqlDBTableDataSet(DataSet):
-    """A SQL DB table dataset.
+    """A SQL DB table data set.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -2423,7 +2429,7 @@ class SqlDBTableDataSet(DataSet):
 
 
 class SqlDBTableDataSetMapping(DataSetMapping):
-    """A SQL DB Table dataset mapping.
+    """A SQL DB Table data set mapping.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -2440,9 +2446,9 @@ class SqlDBTableDataSetMapping(DataSetMapping):
     :type kind: str
     :param database_name: Required. DatabaseName name of the sink data set
     :type database_name: str
-    :param data_set_id: Gets the id of source dataset.
+    :param data_set_id: Required. The id of the source data set.
     :type data_set_id: str
-    :param data_set_mapping_status: Gets the status of the dataset mapping.
+    :param data_set_mapping_status: Gets the status of the data set mapping.
      Possible values include: 'Ok', 'Broken'
     :type data_set_mapping_status: str or
      ~azure.mgmt.datashare.models.DataSetMappingStatus
@@ -2458,6 +2464,7 @@ class SqlDBTableDataSetMapping(DataSetMapping):
         'type': {'readonly': True},
         'kind': {'required': True},
         'database_name': {'required': True},
+        'data_set_id': {'required': True},
         'sql_server_resource_id': {'required': True},
         'table_name': {'required': True},
     }
@@ -2474,7 +2481,7 @@ class SqlDBTableDataSetMapping(DataSetMapping):
         'table_name': {'key': 'properties.tableName', 'type': 'str'},
     }
 
-    def __init__(self, *, database_name: str, sql_server_resource_id: str, table_name: str, data_set_id: str=None, data_set_mapping_status=None, **kwargs) -> None:
+    def __init__(self, *, database_name: str, data_set_id: str, sql_server_resource_id: str, table_name: str, data_set_mapping_status=None, **kwargs) -> None:
         super(SqlDBTableDataSetMapping, self).__init__(**kwargs)
         self.database_name = database_name
         self.data_set_id = data_set_id
@@ -2485,7 +2492,7 @@ class SqlDBTableDataSetMapping(DataSetMapping):
 
 
 class SqlDWTableDataSet(DataSet):
-    """A SQL DW table dataset.
+    """A SQL DW table data set.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -2539,7 +2546,7 @@ class SqlDWTableDataSet(DataSet):
 
 
 class SqlDWTableDataSetMapping(DataSetMapping):
-    """A SQL DW Table dataset mapping.
+    """A SQL DW Table data set mapping.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -2554,9 +2561,9 @@ class SqlDWTableDataSetMapping(DataSetMapping):
     :vartype type: str
     :param kind: Required. Constant filled by server.
     :type kind: str
-    :param data_set_id: Gets the id of source dataset.
+    :param data_set_id: Required. The id of the source data set.
     :type data_set_id: str
-    :param data_set_mapping_status: Gets the status of the dataset mapping.
+    :param data_set_mapping_status: Gets the status of the data set mapping.
      Possible values include: 'Ok', 'Broken'
     :type data_set_mapping_status: str or
      ~azure.mgmt.datashare.models.DataSetMappingStatus
@@ -2574,6 +2581,7 @@ class SqlDWTableDataSetMapping(DataSetMapping):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'kind': {'required': True},
+        'data_set_id': {'required': True},
         'data_warehouse_name': {'required': True},
         'sql_server_resource_id': {'required': True},
         'table_name': {'required': True},
@@ -2591,7 +2599,7 @@ class SqlDWTableDataSetMapping(DataSetMapping):
         'table_name': {'key': 'properties.tableName', 'type': 'str'},
     }
 
-    def __init__(self, *, data_warehouse_name: str, sql_server_resource_id: str, table_name: str, data_set_id: str=None, data_set_mapping_status=None, **kwargs) -> None:
+    def __init__(self, *, data_set_id: str, data_warehouse_name: str, sql_server_resource_id: str, table_name: str, data_set_mapping_status=None, **kwargs) -> None:
         super(SqlDWTableDataSetMapping, self).__init__(**kwargs)
         self.data_set_id = data_set_id
         self.data_set_mapping_status = data_set_mapping_status
@@ -2602,7 +2610,7 @@ class SqlDWTableDataSetMapping(DataSetMapping):
 
 
 class SynchronizationDetails(Model):
-    """Synchronization details at dataset level.
+    """Synchronization details at data set level.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -2614,33 +2622,33 @@ class SynchronizationDetails(Model):
      'AdlsGen2File', 'AdlsGen1Folder', 'AdlsGen1File', 'SqlDBTable',
      'SqlDWTable'
     :vartype data_set_type: str or ~azure.mgmt.datashare.models.DataSetType
-    :ivar duration_ms: duration of dataset level copy
+    :ivar duration_ms: duration of data set level copy
     :vartype duration_ms: int
-    :ivar end_time: End time of dataset level copy
+    :ivar end_time: End time of data set level copy
     :vartype end_time: datetime
-    :ivar files_read: The number of files read from the source dataset.
+    :ivar files_read: The number of files read from the source data set.
     :vartype files_read: long
-    :ivar files_written: The number of files written into the sink dataset.
+    :ivar files_written: The number of files written into the sink data set.
     :vartype files_written: long
     :ivar message: Error Message if any
     :vartype message: str
     :ivar name: name of dataSet
     :vartype name: str
-    :ivar rows_copied: The number of files copied into the sink dataset.
+    :ivar rows_copied: The number of files copied into the sink data set.
     :vartype rows_copied: long
-    :ivar rows_read: The number of rows read from the source dataset.
+    :ivar rows_read: The number of rows read from the source data set.
     :vartype rows_read: long
-    :ivar size_read: The size of the data read from the source dataset in
+    :ivar size_read: The size of the data read from the source data set in
      bytes.
     :vartype size_read: long
-    :ivar size_written: The size of the data written into the sink dataset in
+    :ivar size_written: The size of the data written into the sink data set in
      bytes.
     :vartype size_written: long
-    :ivar start_time: start time of dataset level copy
+    :ivar start_time: start time of data set level copy
     :vartype start_time: datetime
     :ivar status: Raw Status
     :vartype status: str
-    :ivar v_core: The vCore units consumed for the dataset synchronization.
+    :ivar v_core: The vCore units consumed for the data set synchronization.
     :vartype v_core: long
     """
 

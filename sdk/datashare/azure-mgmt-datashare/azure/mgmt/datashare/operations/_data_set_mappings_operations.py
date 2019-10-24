@@ -121,8 +121,8 @@ class DataSetMappingsOperations(object):
         :param share_subscription_name: The name of the share subscription
          which will hold the data set sink.
         :type share_subscription_name: str
-        :param data_set_mapping_name: The Id of the source data set being
-         mapped.
+        :param data_set_mapping_name: The name of the data set mapping to be
+         created.
         :type data_set_mapping_name: str
         :param data_set_mapping: Destination data set configuration details.
         :type data_set_mapping: ~azure.mgmt.datashare.models.DataSetMapping
