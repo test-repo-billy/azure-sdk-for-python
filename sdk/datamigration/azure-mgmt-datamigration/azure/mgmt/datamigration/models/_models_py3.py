@@ -384,7 +384,7 @@ class ProjectTaskProperties(Model):
     }
 
     _subtype_map = {
-        'task_type': {'Migrate.Ssis': 'MigrateSsisTaskProperties', 'GetTDECertificates.Sql': 'GetTdeCertificatesSqlTaskProperties', 'Validate.Oracle.AzureDbPostgreSql.Sync': 'ValidateOracleAzureDbForPostgreSqlSyncTaskProperties', 'Validate.MongoDb': 'ValidateMongoDbTaskProperties', 'ValidateMigrationInput.SqlServer.AzureSqlDbMI.Sync.LRS': 'ValidateMigrationInputSqlServerSqlMISyncTaskProperties', 'ValidateMigrationInput.SqlServer.AzureSqlDbMI': 'ValidateMigrationInputSqlServerSqlMITaskProperties', 'ValidateMigrationInput.SqlServer.SqlDb.Sync': 'ValidateMigrationInputSqlServerSqlDbSyncTaskProperties', 'Migrate.Oracle.AzureDbForPostgreSql.Sync': 'MigrateOracleAzureDbForPostgreSqlSyncTaskProperties', 'Migrate.PostgreSql.AzureDbForPostgreSql.Sync': 'MigratePostgreSqlAzureDbForPostgreSqlSyncTaskProperties', 'Migrate.MySql.AzureDbForMySql.Sync': 'MigrateMySqlAzureDbForMySqlSyncTaskProperties', 'Migrate.SqlServer.AzureSqlDb.Sync': 'MigrateSqlServerSqlDbSyncTaskProperties', 'Migrate.SqlServer.SqlDb': 'MigrateSqlServerSqlDbTaskProperties', 'Migrate.SqlServer.AzureSqlDbMI.Sync.LRS': 'MigrateSqlServerSqlMISyncTaskProperties', 'Migrate.SqlServer.AzureSqlDbMI': 'MigrateSqlServerSqlMITaskProperties', 'Migrate.MongoDb': 'MigrateMongoDbTaskProperties', 'ConnectToTarget.AzureDbForMySql': 'ConnectToTargetAzureDbForMySqlTaskProperties', 'ConnectToTarget.AzureSqlDbMI.Sync.LRS': 'ConnectToTargetSqlMISyncTaskProperties', 'ConnectToTarget.AzureSqlDbMI': 'ConnectToTargetSqlMITaskProperties', 'GetUserTablesPostgreSql': 'GetUserTablesPostgreSqlTaskProperties', 'GetUserTablesOracle': 'GetUserTablesOracleTaskProperties', 'GetUserTables.AzureSqlDb.Sync': 'GetUserTablesSqlSyncTaskProperties', 'GetUserTables.Sql': 'GetUserTablesSqlTaskProperties', 'ConnectToTarget.Oracle.AzureDbForPostgreSql.Sync': 'ConnectToTargetOracleAzureDbForPostgreSqlSyncTaskProperties', 'ConnectToTarget.AzureDbForPostgreSql.Sync': 'ConnectToTargetAzureDbForPostgreSqlSyncTaskProperties', 'ConnectToTarget.SqlDb.Sync': 'ConnectToTargetSqlSqlDbSyncTaskProperties', 'ConnectToTarget.SqlDb': 'ConnectToTargetSqlDbTaskProperties', 'ConnectToSource.Oracle.Sync': 'ConnectToSourceOracleSyncTaskProperties', 'ConnectToSource.PostgreSql.Sync': 'ConnectToSourcePostgreSqlSyncTaskProperties', 'ConnectToSource.SqlServer.Sync': 'ConnectToSourceSqlServerSyncTaskProperties', 'ConnectToSource.SqlServer': 'ConnectToSourceSqlServerTaskProperties', 'Connect.MongoDb': 'ConnectToMongoDbTaskProperties', 'ConnectToSource.MySql': 'ConnectToSourceMySqlTaskProperties', 'MigrateSchemaSqlServerSqlDb': 'MigrateSchemaSqlServerSqlDbTaskProperties', 'Service.Check.OCI': 'CheckOCIDriverTaskProperties', 'Service.Upload.OCI': 'UploadOCIDriverTaskProperties', 'Service.Install.OCI': 'InstallOCIDriverTaskProperties'}
+        'task_type': {'Migrate.Ssis': 'MigrateSsisTaskProperties', 'GetTDECertificates.Sql': 'GetTdeCertificatesSqlTaskProperties', 'Validate.Oracle.AzureDbPostgreSql.Sync': 'ValidateOracleAzureDbForPostgreSqlSyncTaskProperties', 'Validate.MongoDb': 'ValidateMongoDbTaskProperties', 'ValidateMigrationInput.SqlServer.AzureSqlDbMI.Sync.LRS': 'ValidateMigrationInputSqlServerSqlMISyncTaskProperties', 'ValidateMigrationInput.SqlServer.AzureSqlDbMI': 'ValidateMigrationInputSqlServerSqlMITaskProperties', 'ValidateMigrationInput.SqlServer.SqlDb.Sync': 'ValidateMigrationInputSqlServerSqlDbSyncTaskProperties', 'Migrate.Oracle.AzureDbForPostgreSql.Sync': 'MigrateOracleAzureDbForPostgreSqlSyncTaskProperties', 'Migrate.PostgreSql.AzureDbForPostgreSql.SyncV2': 'MigratePostgreSqlAzureDbForPostgreSqlSyncTaskProperties', 'Migrate.MySql.AzureDbForMySql.Sync': 'MigrateMySqlAzureDbForMySqlSyncTaskProperties', 'Migrate.SqlServer.AzureSqlDb.Sync': 'MigrateSqlServerSqlDbSyncTaskProperties', 'Migrate.SqlServer.SqlDb': 'MigrateSqlServerSqlDbTaskProperties', 'Migrate.SqlServer.AzureSqlDbMI.Sync.LRS': 'MigrateSqlServerSqlMISyncTaskProperties', 'Migrate.SqlServer.AzureSqlDbMI': 'MigrateSqlServerSqlMITaskProperties', 'Migrate.MongoDb': 'MigrateMongoDbTaskProperties', 'ConnectToTarget.AzureDbForMySql': 'ConnectToTargetAzureDbForMySqlTaskProperties', 'ConnectToTarget.AzureSqlDbMI.Sync.LRS': 'ConnectToTargetSqlMISyncTaskProperties', 'ConnectToTarget.AzureSqlDbMI': 'ConnectToTargetSqlMITaskProperties', 'GetUserTablesPostgreSql': 'GetUserTablesPostgreSqlTaskProperties', 'GetUserTablesOracle': 'GetUserTablesOracleTaskProperties', 'GetUserTables.AzureSqlDb.Sync': 'GetUserTablesSqlSyncTaskProperties', 'GetUserTables.Sql': 'GetUserTablesSqlTaskProperties', 'ConnectToTarget.Oracle.AzureDbForPostgreSql.Sync': 'ConnectToTargetOracleAzureDbForPostgreSqlSyncTaskProperties', 'ConnectToTarget.AzureDbForPostgreSql.Sync': 'ConnectToTargetAzureDbForPostgreSqlSyncTaskProperties', 'ConnectToTarget.SqlDb.Sync': 'ConnectToTargetSqlSqlDbSyncTaskProperties', 'ConnectToTarget.SqlDb': 'ConnectToTargetSqlDbTaskProperties', 'ConnectToSource.Oracle.Sync': 'ConnectToSourceOracleSyncTaskProperties', 'ConnectToSource.PostgreSql.Sync': 'ConnectToSourcePostgreSqlSyncTaskProperties', 'ConnectToSource.SqlServer.Sync': 'ConnectToSourceSqlServerSyncTaskProperties', 'ConnectToSource.SqlServer': 'ConnectToSourceSqlServerTaskProperties', 'Connect.MongoDb': 'ConnectToMongoDbTaskProperties', 'ConnectToSource.MySql': 'ConnectToSourceMySqlTaskProperties', 'MigrateSchemaSqlServerSqlDb': 'MigrateSchemaSqlServerSqlDbTaskProperties', 'Service.Check.OCI': 'CheckOCIDriverTaskProperties', 'Service.Upload.OCI': 'UploadOCIDriverTaskProperties', 'Service.Install.OCI': 'InstallOCIDriverTaskProperties'}
     }
 
     def __init__(self, *, client_data=None, **kwargs) -> None:
@@ -4223,7 +4223,9 @@ class MigrateMySqlAzureDbForMySqlSyncTaskOutputDatabaseLevel(MigrateMySqlAzureDb
     :ivar migration_state: Migration state that this database is in. Possible
      values include: 'UNDEFINED', 'CONFIGURING', 'INITIALIAZING', 'STARTING',
      'RUNNING', 'READY_TO_COMPLETE', 'COMPLETING', 'COMPLETE', 'CANCELLING',
-     'CANCELLED', 'FAILED'
+     'CANCELLED', 'FAILED', 'VALIDATING', 'VALIDATION_COMPLETE',
+     'VALIDATION_FAILED', 'RESTORE_IN_PROGRESS', 'RESTORE_COMPLETED',
+     'BACKUP_IN_PROGRESS', 'BACKUP_COMPLETED'
     :vartype migration_state: str or
      ~azure.mgmt.datamigration.models.SyncDatabaseMigrationReportingState
     :ivar incoming_changes: Number of incoming changes
@@ -4802,7 +4804,9 @@ class MigrateOracleAzureDbPostgreSqlSyncTaskOutputDatabaseLevel(MigrateOracleAzu
     :ivar migration_state: Migration state that this database is in. Possible
      values include: 'UNDEFINED', 'CONFIGURING', 'INITIALIAZING', 'STARTING',
      'RUNNING', 'READY_TO_COMPLETE', 'COMPLETING', 'COMPLETE', 'CANCELLING',
-     'CANCELLED', 'FAILED'
+     'CANCELLED', 'FAILED', 'VALIDATING', 'VALIDATION_COMPLETE',
+     'VALIDATION_FAILED', 'RESTORE_IN_PROGRESS', 'RESTORE_COMPLETED',
+     'BACKUP_IN_PROGRESS', 'BACKUP_COMPLETED'
     :vartype migration_state: str or
      ~azure.mgmt.datamigration.models.SyncDatabaseMigrationReportingState
     :ivar incoming_changes: Number of incoming changes
@@ -5257,7 +5261,9 @@ class MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputDatabaseLevel(MigratePo
     :ivar migration_state: Migration state that this database is in. Possible
      values include: 'UNDEFINED', 'CONFIGURING', 'INITIALIAZING', 'STARTING',
      'RUNNING', 'READY_TO_COMPLETE', 'COMPLETING', 'COMPLETE', 'CANCELLING',
-     'CANCELLED', 'FAILED'
+     'CANCELLED', 'FAILED', 'VALIDATING', 'VALIDATION_COMPLETE',
+     'VALIDATION_FAILED', 'RESTORE_IN_PROGRESS', 'RESTORE_COMPLETED',
+     'BACKUP_IN_PROGRESS', 'BACKUP_COMPLETED'
     :vartype migration_state: str or
      ~azure.mgmt.datamigration.models.SyncDatabaseMigrationReportingState
     :ivar incoming_changes: Number of incoming changes
@@ -5403,6 +5409,20 @@ class MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputMigrationLevel(MigrateP
     :vartype target_server_version: str
     :ivar target_server: Target server name
     :vartype target_server: str
+    :ivar source_server_type: Source server type. Possible values include:
+     'Access', 'DB2', 'MySQL', 'Oracle', 'SQL', 'Sybase', 'PostgreSQL',
+     'MongoDB', 'SQLRDS', 'MySQLRDS', 'PostgreSQLRDS'
+    :vartype source_server_type: str or
+     ~azure.mgmt.datamigration.models.ScenarioSource
+    :ivar target_server_type: Target server type. Possible values include:
+     'SQLServer', 'SQLDB', 'SQLDW', 'SQLMI', 'AzureDBForMySql',
+     'AzureDBForPostgreeSQL', 'MongoDB'
+    :vartype target_server_type: str or
+     ~azure.mgmt.datamigration.models.ScenarioTarget
+    :ivar state: Migration status. Possible values include: 'UNDEFINED',
+     'VALIDATING', 'PENDING', 'COMPLETE', 'ACTION_REQUIRED', 'FAILED'
+    :vartype state: str or
+     ~azure.mgmt.datamigration.models.ReplicateMigrationState
     """
 
     _validation = {
@@ -5414,6 +5434,9 @@ class MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputMigrationLevel(MigrateP
         'source_server': {'readonly': True},
         'target_server_version': {'readonly': True},
         'target_server': {'readonly': True},
+        'source_server_type': {'readonly': True},
+        'target_server_type': {'readonly': True},
+        'state': {'readonly': True},
     }
 
     _attribute_map = {
@@ -5425,6 +5448,9 @@ class MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputMigrationLevel(MigrateP
         'source_server': {'key': 'sourceServer', 'type': 'str'},
         'target_server_version': {'key': 'targetServerVersion', 'type': 'str'},
         'target_server': {'key': 'targetServer', 'type': 'str'},
+        'source_server_type': {'key': 'sourceServerType', 'type': 'str'},
+        'target_server_type': {'key': 'targetServerType', 'type': 'str'},
+        'state': {'key': 'state', 'type': 'str'},
     }
 
     def __init__(self, **kwargs) -> None:
@@ -5435,6 +5461,9 @@ class MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputMigrationLevel(MigrateP
         self.source_server = None
         self.target_server_version = None
         self.target_server = None
+        self.source_server_type = None
+        self.target_server_type = None
+        self.state = None
         self.result_type = 'MigrationLevelOutput'
 
 
@@ -5588,7 +5617,7 @@ class MigratePostgreSqlAzureDbForPostgreSqlSyncTaskProperties(ProjectTaskPropert
         super(MigratePostgreSqlAzureDbForPostgreSqlSyncTaskProperties, self).__init__(client_data=client_data, **kwargs)
         self.input = input
         self.output = None
-        self.task_type = 'Migrate.PostgreSql.AzureDbForPostgreSql.Sync'
+        self.task_type = 'Migrate.PostgreSql.AzureDbForPostgreSql.SyncV2'
 
 
 class MigrateSchemaSqlServerSqlDbDatabaseInput(Model):
@@ -6229,7 +6258,9 @@ class MigrateSqlServerSqlDbSyncTaskOutputDatabaseLevel(MigrateSqlServerSqlDbSync
     :ivar migration_state: Migration state that this database is in. Possible
      values include: 'UNDEFINED', 'CONFIGURING', 'INITIALIAZING', 'STARTING',
      'RUNNING', 'READY_TO_COMPLETE', 'COMPLETING', 'COMPLETE', 'CANCELLING',
-     'CANCELLED', 'FAILED'
+     'CANCELLED', 'FAILED', 'VALIDATING', 'VALIDATION_COMPLETE',
+     'VALIDATION_FAILED', 'RESTORE_IN_PROGRESS', 'RESTORE_COMPLETED',
+     'BACKUP_IN_PROGRESS', 'BACKUP_COMPLETED'
     :vartype migration_state: str or
      ~azure.mgmt.datamigration.models.SyncDatabaseMigrationReportingState
     :ivar incoming_changes: Number of incoming changes
