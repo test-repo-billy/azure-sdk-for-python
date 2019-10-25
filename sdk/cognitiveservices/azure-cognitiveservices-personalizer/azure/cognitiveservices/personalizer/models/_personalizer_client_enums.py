@@ -12,8 +12,16 @@
 from enum import Enum
 
 
+class EvaluationJobStatus(str, Enum):
+
+    completed = "completed"
+    pending = "pending"
+    failed = "failed"
+    not_submitted = "notSubmitted"
+
+
 class ErrorCode(str, Enum):
 
-    bad_request = "BadRequest"  #: Request could not be understood by the server.
-    resource_not_found = "ResourceNotFound"  #: Requested resource does not exist on the server.
-    internal_server_error = "InternalServerError"  #: A generic error has occurred on the server.
+    bad_request = "BadRequest"  #: BadRequest - Request could not be understood by the server.
+    resource_not_found = "ResourceNotFound"  #: ResourceNotFound - Requested resource does not exist on the server.
+    internal_server_error = "InternalServerError"  #: InternalServerError - A generic error has occurred on the server.
