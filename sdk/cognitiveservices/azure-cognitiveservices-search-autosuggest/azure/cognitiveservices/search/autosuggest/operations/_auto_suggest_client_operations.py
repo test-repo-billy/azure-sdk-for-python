@@ -9,69 +9,18 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import SDKClient
-from msrest import Configuration, Serializer, Deserializer
-from .version import VERSION
 from msrest.pipeline import ClientRawResponse
-from . import models
+from .. import models
 
 
-class AutoSuggestSearchAPIConfiguration(Configuration):
-    """Configuration for AutoSuggestSearchAPI
-    Note that all parameters used to create this instance are saved as instance
-    attributes.
-
-    :param credentials: Subscription credentials which uniquely identify
-     client subscription.
-    :type credentials: None
-    :param str base_url: Service URL
-    """
-
-    def __init__(
-            self, credentials, base_url=None):
-
-        if credentials is None:
-            raise ValueError("Parameter 'credentials' must not be None.")
-        if not base_url:
-            base_url = 'https://api.cognitive.microsoft.com/bing/v7.0'
-
-        super(AutoSuggestSearchAPIConfiguration, self).__init__(base_url)
-
-        self.add_user_agent('azure-cognitiveservices-search-autosuggest/{}'.format(VERSION))
-
-        self.credentials = credentials
-
-
-class AutoSuggestSearchAPI(SDKClient):
-    """The AutoSuggest Search API lets you send a search query to Bing and get back a list of news that are relevant to the search query. This section provides technical details about the query parameters and headers that you use to request news and the JSON response objects that contain them. For examples that show how to make requests, see [Searching the web for AutoSuggest](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-autosuggest-api-v7-reference).
-
-    :ivar config: Configuration for client.
-    :vartype config: AutoSuggestSearchAPIConfiguration
-
-    :param credentials: Subscription credentials which uniquely identify
-     client subscription.
-    :type credentials: None
-    :param str base_url: Service URL
-    """
-
-    def __init__(
-            self, credentials, base_url=None):
-
-        self.config = AutoSuggestSearchAPIConfiguration(credentials, base_url)
-        super(AutoSuggestSearchAPI, self).__init__(self.config.credentials, self.config)
-
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '1.0'
-        self._serialize = Serializer(client_models)
-        self._deserialize = Deserializer(client_models)
-
+class AutoSuggestClientOperationsMixin(object):
 
     def auto_suggest(
             self, query, accept_language=None, pragma=None, user_agent=None, client_id=None, client_ip=None, location=None, country_code=None, market="en-us", safe_search=None, set_lang=None, response_format=None, custom_headers=None, raw=False, **operation_config):
         """The AutoSuggest API lets you send a search query to Bing and get back a
-        list of suggestions. This section provides technical details about the
-        query parameters and headers that you use to request suggestions and
-        the JSON response objects that contain them.
+        list of query suggestions. This section provides technical details
+        about the query parameters and headers that you use to request
+        suggestions and the JSON response objects that contain them.
 
         :param query: The user's search term.
         :type query: str
@@ -270,6 +219,10 @@ class AutoSuggestSearchAPI(SDKClient):
 
         # Construct URL
         url = self.auto_suggest.metadata['url']
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -287,7 +240,7 @@ class AutoSuggestSearchAPI(SDKClient):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
         header_parameters['X-BingApis-SDK'] = self._serialize.header("x_bing_apis_sdk", x_bing_apis_sdk, 'str')
@@ -305,14 +258,13 @@ class AutoSuggestSearchAPI(SDKClient):
             header_parameters['X-Search-Location'] = self._serialize.header("location", location, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('Suggestions', response)
 
