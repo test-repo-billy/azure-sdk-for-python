@@ -355,6 +355,29 @@ class Permissions(Model):
         self.storage = storage
 
 
+class PrivateEndpoint(Model):
+    """Private Endpoint resource identifier.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: The ARM identifier of the Private Endpoint resource.
+    :vartype id: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(PrivateEndpoint, self).__init__(**kwargs)
+        self.id = None
+
+
 class Resource(Model):
     """Key Vault resource.
 
@@ -398,6 +421,164 @@ class Resource(Model):
         self.type = None
         self.location = location
         self.tags = tags
+
+
+class PrivateEndpointConnection(Resource):
+    """The Private Endpoint Connection resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: The Azure Resource Manager resource ID for the key vault.
+    :vartype id: str
+    :ivar name: The name of the key vault.
+    :vartype name: str
+    :ivar type: The resource type of the key vault.
+    :vartype type: str
+    :param location: Required. The supported Azure location where the key
+     vault should be created.
+    :type location: str
+    :param tags: The tags that will be assigned to the key vault.
+    :type tags: dict[str, str]
+    :param private_endpoint: The resource of private endpoint.
+    :type private_endpoint:
+     ~azure.mgmt.keyvault.v2018_02_14.models.PrivateEndpoint
+    :param private_link_service_connection_state: Required. The approval state
+     of the private link connection.
+    :type private_link_service_connection_state:
+     ~azure.mgmt.keyvault.v2018_02_14.models.PrivateLinkServiceConnectionState
+    :param provisioning_state: The provisioning state of the private endpoint.
+     Possible values include: 'Succeeded', 'Creating', 'Deleting', 'Failed'
+    :type provisioning_state: str or
+     ~azure.mgmt.keyvault.v2018_02_14.models.PrivateEndpointConnectionProvisioningState
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'location': {'required': True},
+        'private_link_service_connection_state': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'private_endpoint': {'key': 'properties.privateEndpoint', 'type': 'PrivateEndpoint'},
+        'private_link_service_connection_state': {'key': 'properties.privateLinkServiceConnectionState', 'type': 'PrivateLinkServiceConnectionState'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+    }
+
+    def __init__(self, *, location: str, private_link_service_connection_state, tags=None, private_endpoint=None, provisioning_state=None, **kwargs) -> None:
+        super(PrivateEndpointConnection, self).__init__(location=location, tags=tags, **kwargs)
+        self.private_endpoint = private_endpoint
+        self.private_link_service_connection_state = private_link_service_connection_state
+        self.provisioning_state = provisioning_state
+
+
+class PrivateLinkResource(Resource):
+    """A private link resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: The Azure Resource Manager resource ID for the key vault.
+    :vartype id: str
+    :ivar name: The name of the key vault.
+    :vartype name: str
+    :ivar type: The resource type of the key vault.
+    :vartype type: str
+    :param location: Required. The supported Azure location where the key
+     vault should be created.
+    :type location: str
+    :param tags: The tags that will be assigned to the key vault.
+    :type tags: dict[str, str]
+    :ivar group_id: The private link resource group id.
+    :vartype group_id: str
+    :ivar required_members: The private link resource required member names.
+    :vartype required_members: list[str]
+    :param required_zone_names: The private link resource DNS zone names.
+    :type required_zone_names: list[str]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'location': {'required': True},
+        'group_id': {'readonly': True},
+        'required_members': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'group_id': {'key': 'properties.groupId', 'type': 'str'},
+        'required_members': {'key': 'properties.requiredMembers', 'type': '[str]'},
+        'required_zone_names': {'key': 'properties.requiredZoneNames', 'type': '[str]'},
+    }
+
+    def __init__(self, *, location: str, tags=None, required_zone_names=None, **kwargs) -> None:
+        super(PrivateLinkResource, self).__init__(location=location, tags=tags, **kwargs)
+        self.group_id = None
+        self.required_members = None
+        self.required_zone_names = required_zone_names
+
+
+class PrivateLinkResourceListResult(Model):
+    """A list of private link resources.
+
+    :param value: Array of private link resources
+    :type value:
+     list[~azure.mgmt.keyvault.v2018_02_14.models.PrivateLinkResource]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[PrivateLinkResource]'},
+    }
+
+    def __init__(self, *, value=None, **kwargs) -> None:
+        super(PrivateLinkResourceListResult, self).__init__(**kwargs)
+        self.value = value
+
+
+class PrivateLinkServiceConnectionState(Model):
+    """An object that represents the approval state of the private link
+    connection.
+
+    :param status: Indicates whether the connection has been approved,
+     rejected or removed by the key vault owner. Possible values include:
+     'Pending', 'Approved', 'Rejected', 'Disconnected'
+    :type status: str or
+     ~azure.mgmt.keyvault.v2018_02_14.models.PrivateEndpointServiceConnectionStatus
+    :param description: The reason for approval or rejection.
+    :type description: str
+    :param action_required: A message indicating if changes on the service
+     provider require any updates on the consumer.
+    :type action_required: str
+    """
+
+    _attribute_map = {
+        'status': {'key': 'status', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'action_required': {'key': 'actionRequired', 'type': 'str'},
+    }
+
+    def __init__(self, *, status=None, description: str=None, action_required: str=None, **kwargs) -> None:
+        super(PrivateLinkServiceConnectionState, self).__init__(**kwargs)
+        self.status = status
+        self.description = description
+        self.action_required = action_required
 
 
 class ServiceSpecification(Model):
@@ -726,6 +907,9 @@ class VaultPatchProperties(Model):
 class VaultProperties(Model):
     """Properties of the vault.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     All required parameters must be populated in order to send to Azure.
 
     :param tenant_id: Required. The Azure Active Directory tenant ID that
@@ -769,14 +953,19 @@ class VaultProperties(Model):
      functionality is irreversible - that is, the property does not accept
      false as its value.
     :type enable_purge_protection: bool
-    :param network_acls: A collection of rules governing the accessibility of
-     the vault from specific network locations.
+    :param network_acls: Rules governing the accessibility of the key vault
+     from specific network locations.
     :type network_acls: ~azure.mgmt.keyvault.v2018_02_14.models.NetworkRuleSet
+    :ivar private_endpoint_connections: List of private endpoint connections
+     associated with the key vault.
+    :vartype private_endpoint_connections:
+     list[~azure.mgmt.keyvault.v2018_02_14.models.PrivateEndpointConnection]
     """
 
     _validation = {
         'tenant_id': {'required': True},
         'sku': {'required': True},
+        'private_endpoint_connections': {'readonly': True},
     }
 
     _attribute_map = {
@@ -791,6 +980,7 @@ class VaultProperties(Model):
         'create_mode': {'key': 'createMode', 'type': 'CreateMode'},
         'enable_purge_protection': {'key': 'enablePurgeProtection', 'type': 'bool'},
         'network_acls': {'key': 'networkAcls', 'type': 'NetworkRuleSet'},
+        'private_endpoint_connections': {'key': 'privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
     }
 
     def __init__(self, *, tenant_id: str, sku, access_policies=None, vault_uri: str=None, enabled_for_deployment: bool=None, enabled_for_disk_encryption: bool=None, enabled_for_template_deployment: bool=None, enable_soft_delete: bool=None, create_mode=None, enable_purge_protection: bool=None, network_acls=None, **kwargs) -> None:
@@ -806,6 +996,7 @@ class VaultProperties(Model):
         self.create_mode = create_mode
         self.enable_purge_protection = enable_purge_protection
         self.network_acls = network_acls
+        self.private_endpoint_connections = None
 
 
 class VirtualNetworkRule(Model):
