@@ -10,138 +10,138 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .point2_d_py3 import Point2D
-    from .normalized_quadrilateral_py3 import NormalizedQuadrilateral
-    from .image_tag_region_py3 import ImageTagRegion
-    from .image_action_py3 import ImageAction
-    from .image_tag_py3 import ImageTag
-    from .organization_py3 import Organization
-    from .aggregate_rating_py3 import AggregateRating
-    from .offer_py3 import Offer
-    from .aggregate_offer_py3 import AggregateOffer
-    from .images_image_metadata_py3 import ImagesImageMetadata
-    from .image_object_py3 import ImageObject
-    from .image_knowledge_py3 import ImageKnowledge
-    from .response_py3 import Response
-    from .identifiable_py3 import Identifiable
-    from .error_py3 import Error
-    from .error_response_py3 import ErrorResponse, ErrorResponseException
-    from .thing_py3 import Thing
-    from .action_py3 import Action
-    from .media_object_py3 import MediaObject
-    from .response_base_py3 import ResponseBase
-    from .creative_work_py3 import CreativeWork
-    from .person_py3 import Person
-    from .intangible_py3 import Intangible
-    from .image_entity_action_py3 import ImageEntityAction
-    from .images_module_py3 import ImagesModule
-    from .image_module_action_py3 import ImageModuleAction
-    from .recipe_py3 import Recipe
-    from .recipes_module_py3 import RecipesModule
-    from .image_recipes_action_py3 import ImageRecipesAction
-    from .query_py3 import Query
-    from .related_searches_module_py3 import RelatedSearchesModule
-    from .image_related_searches_action_py3 import ImageRelatedSearchesAction
-    from .image_shopping_sources_action_py3 import ImageShoppingSourcesAction
-    from .structured_value_py3 import StructuredValue
-    from .properties_item_py3 import PropertiesItem
-    from .rating_py3 import Rating
-    from .crop_area_py3 import CropArea
-    from .image_info_py3 import ImageInfo
-    from .filters_py3 import Filters
-    from .knowledge_request_py3 import KnowledgeRequest
-    from .visual_search_request_py3 import VisualSearchRequest
+    from ._models_py3 import Action
+    from ._models_py3 import AggregateOffer
+    from ._models_py3 import AggregateRating
+    from ._models_py3 import CreativeWork
+    from ._models_py3 import CropArea
+    from ._models_py3 import Error
+    from ._models_py3 import ErrorResponse, ErrorResponseException
+    from ._models_py3 import Filters
+    from ._models_py3 import Identifiable
+    from ._models_py3 import ImageAction
+    from ._models_py3 import ImageEntityAction
+    from ._models_py3 import ImageInfo
+    from ._models_py3 import ImageKnowledge
+    from ._models_py3 import ImageModuleAction
+    from ._models_py3 import ImageObject
+    from ._models_py3 import ImageRecipesAction
+    from ._models_py3 import ImageRelatedSearchesAction
+    from ._models_py3 import ImageShoppingSourcesAction
+    from ._models_py3 import ImagesImageMetadata
+    from ._models_py3 import ImagesModule
+    from ._models_py3 import ImageTag
+    from ._models_py3 import ImageTagRegion
+    from ._models_py3 import Intangible
+    from ._models_py3 import KnowledgeRequest
+    from ._models_py3 import MediaObject
+    from ._models_py3 import NormalizedQuadrilateral
+    from ._models_py3 import Offer
+    from ._models_py3 import Organization
+    from ._models_py3 import Person
+    from ._models_py3 import Point2D
+    from ._models_py3 import PropertiesItem
+    from ._models_py3 import Query
+    from ._models_py3 import Rating
+    from ._models_py3 import Recipe
+    from ._models_py3 import RecipesModule
+    from ._models_py3 import RelatedSearchesModule
+    from ._models_py3 import Response
+    from ._models_py3 import ResponseBase
+    from ._models_py3 import StructuredValue
+    from ._models_py3 import Thing
+    from ._models_py3 import VisualSearchRequest
 except (SyntaxError, ImportError):
-    from .point2_d import Point2D
-    from .normalized_quadrilateral import NormalizedQuadrilateral
-    from .image_tag_region import ImageTagRegion
-    from .image_action import ImageAction
-    from .image_tag import ImageTag
-    from .organization import Organization
-    from .aggregate_rating import AggregateRating
-    from .offer import Offer
-    from .aggregate_offer import AggregateOffer
-    from .images_image_metadata import ImagesImageMetadata
-    from .image_object import ImageObject
-    from .image_knowledge import ImageKnowledge
-    from .response import Response
-    from .identifiable import Identifiable
-    from .error import Error
-    from .error_response import ErrorResponse, ErrorResponseException
-    from .thing import Thing
-    from .action import Action
-    from .media_object import MediaObject
-    from .response_base import ResponseBase
-    from .creative_work import CreativeWork
-    from .person import Person
-    from .intangible import Intangible
-    from .image_entity_action import ImageEntityAction
-    from .images_module import ImagesModule
-    from .image_module_action import ImageModuleAction
-    from .recipe import Recipe
-    from .recipes_module import RecipesModule
-    from .image_recipes_action import ImageRecipesAction
-    from .query import Query
-    from .related_searches_module import RelatedSearchesModule
-    from .image_related_searches_action import ImageRelatedSearchesAction
-    from .image_shopping_sources_action import ImageShoppingSourcesAction
-    from .structured_value import StructuredValue
-    from .properties_item import PropertiesItem
-    from .rating import Rating
-    from .crop_area import CropArea
-    from .image_info import ImageInfo
-    from .filters import Filters
-    from .knowledge_request import KnowledgeRequest
-    from .visual_search_request import VisualSearchRequest
-from .visual_search_client_enums import (
+    from ._models import Action
+    from ._models import AggregateOffer
+    from ._models import AggregateRating
+    from ._models import CreativeWork
+    from ._models import CropArea
+    from ._models import Error
+    from ._models import ErrorResponse, ErrorResponseException
+    from ._models import Filters
+    from ._models import Identifiable
+    from ._models import ImageAction
+    from ._models import ImageEntityAction
+    from ._models import ImageInfo
+    from ._models import ImageKnowledge
+    from ._models import ImageModuleAction
+    from ._models import ImageObject
+    from ._models import ImageRecipesAction
+    from ._models import ImageRelatedSearchesAction
+    from ._models import ImageShoppingSourcesAction
+    from ._models import ImagesImageMetadata
+    from ._models import ImagesModule
+    from ._models import ImageTag
+    from ._models import ImageTagRegion
+    from ._models import Intangible
+    from ._models import KnowledgeRequest
+    from ._models import MediaObject
+    from ._models import NormalizedQuadrilateral
+    from ._models import Offer
+    from ._models import Organization
+    from ._models import Person
+    from ._models import Point2D
+    from ._models import PropertiesItem
+    from ._models import Query
+    from ._models import Rating
+    from ._models import Recipe
+    from ._models import RecipesModule
+    from ._models import RelatedSearchesModule
+    from ._models import Response
+    from ._models import ResponseBase
+    from ._models import StructuredValue
+    from ._models import Thing
+    from ._models import VisualSearchRequest
+from ._visual_search_client_enums import (
     Currency,
-    ItemAvailability,
     ErrorCode,
     ErrorSubCode,
+    ItemAvailability,
     SafeSearch,
 )
 
 __all__ = [
-    'Point2D',
-    'NormalizedQuadrilateral',
-    'ImageTagRegion',
-    'ImageAction',
-    'ImageTag',
-    'Organization',
-    'AggregateRating',
-    'Offer',
+    'Action',
     'AggregateOffer',
-    'ImagesImageMetadata',
-    'ImageObject',
-    'ImageKnowledge',
-    'Response',
-    'Identifiable',
+    'AggregateRating',
+    'CreativeWork',
+    'CropArea',
     'Error',
     'ErrorResponse', 'ErrorResponseException',
-    'Thing',
-    'Action',
-    'MediaObject',
-    'ResponseBase',
-    'CreativeWork',
-    'Person',
-    'Intangible',
+    'Filters',
+    'Identifiable',
+    'ImageAction',
     'ImageEntityAction',
-    'ImagesModule',
+    'ImageInfo',
+    'ImageKnowledge',
     'ImageModuleAction',
-    'Recipe',
-    'RecipesModule',
+    'ImageObject',
     'ImageRecipesAction',
-    'Query',
-    'RelatedSearchesModule',
     'ImageRelatedSearchesAction',
     'ImageShoppingSourcesAction',
-    'StructuredValue',
-    'PropertiesItem',
-    'Rating',
-    'CropArea',
-    'ImageInfo',
-    'Filters',
+    'ImagesImageMetadata',
+    'ImagesModule',
+    'ImageTag',
+    'ImageTagRegion',
+    'Intangible',
     'KnowledgeRequest',
+    'MediaObject',
+    'NormalizedQuadrilateral',
+    'Offer',
+    'Organization',
+    'Person',
+    'Point2D',
+    'PropertiesItem',
+    'Query',
+    'Rating',
+    'Recipe',
+    'RecipesModule',
+    'RelatedSearchesModule',
+    'Response',
+    'ResponseBase',
+    'StructuredValue',
+    'Thing',
     'VisualSearchRequest',
     'Currency',
     'ItemAvailability',
