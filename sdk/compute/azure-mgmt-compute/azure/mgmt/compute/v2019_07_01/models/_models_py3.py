@@ -1361,7 +1361,8 @@ class DiskEncryptionSet(Resource):
     :param tags: Resource tags
     :type tags: dict[str, str]
     :param identity:
-    :type identity: ~azure.mgmt.compute.v2019_07_01.models.ResourceIdentity
+    :type identity:
+     ~azure.mgmt.compute.v2019_07_01.models.EncryptionSetIdentity
     :param active_key: The key vault key which is currently used by this disk
      encryption set.
     :type active_key:
@@ -1390,7 +1391,7 @@ class DiskEncryptionSet(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'identity': {'key': 'identity', 'type': 'ResourceIdentity'},
+        'identity': {'key': 'identity', 'type': 'EncryptionSetIdentity'},
         'active_key': {'key': 'properties.activeKey', 'type': 'KeyVaultAndKeyReference'},
         'previous_keys': {'key': 'properties.previousKeys', 'type': '[KeyVaultAndKeyReference]'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
@@ -1625,6 +1626,46 @@ class Encryption(Model):
         super(Encryption, self).__init__(**kwargs)
         self.disk_encryption_set_id = disk_encryption_set_id
         self.type = type
+
+
+class EncryptionSetIdentity(Model):
+    """The managed identity for the disk encryption set. It should be given
+    permission on the key vault before it can be used to encrypt disks.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :param type: The type of Managed Identity used by the DiskEncryptionSet.
+     Only SystemAssigned is supported. Possible values include:
+     'SystemAssigned'
+    :type type: str or
+     ~azure.mgmt.compute.v2019_07_01.models.DiskEncryptionSetIdentityType
+    :ivar principal_id: The object id of the Managed Identity Resource. This
+     will be sent to the RP from ARM via the x-ms-identity-principal-id header
+     in the PUT request if the resource has a systemAssigned(implicit) identity
+    :vartype principal_id: str
+    :ivar tenant_id: The tenant id of the Managed Identity Resource. This will
+     be sent to the RP from ARM via the x-ms-client-tenant-id header in the PUT
+     request if the resource has a systemAssigned(implicit) identity
+    :vartype tenant_id: str
+    """
+
+    _validation = {
+        'principal_id': {'readonly': True},
+        'tenant_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+    }
+
+    def __init__(self, *, type=None, **kwargs) -> None:
+        super(EncryptionSetIdentity, self).__init__(**kwargs)
+        self.type = type
+        self.principal_id = None
+        self.tenant_id = None
 
 
 class EncryptionSettingsCollection(Model):
@@ -3951,46 +3992,6 @@ class RequestRateByIntervalInput(LogAnalyticsInputBase):
     def __init__(self, *, blob_container_sas_uri: str, from_time, to_time, interval_length, group_by_throttle_policy: bool=None, group_by_operation_name: bool=None, group_by_resource_name: bool=None, **kwargs) -> None:
         super(RequestRateByIntervalInput, self).__init__(blob_container_sas_uri=blob_container_sas_uri, from_time=from_time, to_time=to_time, group_by_throttle_policy=group_by_throttle_policy, group_by_operation_name=group_by_operation_name, group_by_resource_name=group_by_resource_name, **kwargs)
         self.interval_length = interval_length
-
-
-class ResourceIdentity(Model):
-    """The managed identity for the disk encryption set. It should be given
-    permission on the key vault before it can be used to encrypt disks.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :param type: The type of Managed Identity used by the DiskEncryptionSet.
-     Only SystemAssigned is supported. Possible values include:
-     'SystemAssigned'
-    :type type: str or
-     ~azure.mgmt.compute.v2019_07_01.models.DiskEncryptionSetIdentityType
-    :ivar principal_id: The object id of the Managed Identity Resource. This
-     will be sent to the RP from ARM via the x-ms-identity-principal-id header
-     in the PUT request if the resource has a systemAssigned(implicit) identity
-    :vartype principal_id: str
-    :ivar tenant_id: The tenant id of the Managed Identity Resource. This will
-     be sent to the RP from ARM via the x-ms-client-tenant-id header in the PUT
-     request if the resource has a systemAssigned(implicit) identity
-    :vartype tenant_id: str
-    """
-
-    _validation = {
-        'principal_id': {'readonly': True},
-        'tenant_id': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
-    }
-
-    def __init__(self, *, type=None, **kwargs) -> None:
-        super(ResourceIdentity, self).__init__(**kwargs)
-        self.type = type
-        self.principal_id = None
-        self.tenant_id = None
 
 
 class ResourceRange(Model):
