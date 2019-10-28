@@ -364,7 +364,7 @@ class BlobServiceProperties(Resource):
      request’s version is not specified. Possible values include version
      2008-10-27 and all more recent versions.
     :type default_service_version: str
-    :param delete_retention_policy: The blob service properties for soft
+    :param delete_retention_policy: The blob service properties for blob soft
      delete.
     :type delete_retention_policy:
      ~azure.mgmt.storage.v2019_06_01.models.DeleteRetentionPolicy
@@ -373,6 +373,10 @@ class BlobServiceProperties(Resource):
     :type automatic_snapshot_policy_enabled: bool
     :param change_feed: The blob service properties for change feed events.
     :type change_feed: ~azure.mgmt.storage.v2019_06_01.models.ChangeFeed
+    :param container_delete_retention_policy: The blob service properties for
+     container soft delete.
+    :type container_delete_retention_policy:
+     ~azure.mgmt.storage.v2019_06_01.models.DeleteRetentionPolicy
     """
 
     _validation = {
@@ -390,15 +394,17 @@ class BlobServiceProperties(Resource):
         'delete_retention_policy': {'key': 'properties.deleteRetentionPolicy', 'type': 'DeleteRetentionPolicy'},
         'automatic_snapshot_policy_enabled': {'key': 'properties.automaticSnapshotPolicyEnabled', 'type': 'bool'},
         'change_feed': {'key': 'properties.changeFeed', 'type': 'ChangeFeed'},
+        'container_delete_retention_policy': {'key': 'properties.containerDeleteRetentionPolicy', 'type': 'DeleteRetentionPolicy'},
     }
 
-    def __init__(self, *, cors=None, default_service_version: str=None, delete_retention_policy=None, automatic_snapshot_policy_enabled: bool=None, change_feed=None, **kwargs) -> None:
+    def __init__(self, *, cors=None, default_service_version: str=None, delete_retention_policy=None, automatic_snapshot_policy_enabled: bool=None, change_feed=None, container_delete_retention_policy=None, **kwargs) -> None:
         super(BlobServiceProperties, self).__init__(**kwargs)
         self.cors = cors
         self.default_service_version = default_service_version
         self.delete_retention_policy = delete_retention_policy
         self.automatic_snapshot_policy_enabled = automatic_snapshot_policy_enabled
         self.change_feed = change_feed
+        self.container_delete_retention_policy = container_delete_retention_policy
 
 
 class ChangeFeed(Model):
@@ -931,6 +937,10 @@ class FileServiceProperties(Resource):
      included in the request body, all CORS rules will be deleted, and CORS
      will be disabled for the File service.
     :type cors: ~azure.mgmt.storage.v2019_06_01.models.CorsRules
+    :param share_delete_retention_policy: The file service properties for
+     share soft delete.
+    :type share_delete_retention_policy:
+     ~azure.mgmt.storage.v2019_06_01.models.DeleteRetentionPolicy
     """
 
     _validation = {
@@ -944,11 +954,13 @@ class FileServiceProperties(Resource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'cors': {'key': 'properties.cors', 'type': 'CorsRules'},
+        'share_delete_retention_policy': {'key': 'properties.shareDeleteRetentionPolicy', 'type': 'DeleteRetentionPolicy'},
     }
 
-    def __init__(self, *, cors=None, **kwargs) -> None:
+    def __init__(self, *, cors=None, share_delete_retention_policy=None, **kwargs) -> None:
         super(FileServiceProperties, self).__init__(**kwargs)
         self.cors = cors
+        self.share_delete_retention_policy = share_delete_retention_policy
 
 
 class FileShare(AzureEntityResource):

@@ -364,7 +364,7 @@ class BlobServiceProperties(Resource):
      request’s version is not specified. Possible values include version
      2008-10-27 and all more recent versions.
     :type default_service_version: str
-    :param delete_retention_policy: The blob service properties for soft
+    :param delete_retention_policy: The blob service properties for blob soft
      delete.
     :type delete_retention_policy:
      ~azure.mgmt.storage.v2019_06_01.models.DeleteRetentionPolicy
@@ -373,6 +373,10 @@ class BlobServiceProperties(Resource):
     :type automatic_snapshot_policy_enabled: bool
     :param change_feed: The blob service properties for change feed events.
     :type change_feed: ~azure.mgmt.storage.v2019_06_01.models.ChangeFeed
+    :param container_delete_retention_policy: The blob service properties for
+     container soft delete.
+    :type container_delete_retention_policy:
+     ~azure.mgmt.storage.v2019_06_01.models.DeleteRetentionPolicy
     """
 
     _validation = {
@@ -390,6 +394,7 @@ class BlobServiceProperties(Resource):
         'delete_retention_policy': {'key': 'properties.deleteRetentionPolicy', 'type': 'DeleteRetentionPolicy'},
         'automatic_snapshot_policy_enabled': {'key': 'properties.automaticSnapshotPolicyEnabled', 'type': 'bool'},
         'change_feed': {'key': 'properties.changeFeed', 'type': 'ChangeFeed'},
+        'container_delete_retention_policy': {'key': 'properties.containerDeleteRetentionPolicy', 'type': 'DeleteRetentionPolicy'},
     }
 
     def __init__(self, **kwargs):
@@ -399,6 +404,7 @@ class BlobServiceProperties(Resource):
         self.delete_retention_policy = kwargs.get('delete_retention_policy', None)
         self.automatic_snapshot_policy_enabled = kwargs.get('automatic_snapshot_policy_enabled', None)
         self.change_feed = kwargs.get('change_feed', None)
+        self.container_delete_retention_policy = kwargs.get('container_delete_retention_policy', None)
 
 
 class ChangeFeed(Model):
@@ -931,6 +937,10 @@ class FileServiceProperties(Resource):
      included in the request body, all CORS rules will be deleted, and CORS
      will be disabled for the File service.
     :type cors: ~azure.mgmt.storage.v2019_06_01.models.CorsRules
+    :param share_delete_retention_policy: The file service properties for
+     share soft delete.
+    :type share_delete_retention_policy:
+     ~azure.mgmt.storage.v2019_06_01.models.DeleteRetentionPolicy
     """
 
     _validation = {
@@ -944,11 +954,13 @@ class FileServiceProperties(Resource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'cors': {'key': 'properties.cors', 'type': 'CorsRules'},
+        'share_delete_retention_policy': {'key': 'properties.shareDeleteRetentionPolicy', 'type': 'DeleteRetentionPolicy'},
     }
 
     def __init__(self, **kwargs):
         super(FileServiceProperties, self).__init__(**kwargs)
         self.cors = kwargs.get('cors', None)
+        self.share_delete_retention_policy = kwargs.get('share_delete_retention_policy', None)
 
 
 class FileShare(AzureEntityResource):
