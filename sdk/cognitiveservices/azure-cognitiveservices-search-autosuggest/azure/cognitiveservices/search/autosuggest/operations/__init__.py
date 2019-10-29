@@ -9,11 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from ._configuration import AutoSuggestClientConfiguration
-from ._auto_suggest_client import AutoSuggestClient
-__all__ = ['AutoSuggestClient', 'AutoSuggestClientConfiguration']
+from ._auto_suggest_client_operations import AutoSuggestClientOperationsMixin
 
-from .version import VERSION
-
-__version__ = VERSION
-
+__all__ = [
+    'AutoSuggestClientOperationsMixin',
+]
