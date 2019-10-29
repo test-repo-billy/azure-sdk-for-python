@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .visual_search_client import VisualSearchClient
-from .version import VERSION
+from ._configuration import VisualSearchClientConfiguration
+from ._visual_search_client import VisualSearchClient
+__all__ = ['VisualSearchClient', 'VisualSearchClientConfiguration']
 
-__all__ = ['VisualSearchClient']
+from .version import VERSION
 
 __version__ = VERSION
 

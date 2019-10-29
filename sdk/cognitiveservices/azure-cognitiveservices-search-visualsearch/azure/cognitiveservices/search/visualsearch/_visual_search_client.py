@@ -10,45 +10,15 @@
 # --------------------------------------------------------------------------
 
 from msrest.service_client import SDKClient
-from msrest import Configuration, Serializer, Deserializer
-from .version import VERSION
-from .operations.images_operations import ImagesOperations
+from msrest import Serializer, Deserializer
+
+from ._configuration import VisualSearchClientConfiguration
+from .operations import ImagesOperations
 from . import models
 
 
-class VisualSearchClientConfiguration(Configuration):
-    """Configuration for VisualSearchClient
-    Note that all parameters used to create this instance are saved as instance
-    attributes.
-
-    :param endpoint: Supported Cognitive Services endpoints (protocol and
-     hostname, for example: "https://westus.api.cognitive.microsoft.com",
-     "https://api.cognitive.microsoft.com").
-    :type endpoint: str
-    :param credentials: Subscription credentials which uniquely identify
-     client subscription.
-    :type credentials: None
-    """
-
-    def __init__(
-            self, endpoint, credentials):
-
-        if endpoint is None:
-            raise ValueError("Parameter 'endpoint' must not be None.")
-        if credentials is None:
-            raise ValueError("Parameter 'credentials' must not be None.")
-        base_url = '{Endpoint}/bing/v7.0'
-
-        super(VisualSearchClientConfiguration, self).__init__(base_url)
-
-        self.add_user_agent('azure-cognitiveservices-search-visualsearch/{}'.format(VERSION))
-
-        self.endpoint = endpoint
-        self.credentials = credentials
-
-
 class VisualSearchClient(SDKClient):
-    """Visual Search API lets you discover insights about an image such as visually similar images, shopping sources, and related searches. The API can also perform text recognition, identify entities (people, places, things), return other topical content for the user to explore, and more. For more information, see [Visual Search Overview](https://docs.microsoft.com/azure/cognitive-services/bing-visual-search/overview).
+    """Visual Search API lets you discover insights about an image such as visually similar images, shopping sources, and related searches. The API can also perform text recognition, identify entities (people, places, things), return other topical content for the user to explore, and more. For more information, see [Visual Search Overview](https://docs.microsoft.com/azure/cognitive-services/bing-visual-search/overview).  **NOTE:** To comply with the new EU Copyright Directive in France, the Bing Visual Search API must omit some content from certain EU News sources for French users. The removed content may include thumbnail images and videos, video previews, and snippets which accompany search results from these sources. As a consequence, the Bing APIs may serve fewer results with thumbnail images and videos, video previews, and snippets to French users.
 
     :ivar config: Configuration for client.
     :vartype config: VisualSearchClientConfiguration
