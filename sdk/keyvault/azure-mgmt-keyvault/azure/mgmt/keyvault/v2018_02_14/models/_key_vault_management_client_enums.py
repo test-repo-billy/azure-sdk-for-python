@@ -106,6 +106,22 @@ class NetworkRuleAction(str, Enum):
     deny = "Deny"
 
 
+class PrivateEndpointServiceConnectionStatus(str, Enum):
+
+    pending = "Pending"
+    approved = "Approved"
+    rejected = "Rejected"
+    disconnected = "Disconnected"
+
+
+class PrivateEndpointConnectionProvisioningState(str, Enum):
+
+    succeeded = "Succeeded"
+    creating = "Creating"
+    deleting = "Deleting"
+    failed = "Failed"
+
+
 class Reason(str, Enum):
 
     account_name_invalid = "AccountNameInvalid"
