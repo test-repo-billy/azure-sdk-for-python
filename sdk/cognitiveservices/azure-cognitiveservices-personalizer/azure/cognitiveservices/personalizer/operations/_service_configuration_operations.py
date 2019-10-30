@@ -15,8 +15,10 @@ from msrest.exceptions import HttpOperationError
 from .. import models
 
 
-class EventsOperations(object):
-    """EventsOperations operations.
+class ServiceConfigurationOperations(object):
+    """ServiceConfigurationOperations operations.
+
+    You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -34,33 +36,28 @@ class EventsOperations(object):
 
         self.config = config
 
-    def reward(
-            self, event_id, value, custom_headers=None, raw=False, **operation_config):
-        """Report reward to allocate to the top ranked action for the specified
-        event.
+    def get(
+            self, custom_headers=None, raw=False, **operation_config):
+        """Get Service Configuration.
 
-        :param event_id: The event id this reward applies to.
-        :type event_id: str
-        :param value: Reward to be assigned to an action. Value should be
-         between -1 and 1 inclusive.
-        :type value: float
+        Get the Personalizer service configuration.
+
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or ClientRawResponse if raw=true
-        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :return: ServiceConfiguration or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.cognitiveservices.personalizer.models.ServiceConfiguration or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
         """
-        reward1 = models.RewardRequest(value=value)
-
         # Construct URL
-        url = self.reward.metadata['url']
+        url = self.get.metadata['url']
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
-            'eventId': self._serialize.url("event_id", event_id, 'str', max_length=256)
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -69,66 +66,83 @@ class EventsOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise HttpOperationError(self._deserialize, response)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('ServiceConfiguration', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get.metadata = {'url': '/configurations/service'}
+
+    def update(
+            self, config, custom_headers=None, raw=False, **operation_config):
+        """Update Service Configuration.
+
+        Update the Personalizer service configuration.
+
+        :param config: The personalizer service configuration.
+        :type config:
+         ~azure.cognitiveservices.personalizer.models.ServiceConfiguration
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: ServiceConfiguration or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.cognitiveservices.personalizer.models.ServiceConfiguration or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+        """
+        # Construct URL
+        url = self.update.metadata['url']
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(reward1, 'RewardRequest')
+        body_content = self._serialize.body(config, 'ServiceConfiguration')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        request = self._client.put(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [204]:
+        if response.status_code not in [200]:
             raise HttpOperationError(self._deserialize, response)
 
-        if raw:
-            client_raw_response = ClientRawResponse(None, response)
-            return client_raw_response
-    reward.metadata = {'url': '/events/{eventId}/reward'}
-
-    def activate(
-            self, event_id, custom_headers=None, raw=False, **operation_config):
-        """Report that the specified event was actually displayed to the user and
-        a reward should be expected for it.
-
-        :param event_id: The event ID this activation applies to.
-        :type event_id: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: None or ClientRawResponse if raw=true
-        :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
-        """
-        # Construct URL
-        url = self.activate.metadata['url']
-        path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
-            'eventId': self._serialize.url("event_id", event_id, 'str', max_length=256)
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-
-        # Construct headers
-        header_parameters = {}
-        if custom_headers:
-            header_parameters.update(custom_headers)
-
-        # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [204]:
-            raise HttpOperationError(self._deserialize, response)
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('ServiceConfiguration', response)
 
         if raw:
-            client_raw_response = ClientRawResponse(None, response)
+            client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
-    activate.metadata = {'url': '/events/{eventId}/activate'}
+
+        return deserialized
+    update.metadata = {'url': '/configurations/service'}
