@@ -9,11 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .container_groups_operations import ContainerGroupsOperations
-from .operations import Operations
-from .container_group_usage_operations import ContainerGroupUsageOperations
-from .container_operations import ContainerOperations
-from .service_association_link_operations import ServiceAssociationLinkOperations
+from ._container_groups_operations import ContainerGroupsOperations
+from ._operations import Operations
+from ._container_group_usage_operations import ContainerGroupUsageOperations
+from ._container_operations import ContainerOperations
+from ._service_association_link_operations import ServiceAssociationLinkOperations
+from ._container_instance_management_client_operations import ContainerInstanceManagementClientOperationsMixin
 
 __all__ = [
     'ContainerGroupsOperations',
@@ -21,4 +22,5 @@ __all__ = [
     'ContainerGroupUsageOperations',
     'ContainerOperations',
     'ServiceAssociationLinkOperations',
+    'ContainerInstanceManagementClientOperationsMixin',
 ]
