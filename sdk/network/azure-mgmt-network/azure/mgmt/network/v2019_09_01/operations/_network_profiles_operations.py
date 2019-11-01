@@ -185,9 +185,28 @@ class NetworkProfilesOperations(object):
         return deserialized
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkProfiles/{networkProfileName}'}
 
-
-    def _create_or_update_initial(
+    def create_or_update(
             self, resource_group_name, network_profile_name, parameters, custom_headers=None, raw=False, **operation_config):
+        """Creates or updates a network profile.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param network_profile_name: The name of the network profile.
+        :type network_profile_name: str
+        :param parameters: Parameters supplied to the create or update network
+         profile operation.
+        :type parameters:
+         ~azure.mgmt.network.v2019_09_01.models.NetworkProfile
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: NetworkProfile or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.network.v2019_09_01.models.NetworkProfile or
+         ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
@@ -225,7 +244,6 @@ class NetworkProfilesOperations(object):
             raise exp
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('NetworkProfile', response)
         if response.status_code == 201:
@@ -236,57 +254,6 @@ class NetworkProfilesOperations(object):
             return client_raw_response
 
         return deserialized
-
-    def create_or_update(
-            self, resource_group_name, network_profile_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Creates or updates a network profile.
-
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param network_profile_name: The name of the network profile.
-        :type network_profile_name: str
-        :param parameters: Parameters supplied to the create or update network
-         profile operation.
-        :type parameters:
-         ~azure.mgmt.network.v2019_09_01.models.NetworkProfile
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: The poller return type is ClientRawResponse, the
-         direct response alongside the deserialized response
-        :param polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
-        :return: An instance of LROPoller that returns NetworkProfile or
-         ClientRawResponse<NetworkProfile> if raw==True
-        :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.network.v2019_09_01.models.NetworkProfile]
-         or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.network.v2019_09_01.models.NetworkProfile]]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        raw_result = self._create_or_update_initial(
-            resource_group_name=resource_group_name,
-            network_profile_name=network_profile_name,
-            parameters=parameters,
-            custom_headers=custom_headers,
-            raw=True,
-            **operation_config
-        )
-
-        def get_long_running_output(response):
-            deserialized = self._deserialize('NetworkProfile', response)
-
-            if raw:
-                client_raw_response = ClientRawResponse(deserialized, response)
-                return client_raw_response
-
-            return deserialized
-
-        lro_delay = operation_config.get(
-            'long_running_operation_timeout',
-            self.config.long_running_operation_timeout)
-        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
-        elif polling is False: polling_method = NoPolling()
-        else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkProfiles/{networkProfileName}'}
 
     def update_tags(
