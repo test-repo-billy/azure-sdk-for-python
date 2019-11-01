@@ -9,48 +9,16 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
-from msrestazure import AzureConfiguration
-from .version import VERSION
-from .operations.operationalization_clusters_operations import OperationalizationClustersOperations
-from .operations.machine_learning_compute_operations import MachineLearningComputeOperations
+
+from ._configuration import MachineLearningComputeManagementClientConfiguration
+from .operations import OperationalizationClustersOperations
+from .operations import MachineLearningComputeOperations
 from . import models
 
 
-class MachineLearningComputeManagementClientConfiguration(AzureConfiguration):
-    """Configuration for MachineLearningComputeManagementClient
-    Note that all parameters used to create this instance are saved as instance
-    attributes.
-
-    :param credentials: Credentials needed for the client to connect to Azure.
-    :type credentials: :mod:`A msrestazure Credentials
-     object<msrestazure.azure_active_directory>`
-    :param subscription_id: The Azure subscription ID.
-    :type subscription_id: str
-    :param str base_url: Service URL
-    """
-
-    def __init__(
-            self, credentials, subscription_id, base_url=None):
-
-        if credentials is None:
-            raise ValueError("Parameter 'credentials' must not be None.")
-        if subscription_id is None:
-            raise ValueError("Parameter 'subscription_id' must not be None.")
-        if not base_url:
-            base_url = 'https://management.azure.com'
-
-        super(MachineLearningComputeManagementClientConfiguration, self).__init__(base_url)
-
-        self.add_user_agent('azure-mgmt-machinelearningcompute/{}'.format(VERSION))
-        self.add_user_agent('Azure-SDK-For-Python')
-
-        self.credentials = credentials
-        self.subscription_id = subscription_id
-
-
-class MachineLearningComputeManagementClient(object):
+class MachineLearningComputeManagementClient(SDKClient):
     """These APIs allow end users to operate on Azure Machine Learning Compute resources. They support the following operations:&lt;ul&gt;&lt;li&gt;Create or update a cluster&lt;/li&gt;&lt;li&gt;Get a cluster&lt;/li&gt;&lt;li&gt;Patch a cluster&lt;/li&gt;&lt;li&gt;Delete a cluster&lt;/li&gt;&lt;li&gt;Get keys for a cluster&lt;/li&gt;&lt;li&gt;Check if updates are available for system services in a cluster&lt;/li&gt;&lt;li&gt;Update system services in a cluster&lt;/li&gt;&lt;li&gt;Get all clusters in a resource group&lt;/li&gt;&lt;li&gt;Get all clusters in a subscription&lt;/li&gt;&lt;/ul&gt;
 
     :ivar config: Configuration for client.
@@ -73,7 +41,7 @@ class MachineLearningComputeManagementClient(object):
             self, credentials, subscription_id, base_url=None):
 
         self.config = MachineLearningComputeManagementClientConfiguration(credentials, subscription_id, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(MachineLearningComputeManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '2017-08-01-preview'
