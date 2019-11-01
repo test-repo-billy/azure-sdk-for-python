@@ -11,44 +11,11 @@
 
 from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
-from msrestazure import AzureConfiguration
-from .version import VERSION
-from .operations.operations import Operations
-from .operations.user_assigned_identities_operations import UserAssignedIdentitiesOperations
+
+from ._configuration import ManagedServiceIdentityClientConfiguration
+from .operations import Operations
+from .operations import UserAssignedIdentitiesOperations
 from . import models
-
-
-class ManagedServiceIdentityClientConfiguration(AzureConfiguration):
-    """Configuration for ManagedServiceIdentityClient
-    Note that all parameters used to create this instance are saved as instance
-    attributes.
-
-    :param credentials: Credentials needed for the client to connect to Azure.
-    :type credentials: :mod:`A msrestazure Credentials
-     object<msrestazure.azure_active_directory>`
-    :param subscription_id: The Id of the Subscription to which the identity
-     belongs.
-    :type subscription_id: str
-    :param str base_url: Service URL
-    """
-
-    def __init__(
-            self, credentials, subscription_id, base_url=None):
-
-        if credentials is None:
-            raise ValueError("Parameter 'credentials' must not be None.")
-        if subscription_id is None:
-            raise ValueError("Parameter 'subscription_id' must not be None.")
-        if not base_url:
-            base_url = 'https://management.azure.com'
-
-        super(ManagedServiceIdentityClientConfiguration, self).__init__(base_url)
-
-        self.add_user_agent('azure-mgmt-msi/{}'.format(VERSION))
-        self.add_user_agent('Azure-SDK-For-Python')
-
-        self.credentials = credentials
-        self.subscription_id = subscription_id
 
 
 class ManagedServiceIdentityClient(SDKClient):
