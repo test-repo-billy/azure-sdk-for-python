@@ -16,8 +16,8 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class PricingsOperations(object):
-    """PricingsOperations operations.
+class AssessmentsOperations(object):
+    """AssessmentsOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -25,7 +25,7 @@ class PricingsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: API version for the operation. Constant value: "2018-06-01".
+    :ivar api_version: API version for the operation. Constant value: "2019-01-01-preview".
     """
 
     models = models
@@ -35,93 +35,115 @@ class PricingsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-06-01"
+        self.api_version = "2019-01-01-preview"
 
         self.config = config
 
     def list(
-            self, custom_headers=None, raw=False, **operation_config):
-        """Lists Security Center pricing configurations in the subscription.
+            self, scope, custom_headers=None, raw=False, **operation_config):
+        """Get security assessments on all your scanned resources inside a scope.
 
+        :param scope: Scope of the query, can be subscription
+         (/subscriptions/0b06d9ea-afe6-4779-bd59-30e5c2d9d13f) or management
+         group (/providers/Microsoft.Management/managementGroups/mgName).
+        :type scope: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: PricingList or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.security.models.PricingList or
-         ~msrest.pipeline.ClientRawResponse
+        :return: An iterator like instance of SecurityAssessment
+        :rtype:
+         ~azure.mgmt.security.models.SecurityAssessmentPaged[~azure.mgmt.security.models.SecurityAssessment]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        # Construct URL
-        url = self.list.metadata['url']
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        def prepare_request(next_link=None):
+            if not next_link:
+                # Construct URL
+                url = self.list.metadata['url']
+                path_format_arguments = {
+                    'scope': self._serialize.url("scope", scope, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+            else:
+                url = next_link
+                query_parameters = {}
 
-        # Construct and send request
-        request = self._client.get(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Accept'] = 'application/json'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            # Construct and send request
+            request = self._client.get(url, query_parameters, header_parameters)
+            return request
 
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('PricingList', response)
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
 
+            response = self._client.send(request, stream=False, **operation_config)
+
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        header_dict = None
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
+            header_dict = {}
+        deserialized = models.SecurityAssessmentPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/pricings'}
+    list.metadata = {'url': '/{scope}/providers/Microsoft.Security/assessments'}
 
     def get(
-            self, pricing_name, custom_headers=None, raw=False, **operation_config):
-        """Gets a provided Security Center pricing configuration in the
-        subscription.
+            self, resource_id, assessment_name, expand=None, custom_headers=None, raw=False, **operation_config):
+        """Get a security assessment on your scanned resource.
 
-        :param pricing_name: name of the pricing configuration
-        :type pricing_name: str
+        :param resource_id: The identifier of the resource.
+        :type resource_id: str
+        :param assessment_name: The Assessment Key - Unique key for the
+         assessment type
+        :type assessment_name: str
+        :param expand: OData expand. Optional. Possible values include:
+         'links', 'metadata'
+        :type expand: str or ~azure.mgmt.security.models.ExpandEnum
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: Pricing or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.security.models.Pricing or
+        :return: SecurityAssessment or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.security.models.SecurityAssessment or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
-            'pricingName': self._serialize.url("pricing_name", pricing_name, 'str')
+            'resourceId': self._serialize.url("resource_id", resource_id, 'str'),
+            'assessmentName': self._serialize.url("assessment_name", assessment_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        if expand is not None:
+            query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -144,45 +166,44 @@ class PricingsOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('Pricing', response)
+            deserialized = self._deserialize('SecurityAssessment', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/pricings/{pricingName}'}
+    get.metadata = {'url': '/{resourceId}/providers/Microsoft.Security/assessments/{assessmentName}'}
 
-    def update(
-            self, pricing_name, pricing_tier, custom_headers=None, raw=False, **operation_config):
-        """Updates a provided Security Center pricing configuration in the
-        subscription.
+    def create(
+            self, resource_id, assessment_name, body, custom_headers=None, raw=False, **operation_config):
+        """Create a security assessment on your resource. An assessment metadata
+        that describes this assessment must be predefined with the same name
+        before inserting the assessment result.
 
-        :param pricing_name: name of the pricing configuration
-        :type pricing_name: str
-        :param pricing_tier: The pricing tier value. Azure Security Center is
-         provided in two pricing tiers: free and standard, with the standard
-         tier available with a trial period. The standard tier offers advanced
-         security capabilities, while the free tier offers basic security
-         features. Possible values include: 'Free', 'Standard'
-        :type pricing_tier: str or ~azure.mgmt.security.models.PricingTier
+        :param resource_id: The identifier of the resource.
+        :type resource_id: str
+        :param assessment_name: The Assessment Key - Unique key for the
+         assessment type
+        :type assessment_name: str
+        :param body: Calculated assessment on a pre-defined assessment
+         metadata
+        :type body: ~azure.mgmt.security.models.SecurityAssessment
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: Pricing or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.security.models.Pricing or
+        :return: SecurityAssessment or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.security.models.SecurityAssessment or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        pricing = models.Pricing(pricing_tier=pricing_tier)
-
         # Construct URL
-        url = self.update.metadata['url']
+        url = self.create.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
-            'pricingName': self._serialize.url("pricing_name", pricing_name, 'str')
+            'resourceId': self._serialize.url("resource_id", resource_id, 'str'),
+            'assessmentName': self._serialize.url("assessment_name", assessment_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -202,7 +223,7 @@ class PricingsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(pricing, 'Pricing')
+        body_content = self._serialize.body(body, 'SecurityAssessment')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -215,11 +236,11 @@ class PricingsOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('Pricing', response)
+            deserialized = self._deserialize('SecurityAssessment', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    update.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/pricings/{pricingName}'}
+    create.metadata = {'url': '/{resourceId}/providers/Microsoft.Security/assessments/{assessmentName}'}
