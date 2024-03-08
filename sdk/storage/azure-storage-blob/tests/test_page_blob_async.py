@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 
 import os
+import tempfile
 import uuid
 from datetime import datetime, timedelta
 
@@ -52,13 +53,6 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
                 pass
             try:
                 await bsc.create_container(self.source_container_name)
-            except:
-                pass
-
-    def _teardown(self, FILE_PATH):
-        if os.path.isfile(FILE_PATH):
-            try:
-                os.remove(FILE_PATH)
             except:
                 pass
 
@@ -1735,20 +1729,18 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         await self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = 'create_blob_from_p.temp.{}.dat'.format(str(uuid.uuid4()))
-        with open(FILE_PATH, 'wb') as stream:
-            stream.write(data)
 
         # Act
-        with open(FILE_PATH, 'rb') as stream:
-            create_resp = await blob.upload_blob(stream, blob_type=BlobType.PageBlob)
+        with tempfile.TemporaryFile() as temp_file:
+            temp_file.write(data)
+            temp_file.seek(0)
+            create_resp = await blob.upload_blob(temp_file, blob_type=BlobType.PageBlob)
         props = await blob.get_blob_properties()
 
         # Assert
         await self.assertBlobEqual(self.container_name, blob.blob_name, data, bsc)
         assert props.etag == create_resp.get('etag')
         assert props.last_modified == create_resp.get('last_modified')
-        self._teardown(FILE_PATH)
 
     @BlobPreparer()
     @recorded_by_proxy_async
@@ -1760,9 +1752,6 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         await self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = 'create_blob_from_path_with_p.temp.{}.dat'.format(str(uuid.uuid4()))
-        with open(FILE_PATH, 'wb') as stream:
-            stream.write(data)
 
         # Act
         progress = []
@@ -1772,13 +1761,14 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
             if current is not None:
                 progress.append((current, total))
 
-        with open(FILE_PATH, 'rb') as stream:
-            await blob.upload_blob(stream, blob_type=BlobType.PageBlob, raw_response_hook=callback)
+        with tempfile.TemporaryFile() as temp_file:
+            temp_file.write(data)
+            temp_file.seek(0)
+            await blob.upload_blob(temp_file, blob_type=BlobType.PageBlob, raw_response_hook=callback)
 
         # Assert
         await self.assertBlobEqual(self.container_name, blob.blob_name, data, bsc)
         self.assert_upload_progress(len(data), self.config.max_page_size, progress)
-        self._teardown(FILE_PATH)
 
     @BlobPreparer()
     @recorded_by_proxy_async
@@ -1790,21 +1780,19 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         await self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = '_create_blob_from_s.temp.{}.dat'.format(str(uuid.uuid4()))
-        with open(FILE_PATH, 'wb') as stream:
-            stream.write(data)
 
         # Act
         blob_size = len(data)
-        with open(FILE_PATH, 'rb') as stream:
-            create_resp = await blob.upload_blob(stream, length=blob_size, blob_type=BlobType.PageBlob)
+        with tempfile.TemporaryFile() as temp_file:
+            temp_file.write(data)
+            temp_file.seek(0)
+            create_resp = await blob.upload_blob(temp_file, length=blob_size, blob_type=BlobType.PageBlob)
         props = await blob.get_blob_properties()
 
         # Assert
         await self.assertBlobEqual(self.container_name, blob.blob_name, data[:blob_size], bsc)
         assert props.etag == create_resp.get('etag')
         assert props.last_modified == create_resp.get('last_modified')
-        self._teardown(FILE_PATH)
 
     @BlobPreparer()
     @recorded_by_proxy_async
@@ -1819,14 +1807,13 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         data = bytearray(16 * 1024)
         data[512: 1024] = self.get_random_bytes(512)
         data[8192: 8196] = self.get_random_bytes(4)
-        FILE_PATH = '_with_empty_pages.temp.{}.dat'.format(str(uuid.uuid4()))
-        with open(FILE_PATH, 'wb') as stream:
-            stream.write(data)
 
         # Act
         blob_size = len(data)
-        with open(FILE_PATH, 'rb') as stream:
-            create_resp = await blob.upload_blob(stream, length=blob_size, blob_type=BlobType.PageBlob)
+        with tempfile.TemporaryFile() as temp_file:
+            temp_file.write(data)
+            temp_file.seek(0)
+            create_resp = await blob.upload_blob(temp_file, length=blob_size, blob_type=BlobType.PageBlob)
         props = await blob.get_blob_properties()
 
         # Assert
@@ -1841,7 +1828,6 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         assert page_ranges[1]['end'] == 12287
         assert props.etag == create_resp.get('etag')
         assert props.last_modified == create_resp.get('last_modified')
-        self._teardown(FILE_PATH)
 
     @BlobPreparer()
     @recorded_by_proxy_async
@@ -1853,23 +1839,17 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         await self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = 'blob_from_stream_non_see.temp.{}.dat'.format(str(uuid.uuid4()))
-        with open(FILE_PATH, 'wb') as stream:
-            stream.write(data)
 
         # Act
         blob_size = len(data)
-        with open(FILE_PATH, 'rb') as stream:
-            non_seekable_file = NonSeekableStream(stream)
-            await blob.upload_blob(
-                non_seekable_file,
-                length=blob_size,
-                max_concurrency=1,
-                blob_type=BlobType.PageBlob)
+        with tempfile.TemporaryFile() as temp_file:
+            temp_file.write(data)
+            temp_file.seek(0)
+            non_seekable_file = NonSeekableStream(temp_file)
+            await blob.upload_blob(non_seekable_file, length=blob_size, max_concurrency=1, blob_type=BlobType.PageBlob)
 
         # Assert
         await self.assertBlobEqual(self.container_name, blob.blob_name, data[:blob_size], bsc)
-        self._teardown(FILE_PATH)
 
     @BlobPreparer()
     @recorded_by_proxy_async
@@ -1881,9 +1861,6 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         await self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = 'rom_stream_with_progress.temp.{}.dat'.format(str(uuid.uuid4()))
-        with open(FILE_PATH, 'wb') as stream:
-            stream.write(data)
 
         # Act
         progress = []
@@ -1894,14 +1871,14 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
                 progress.append((current, total))
 
         blob_size = len(data)
-        with open(FILE_PATH, 'rb') as stream:
-            await blob.upload_blob(
-                stream, length=blob_size, blob_type=BlobType.PageBlob, raw_response_hook=callback)
+        with tempfile.TemporaryFile() as temp_file:
+            temp_file.write(data)
+            temp_file.seek(0)
+            await blob.upload_blob(temp_file, length=blob_size, blob_type=BlobType.PageBlob, raw_response_hook=callback)
 
         # Assert
         await self.assertBlobEqual(self.container_name, blob.blob_name, data[:blob_size], bsc)
         self.assert_upload_progress(len(data), self.config.max_page_size, progress)
-        self._teardown(FILE_PATH)
 
     @BlobPreparer()
     @recorded_by_proxy_async
@@ -1913,18 +1890,16 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         await self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = '_create_blob_from_stream_trunc.temp.{}.dat'.format(str(uuid.uuid4()))
-        with open(FILE_PATH, 'wb') as stream:
-            stream.write(data)
 
         # Act
         blob_size = len(data) - 512
-        with open(FILE_PATH, 'rb') as stream:
-            await blob.upload_blob(stream, length=blob_size, blob_type=BlobType.PageBlob)
+        with tempfile.TemporaryFile() as temp_file:
+            temp_file.write(data)
+            temp_file.seek(0)
+            await blob.upload_blob(temp_file, length=blob_size, blob_type=BlobType.PageBlob)
 
         # Assert
         await self.assertBlobEqual(self.container_name, blob.blob_name, data[:blob_size], bsc)
-        self._teardown(FILE_PATH)
 
     @BlobPreparer()
     @recorded_by_proxy_async
@@ -1936,9 +1911,6 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         await self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = 'from_stream_with_progress_truncated.temp.{}.dat'.format(str(uuid.uuid4()))
-        with open(FILE_PATH, 'wb') as stream:
-            stream.write(data)
 
         # Act
         progress = []
@@ -1949,14 +1921,14 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
                 progress.append((current, total))
 
         blob_size = len(data) - 512
-        with open(FILE_PATH, 'rb') as stream:
-            await blob.upload_blob(
-                stream, length=blob_size, blob_type=BlobType.PageBlob, raw_response_hook=callback)
+        with tempfile.TemporaryFile() as temp_file:
+            temp_file.write(data)
+            temp_file.seek(0)
+            await blob.upload_blob(temp_file, length=blob_size, blob_type=BlobType.PageBlob, raw_response_hook=callback)
 
         # Assert
         await self.assertBlobEqual(self.container_name, blob.blob_name, data[:blob_size], bsc)
         self.assert_upload_progress(blob_size, self.config.max_page_size, progress)
-        self._teardown(FILE_PATH)
 
     @BlobPreparer()
     @recorded_by_proxy_async
@@ -2083,15 +2055,10 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
             # test create_blob_from_path API
             blob3 = self._get_blob_reference(bsc)
             pblob3 = pbs.get_blob_client(container_name, blob3.blob_name)
-            FILE_PATH = 'test_blob_tier_on_creat.temp.{}.dat'.format(str(uuid.uuid4()))
-            with open(FILE_PATH, 'wb') as stream:
-                stream.write(byte_data)
-            with open(FILE_PATH, 'rb') as stream:
-                await pblob3.upload_blob(
-                    stream,
-                    blob_type=BlobType.PageBlob,
-                    premium_page_blob_tier=PremiumPageBlobTier.P10,
-                    overwrite=True)
+            with tempfile.TemporaryFile() as temp_file:
+                temp_file.write(byte_data)
+                temp_file.seek(0)
+                await pblob3.upload_blob(temp_file, blob_type=BlobType.PageBlob, premium_page_blob_tier=PremiumPageBlobTier.P10, overwrite=True)
 
             props3 = await pblob3.get_blob_properties()
             assert props3.blob_tier == PremiumPageBlobTier.P10
@@ -2099,7 +2066,6 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
 
         finally:
             await container.delete_container()
-        self._teardown(FILE_PATH)
 
     @BlobPreparer()
     @recorded_by_proxy_async
@@ -2271,6 +2237,45 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
                 assert byte == '\x00'
             except:
                 assert byte == 0
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_download_sparse_page_blob_uneven_chunks(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key)
+        await self._setup(bsc)
+
+        # Choose an initial size, chunk size, and blob size, so the last chunk spills over end of blob
+        self.config.max_single_get_size = 4 * 1024
+        self.config.max_chunk_get_size = 4 * 1024
+        sparse_page_blob_size = 10 * 1024
+
+        blob_client = self._get_blob_reference(bsc)
+        await blob_client.create_page_blob(sparse_page_blob_size)
+
+        data = b'12345678' * 128  # 1024 bytes
+        range_start = 2 * 1024 + 512
+        await blob_client.upload_page(data, offset=range_start, length=len(data))
+
+        # Act
+        content = await (await blob_client.download_blob()).readall()
+
+        # Assert
+        assert sparse_page_blob_size == len(content)
+        start = end = 0
+        async for r in blob_client.list_page_ranges():
+            if not r.cleared:
+                start = r.start
+                end = r.end
+
+        assert data == content[start: end + 1]
+        for byte in content[:start - 1]:
+            assert byte == 0
+        for byte in content[end + 1:]:
+            assert byte == 0
 
     @BlobPreparer()
     @recorded_by_proxy_async

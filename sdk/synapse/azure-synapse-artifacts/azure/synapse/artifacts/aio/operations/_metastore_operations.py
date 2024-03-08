@@ -79,30 +79,30 @@ class MetastoreOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-07-01-preview"))  # type: str
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.MetastoreRegistrationResponse]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-07-01-preview"))
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
+        cls: ClsType[_models.MetastoreRegistrationResponse] = kwargs.pop("cls", None)
 
         _register_body = _models.MetastoreRegisterObject(input_folder=input_folder)
         _json = self._serialize.body(_register_body, "MetastoreRegisterObject")
 
-        request = build_register_request(
+        _request = build_register_request(
             id=id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
-            template_url=self.register.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -115,11 +115,9 @@ class MetastoreOperations:
         deserialized = self._deserialize("MetastoreRegistrationResponse", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    register.metadata = {"url": "/metastore/create-database-operations/{id}"}  # type: ignore
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def get_database_operations(self, id: str, **kwargs: Any) -> _models.MetastoreRequestSuccessResponse:
@@ -143,24 +141,24 @@ class MetastoreOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-07-01-preview"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.MetastoreRequestSuccessResponse]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-07-01-preview"))
+        cls: ClsType[_models.MetastoreRequestSuccessResponse] = kwargs.pop("cls", None)
 
-        request = build_get_database_operations_request(
+        _request = build_get_database_operations_request(
             id=id,
             api_version=api_version,
-            template_url=self.get_database_operations.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -173,11 +171,9 @@ class MetastoreOperations:
         deserialized = self._deserialize("MetastoreRequestSuccessResponse", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_database_operations.metadata = {"url": "/metastore/create-database-operations/{id}"}  # type: ignore
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def update(self, id: str, input_folder: str, **kwargs: Any) -> _models.MetastoreUpdationResponse:
@@ -203,30 +199,30 @@ class MetastoreOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-07-01-preview"))  # type: str
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.MetastoreUpdationResponse]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-07-01-preview"))
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
+        cls: ClsType[_models.MetastoreUpdationResponse] = kwargs.pop("cls", None)
 
         _update_body = _models.MetastoreUpdateObject(input_folder=input_folder)
         _json = self._serialize.body(_update_body, "MetastoreUpdateObject")
 
-        request = build_update_request(
+        _request = build_update_request(
             id=id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
-            template_url=self.update.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -239,11 +235,9 @@ class MetastoreOperations:
         deserialized = self._deserialize("MetastoreUpdationResponse", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    update.metadata = {"url": "/metastore/update-database-operations/{id}"}  # type: ignore
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def delete(self, id: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
@@ -267,24 +261,24 @@ class MetastoreOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-07-01-preview"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-07-01-preview"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_request(
+        _request = build_delete_request(
             id=id,
             api_version=api_version,
-            template_url=self.delete.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -295,6 +289,4 @@ class MetastoreOperations:
             raise HttpResponseError(response=response, model=error)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    delete.metadata = {"url": "/metastore/databases/{id}"}  # type: ignore
+            return cls(pipeline_response, None, {})  # type: ignore

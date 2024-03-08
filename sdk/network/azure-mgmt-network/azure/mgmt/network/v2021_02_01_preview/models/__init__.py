@@ -56,6 +56,10 @@ from ._models_py3 import NspAccessRule
 from ._models_py3 import NspAccessRuleListResult
 from ._models_py3 import NspAssociation
 from ._models_py3 import NspAssociationsListResult
+from ._models_py3 import NspLink
+from ._models_py3 import NspLinkListResult
+from ._models_py3 import NspLinkReference
+from ._models_py3 import NspLinkReferenceListResult
 from ._models_py3 import NspProfile
 from ._models_py3 import NspProfileListResult
 from ._models_py3 import PerimeterAssociableResource
@@ -72,6 +76,7 @@ from ._models_py3 import SubResource
 from ._models_py3 import SubscriptionId
 from ._models_py3 import SystemData
 from ._models_py3 import TagsObject
+from ._models_py3 import UpdateTagsRequest
 from ._models_py3 import UserRule
 from ._models_py3 import UserRuleListResult
 
@@ -90,6 +95,8 @@ from ._network_management_client_enums import EffectiveUserRuleKind
 from ._network_management_client_enums import GroupConnectivity
 from ._network_management_client_enums import IsGlobal
 from ._network_management_client_enums import MembershipType
+from ._network_management_client_enums import NspLinkProvisioningState
+from ._network_management_client_enums import NspLinkStatus
 from ._network_management_client_enums import NspProvisioningState
 from ._network_management_client_enums import ProvisioningState
 from ._network_management_client_enums import SecurityConfigurationRuleAccess
@@ -99,7 +106,7 @@ from ._network_management_client_enums import SecurityType
 from ._network_management_client_enums import UseHubGateway
 from ._network_management_client_enums import UserRuleKind
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
@@ -153,6 +160,10 @@ __all__ = [
     "NspAccessRuleListResult",
     "NspAssociation",
     "NspAssociationsListResult",
+    "NspLink",
+    "NspLinkListResult",
+    "NspLinkReference",
+    "NspLinkReferenceListResult",
     "NspProfile",
     "NspProfileListResult",
     "PerimeterAssociableResource",
@@ -169,6 +180,7 @@ __all__ = [
     "SubscriptionId",
     "SystemData",
     "TagsObject",
+    "UpdateTagsRequest",
     "UserRule",
     "UserRuleListResult",
     "AccessRuleDirection",
@@ -186,6 +198,8 @@ __all__ = [
     "GroupConnectivity",
     "IsGlobal",
     "MembershipType",
+    "NspLinkProvisioningState",
+    "NspLinkStatus",
     "NspProvisioningState",
     "ProvisioningState",
     "SecurityConfigurationRuleAccess",

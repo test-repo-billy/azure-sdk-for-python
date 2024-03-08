@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 import logging
-from typing import Dict, Union
+from typing import Any, Dict, List, Optional, Union
 
 from ..job_resource_configuration import JobResourceConfiguration
 from .parallel_task import ParallelTask
@@ -13,8 +13,7 @@ module_logger = logging.getLogger(__name__)
 
 
 class ParameterizedParallel:
-    """Parallel component that contains the traning parallel and supporting
-    parameters for the parallel.
+    """Parallel component that contains the traning parallel and supporting parameters for the parallel.
 
     :param retry_settings: parallel component run failed retry
     :type retry_settings: BatchRetrySettings
@@ -39,18 +38,20 @@ class ParameterizedParallel:
     # pylint: disable=too-many-instance-attributes
     def __init__(
         self,
-        retry_settings: RetrySettings = None,
-        logging_level: str = None,
-        max_concurrency_per_instance: int = None,
-        error_threshold: int = None,
-        mini_batch_error_threshold: int = None,
-        input_data: str = None,
-        task: ParallelTask = None,
-        mini_batch_size: int = None,
-        resources: Union[dict, JobResourceConfiguration] = None,
-        environment_variables: Dict = None,
+        retry_settings: Optional[RetrySettings] = None,
+        logging_level: Optional[str] = None,
+        max_concurrency_per_instance: Optional[int] = None,
+        error_threshold: Optional[int] = None,
+        mini_batch_error_threshold: Optional[int] = None,
+        input_data: Optional[str] = None,
+        task: Optional[ParallelTask] = None,
+        mini_batch_size: Optional[int] = None,
+        partition_keys: Optional[List] = None,
+        resources: Optional[Union[dict, JobResourceConfiguration]] = None,
+        environment_variables: Optional[Dict] = None,
     ):
         self.mini_batch_size = mini_batch_size
+        self.partition_keys = partition_keys
         self.task = task
         self.retry_settings = retry_settings
         self.input_data = input_data
@@ -62,31 +63,34 @@ class ParameterizedParallel:
         self.environment_variables = dict(environment_variables) if environment_variables else {}
 
     @property
-    def task(self) -> ParallelTask:
-        return self._task
+    def task(self) -> Optional[ParallelTask]:
+        res: Optional[ParallelTask] = self._task
+        return res
 
     @task.setter
-    def task(self, value):
+    def task(self, value: Any) -> None:
         if isinstance(value, dict):
             value = ParallelTask(**value)
         self._task = value
 
     @property
-    def resources(self) -> JobResourceConfiguration:
-        return self._resources
+    def resources(self) -> Optional[Union[dict, JobResourceConfiguration]]:
+        res: Optional[Union[dict, JobResourceConfiguration]] = self._resources
+        return res
 
     @resources.setter
-    def resources(self, value):
+    def resources(self, value: Any) -> None:
         if isinstance(value, dict):
             value = JobResourceConfiguration(**value)
         self._resources = value
 
     @property
-    def retry_settings(self) -> RetrySettings:
-        return self._retry_settings
+    def retry_settings(self) -> Optional[RetrySettings]:
+        res: Optional[RetrySettings] = self._retry_settings
+        return res
 
     @retry_settings.setter
-    def retry_settings(self, value):
+    def retry_settings(self, value: Any) -> None:
         if isinstance(value, dict):
             value = RetrySettings(**value)
         self._retry_settings = value

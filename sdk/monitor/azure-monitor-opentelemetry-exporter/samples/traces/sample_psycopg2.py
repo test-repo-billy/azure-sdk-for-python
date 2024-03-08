@@ -8,6 +8,7 @@ application insights with the AzureMonitorTraceExporter.
 See more info on the psycopg2 instrumentation here:
 https://github.com/open-telemetry/opentelemetry-python-contrib/tree/main/instrumentation/opentelemetry-instrumentation-psycopg2
 """
+# mypy: disable-error-code="attr-defined"
 import os
 import psycopg2
 
@@ -30,9 +31,9 @@ span_processor = BatchSpanProcessor(
 )
 trace.get_tracer_provider().add_span_processor(span_processor)
 
-cnx = psycopg2.connect(database='Database')
+cnx = psycopg2.connect(database='test', user="<user>", password="<password>")
 cursor = cnx.cursor()
-cursor.execute("INSERT INTO test (testField) VALUES (123)")
+cursor.execute("INSERT INTO test_tables (test_field) VALUES (123)")
 cursor.close()
 cnx.close()
 

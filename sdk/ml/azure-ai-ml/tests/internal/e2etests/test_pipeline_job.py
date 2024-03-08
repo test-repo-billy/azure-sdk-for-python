@@ -2,22 +2,26 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import json
+import re
+import shutil
 from pathlib import Path
-from typing import Callable
+from typing import Callable, Dict
 
-from devtools_testutils import AzureRecordedTestCase, is_live
 import pydash
 import pytest
+import yaml
+from azure.core.exceptions import HttpResponseError
+from devtools_testutils import AzureRecordedTestCase, is_live, is_live_and_not_recording
+from test_utilities.utils import assert_job_cancel, sleep_if_live
 
 from azure.ai.ml import Input, MLClient, Output, load_component
 from azure.ai.ml._internal.entities.component import InternalComponent
+from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.constants import AssetTypes, InputOutputModes
 from azure.ai.ml.dsl import pipeline
 from azure.ai.ml.entities import Data, PipelineJob
-from azure.core.exceptions import HttpResponseError
-from azure.core.polling import LROPoller
 
-from .._utils import DATA_VERSION, PARAMETERS_TO_TEST, set_run_settings
+from .._utils import DATA_VERSION, PARAMETERS_TO_TEST, get_expected_runsettings_items, set_run_settings
 
 _dependent_datasets = {}
 
@@ -56,15 +60,25 @@ def create_internal_sample_dependent_datasets(client: MLClient):
     "mock_code_hash",
     "mock_asset_name",
     "mock_component_hash",
+    "mock_set_headers_with_user_aml_token",
     "enable_pipeline_private_preview_features",
     "create_internal_sample_dependent_datasets",
     "enable_internal_components",
 )
-@pytest.mark.skipif(condition=not is_live(), reason="Works in live mode, does not work in playback")
 @pytest.mark.e2etest
+@pytest.mark.pipeline_test
 class TestPipelineJob(AzureRecordedTestCase):
     @classmethod
-    def _test_component(cls, node_func, inputs, runsettings_dict, pipeline_runsettings_dict, client: MLClient):
+    def _test_component(
+        cls,
+        node_func,
+        inputs,
+        runsettings_dict,
+        pipeline_runsettings_dict,
+        client: MLClient,
+        *,
+        wait_for_completion: bool = False,
+    ):
         @pipeline()
         def pipeline_func():
             node = node_func(**inputs)
@@ -75,33 +89,20 @@ class TestPipelineJob(AzureRecordedTestCase):
         result = dsl_pipeline._validate()
         assert result._to_dict() == {"result": "Succeeded"}
 
-        created_pipeline: PipelineJob = client.jobs.create_or_update(dsl_pipeline)
-        try:
-            cancel_poller = client.jobs.begin_cancel(created_pipeline.name)
-            assert isinstance(cancel_poller, LROPoller)
-            assert cancel_poller.result() is None
-        except HttpResponseError as ex:
-            assert "CancelPipelineRunInTerminalStatus" in str(ex)
+        if wait_for_completion:
+            created_pipeline: PipelineJob = assert_job_cancel(
+                dsl_pipeline,
+                client,
+                skip_cancel=True,
+                wait_for_completion=True,
+            )
+        else:
+            created_pipeline: PipelineJob = assert_job_cancel(dsl_pipeline, client)
 
         node_rest_dict = created_pipeline._to_rest_object().properties.jobs["node"]
         del node_rest_dict["componentId"]  # delete component spec to make it a pure dict
         mismatched_runsettings = {}
-        dot_key_map = {"compute": "computeId"}
-        for dot_key, expected_value in runsettings_dict.items():
-            if dot_key in dot_key_map:
-                dot_key = dot_key_map[dot_key]
-
-            # hack: timeout will be transformed into str
-            if dot_key == "limits.timeout":
-                expected_value = "PT5M"
-            # hack: compute_name for hdinsight will be transformed into arm str
-            if dot_key == "compute_name":
-                expected_value = f"/subscriptions/{client.subscription_id}/" \
-                                 f"resourceGroups/{client.resource_group_name}/" \
-                                 f"providers/Microsoft.MachineLearningServices/" \
-                                 f"workspaces/{client.workspace_name}/" \
-                                 f"computes/{expected_value}"
-
+        for dot_key, expected_value in get_expected_runsettings_items(runsettings_dict, client):
             value = pydash.get(node_rest_dict, dot_key)
             if value != expected_value:
                 mismatched_runsettings[dot_key] = (value, expected_value)
@@ -113,32 +114,82 @@ class TestPipelineJob(AzureRecordedTestCase):
         "yaml_path,inputs,runsettings_dict,pipeline_runsettings_dict",
         PARAMETERS_TO_TEST,
     )
-    def test_pipeline_anonymous(
-        self, client: MLClient, yaml_path, inputs, runsettings_dict, pipeline_runsettings_dict
-    ):
+    @pytest.mark.disable_mock_code_hash
+    def test_register_output_for_anonymous_internal_component(
+        self,
+        client: MLClient,
+        yaml_path: str,
+        inputs: Dict,
+        runsettings_dict: Dict,
+        pipeline_runsettings_dict: Dict,
+    ) -> None:
+        node_func: InternalComponent = load_component(yaml_path)
+
+        output_port_name = next(iter(node_func.outputs))
+        output_name = node_func.type + "_output"
+        output_version = "1"
+
+        @pipeline()
+        def pipeline_func():
+            node = node_func(**inputs)
+            node.outputs[output_port_name].type = "uri_file"  # use this, in case that the type is path
+            node.outputs[output_port_name].name = output_name
+            node.outputs[output_port_name].version = output_version
+            from azure.ai.ml.constants._component import NodeType
+
+            if node.type == NodeType.SPARK:
+                # spark node supports only direct mode outputs
+                node.outputs[output_port_name].mode = InputOutputModes.DIRECT
+            set_run_settings(node, runsettings_dict)
+
+        dsl_pipeline: PipelineJob = pipeline_func()
+        set_run_settings(dsl_pipeline.settings, pipeline_runsettings_dict)
+        dsl_pipeline.settings.default_compute = "cpu-cluster"
+
+        result = dsl_pipeline._validate()
+        assert result._to_dict() == {"result": "Succeeded"}
+
+        pipeline_job = assert_job_cancel(dsl_pipeline, client)
+
+        assert pipeline_job.jobs["node"].outputs[output_port_name].name == output_name
+        assert pipeline_job.jobs["node"].outputs[output_port_name].version == output_version
+
+    @pytest.mark.parametrize(
+        "yaml_path,inputs,runsettings_dict,pipeline_runsettings_dict",
+        PARAMETERS_TO_TEST,
+    )
+    def test_pipeline_job_with_anonymous_internal_component(
+        self,
+        client: MLClient,
+        yaml_path: str,
+        inputs: Dict,
+        runsettings_dict: Dict,
+        pipeline_runsettings_dict: Dict,
+    ) -> None:
+        # no need to override component name, since it will be used as an anonymous component
         # curated env with name & version
         node_func: InternalComponent = load_component(yaml_path)
 
         self._test_component(node_func, inputs, runsettings_dict, pipeline_runsettings_dict, client)
 
-    @pytest.mark.skip(reason="TODO: can't find newly registered component?")
     @pytest.mark.parametrize(
         "yaml_path,inputs,runsettings_dict,pipeline_runsettings_dict",
         PARAMETERS_TO_TEST,
     )
-    def test_created_internal_component_in_pipeline(
+    def test_pipeline_job_with_registered_internal_component(
         self,
         client: MLClient,
-        randstr: Callable[[], str],
-        yaml_path,
-        inputs,
-        runsettings_dict,
-        pipeline_runsettings_dict,
-    ):
-        component_to_register = load_component(yaml_path, params_override=[{"name": randstr("name")}])
+        randstr: Callable[[str], str],
+        yaml_path: str,
+        inputs: Dict,
+        runsettings_dict: Dict,
+        pipeline_runsettings_dict: Dict,
+    ) -> None:
         component_name = randstr("component_name")
-        component_resource = client.components.create_or_update(component_to_register)
 
+        component_to_register = load_component(yaml_path, params_override=[{"name": component_name}])
+        component_resource = client.components.create_or_update(component_to_register)
+        sleep_if_live(5)
         created_component = client.components.get(component_name, component_resource.version)
 
         self._test_component(created_component, inputs, runsettings_dict, pipeline_runsettings_dict, client)
@@ -169,31 +220,23 @@ class TestPipelineJob(AzureRecordedTestCase):
             pipeline_input=client.data.get("mltable_imdb_reviews_train", label="latest")
         )
 
-        created_pipeline: PipelineJob = client.jobs.create_or_update(dsl_pipeline)
-        try:
-            cancel_poller = client.jobs.begin_cancel(created_pipeline.name)
-            assert isinstance(cancel_poller, LROPoller)
-            assert cancel_poller.result() is None
-        except HttpResponseError as ex:
-            assert "CancelPipelineRunInTerminalStatus" in str(ex)
+        assert_job_cancel(dsl_pipeline, client)
 
-    @pytest.mark.skip(
-        reason="Skip for pipeline component compute bug: https://msdata.visualstudio.com/Vienna/_workitems/edit/1920464"
-    )
+    # TODO: Enable this when type fixed on master.
+    @pytest.mark.skip(reason="marshmallow.exceptions.ValidationError: miss required jobs.node.component")
     @pytest.mark.parametrize(
         "yaml_path,inputs,runsettings_dict,pipeline_runsettings_dict",
         PARAMETERS_TO_TEST,
     )
-    def test_internal_in_pipeline_component(
+    def test_pipeline_component_with_anonymous_internal_component(
         self,
         client: MLClient,
-        randstr: Callable[[], str],
-        yaml_path,
-        inputs,
-        runsettings_dict,
-        pipeline_runsettings_dict,
-    ):
-        component_func = load_component(yaml_path, params_override=[{"name": randstr("name")}])
+        yaml_path: str,
+        inputs: Dict,
+        runsettings_dict: Dict,
+        pipeline_runsettings_dict: Dict,
+    ) -> None:
+        component_func = load_component(yaml_path)
 
         @pipeline()
         def sub_pipeline_func():
@@ -208,11 +251,9 @@ class TestPipelineJob(AzureRecordedTestCase):
 
         dsl_pipeline: PipelineJob = pipeline_func()
         set_run_settings(dsl_pipeline.settings, pipeline_runsettings_dict)
-        created_pipeline: PipelineJob = client.jobs.create_or_update(dsl_pipeline)
-        cancel_poller = client.jobs.begin_cancel(created_pipeline.name)
-        assert isinstance(cancel_poller, LROPoller)
-        assert cancel_poller.result() is None
+        assert_job_cancel(dsl_pipeline, client)
 
+    @pytest.mark.skipif(condition=not is_live(), reason="unknown recording error to further investigate")
     def test_pipeline_with_setting_node_output(self, client: MLClient) -> None:
         component_dir = Path(__file__).parent.parent.parent / "test_configs" / "internal" / "command-component"
         tsv_func = load_component(component_dir / "command-linux/one-line-tsv/component.yaml")
@@ -244,10 +285,7 @@ class TestPipelineJob(AzureRecordedTestCase):
 
         pipeline_job = pipeline_with_command_components(tsv_file="out.tsv", content="1\t2\t3\t4")
 
-        pipeline_job = client.jobs.create_or_update(pipeline_job, experiment_name="v15_v2_interop")
-        cancel_poller = client.jobs.begin_cancel(pipeline_job.name)
-        assert isinstance(cancel_poller, LROPoller)
-        assert cancel_poller.result() is None
+        assert_job_cancel(pipeline_job, client, experiment_name="v15_v2_interop")
 
     def test_pipeline_with_setting_node_output_mode(self, client: MLClient):
         # get dataset
@@ -275,7 +313,102 @@ class TestPipelineJob(AzureRecordedTestCase):
             input_data=training_data, test_data=test_data, learning_rate=0.1
         )
         pipeline_job.settings.default_compute = "cpu-cluster"
-        pipeline_job = client.jobs.create_or_update(pipeline_job, experiment_name="v15_v2_interop")
-        cancel_poller = client.jobs.begin_cancel(pipeline_job.name)
-        assert isinstance(cancel_poller, LROPoller)
-        assert cancel_poller.result() is None
+        assert_job_cancel(pipeline_job, client, experiment_name="v15_v2_interop")
+
+    def test_internal_component_node_output_type(self, client):
+        from azure.ai.ml._utils.utils import try_enable_internal_components
+
+        # force register internal components after partially reload schema files
+        try_enable_internal_components(force=True)
+        yaml_path = "./tests/test_configs/internal/command-component-single-file-output/component_spec.yaml"
+        component_func = load_component(yaml_path)
+
+        @pipeline
+        def pipeline_func():
+            node = component_func()
+            # node level should have correct output type when type not configured
+            node.outputs.output.mode = "mount"
+
+        pipeline_job = pipeline_func()
+        rest_pipeline_job_dict = pipeline_job._to_rest_object().as_dict()
+        assert rest_pipeline_job_dict["properties"]["jobs"]["node"]["outputs"] == {
+            "output": {"job_output_type": "uri_file", "mode": "ReadWriteMount"}
+        }
+        assert_job_cancel(pipeline_job, client)
+
+    @classmethod
+    def _prepare_v2_style_yaml(cls, test_id, yaml_path, original_component_type, new_component_type):
+        # no need to override component name, since it will be used as an anonymous component
+        # curated env with name & version
+        yaml_path = Path(yaml_path)
+        v2_style_base_dir = Path("./tests/test_configs/internal/v2_style/") / camel_to_snake(test_id)
+        v2_style_yaml_path = Path(v2_style_base_dir) / yaml_path.name
+
+        # no need to overwrite existed v2 style yaml unless it's live and recording
+        # playback mode will still fail if the new yaml doesn't match recorded request
+        if (is_live_and_not_recording() or not is_live()) and v2_style_yaml_path.exists():
+            return v2_style_yaml_path
+        # do not use shutil.copytree(dirs_exist_ok=True), since it's not supported in python 3.7
+        if v2_style_base_dir.exists():
+            shutil.rmtree(v2_style_base_dir)
+        shutil.copytree(yaml_path.parent, v2_style_base_dir)
+        yaml_content = yaml_path.read_text()
+
+        yaml_content = yaml_content.replace("type: " + original_component_type, "type: " + new_component_type)
+        yaml_content = yaml_content.replace("type: float", "type: number")
+        yaml_content = yaml_content.replace("type: enum", "type: string")
+        yaml_content = yaml_content.replace("datastore_mode:", "mode:")
+
+        def get_all_group(regex, content):
+            return set(map(lambda x: x.group(0), re.finditer(regex, content)))
+
+        for source in get_all_group(r"\{\W*(inputs|outputs).\w+\W*}", yaml_content):
+            yaml_content = yaml_content.replace(source, "${" + source + "}")
+        for source in get_all_group(r"\[.*?(inputs|outputs).*?]", yaml_content):
+            yaml_content = yaml_content.replace(source, "$[" + source + "]")
+        # write in LF format to be aligned with git settings
+        v2_style_yaml_path.write_bytes(yaml_content.encode("utf-8").replace(b"\r\n", b"\n"))
+        return v2_style_yaml_path
+
+    _V2_STYLE_COMPONENT_TYPE_MAPPING = {
+        "ScopeComponent": "scope",
+        "HDInsightComponent": "hdinsight",
+        "HemeraComponent": "hemera",
+        "StarliteComponent": "starlite",
+        "Ae365exepoolComponent": "ae365exepool",
+        "AetherBridgeComponent": "aetherbridge",
+    }
+
+    @pytest.mark.parametrize(
+        "yaml_path,inputs,runsettings_dict,pipeline_runsettings_dict",
+        filter(
+            lambda x: x.id in TestPipelineJob._V2_STYLE_COMPONENT_TYPE_MAPPING,
+            PARAMETERS_TO_TEST,
+        ),
+    )
+    def test_internal_component_v2_style_support(
+        self,
+        client: MLClient,
+        request,
+        yaml_path: str,
+        inputs: Dict,
+        runsettings_dict: Dict,
+        pipeline_runsettings_dict: Dict,
+    ):
+        with open(yaml_path, "r") as f:
+            original_component_type = yaml.safe_load(f)["type"]
+
+        test_id = request.node.callspec.id
+        new_component_type = self._V2_STYLE_COMPONENT_TYPE_MAPPING[test_id]
+        yaml_path = self._prepare_v2_style_yaml(test_id, yaml_path, original_component_type, new_component_type)
+
+        node_func: InternalComponent = load_component(yaml_path)
+
+        # test submission only here. e2e runtime tests are in sample repo
+        self._test_component(
+            node_func,
+            inputs,
+            runsettings_dict,
+            pipeline_runsettings_dict,
+            client,
+        )

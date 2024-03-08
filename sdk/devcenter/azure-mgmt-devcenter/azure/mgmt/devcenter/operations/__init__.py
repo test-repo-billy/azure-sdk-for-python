@@ -20,13 +20,17 @@ from ._dev_box_definitions_operations import DevBoxDefinitionsOperations
 from ._operations import Operations
 from ._operation_statuses_operations import OperationStatusesOperations
 from ._usages_operations import UsagesOperations
+from ._check_name_availability_operations import CheckNameAvailabilityOperations
+from ._catalog_dev_box_definitions_operations import CatalogDevBoxDefinitionsOperations
+from ._customization_tasks_operations import CustomizationTasksOperations
+from ._environment_definitions_operations import EnvironmentDefinitionsOperations
 from ._skus_operations import SkusOperations
 from ._pools_operations import PoolsOperations
 from ._schedules_operations import SchedulesOperations
 from ._network_connections_operations import NetworkConnectionsOperations
 
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
@@ -44,6 +48,10 @@ __all__ = [
     "Operations",
     "OperationStatusesOperations",
     "UsagesOperations",
+    "CheckNameAvailabilityOperations",
+    "CatalogDevBoxDefinitionsOperations",
+    "CustomizationTasksOperations",
+    "EnvironmentDefinitionsOperations",
     "SkusOperations",
     "PoolsOperations",
     "SchedulesOperations",

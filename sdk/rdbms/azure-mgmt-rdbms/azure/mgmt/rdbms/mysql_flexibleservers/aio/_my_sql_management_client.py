@@ -9,26 +9,62 @@
 from copy import deepcopy
 from typing import Any, Awaitable, TYPE_CHECKING
 
-from msrest import Deserializer, Serializer
-
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
 
-from .. import models
+from .. import models as _models
+from .._serialization import Deserializer, Serializer
 from ._configuration import MySQLManagementClientConfiguration
-from .operations import AzureADAdministratorsOperations, BackupsOperations, CheckNameAvailabilityOperations, CheckNameAvailabilityWithoutLocationOperations, CheckVirtualNetworkSubnetUsageOperations, ConfigurationsOperations, DatabasesOperations, FirewallRulesOperations, GetPrivateDnsZoneSuffixOperations, LocationBasedCapabilitiesOperations, LogFilesOperations, Operations, ReplicasOperations, ServersOperations
+from .operations import (
+    AdvancedThreatProtectionSettingsOperations,
+    AzureADAdministratorsOperations,
+    BackupAndExportOperations,
+    BackupsOperations,
+    CheckNameAvailabilityOperations,
+    CheckNameAvailabilityWithoutLocationOperations,
+    CheckVirtualNetworkSubnetUsageOperations,
+    ConfigurationsOperations,
+    DatabasesOperations,
+    FirewallRulesOperations,
+    GetPrivateDnsZoneSuffixOperations,
+    LocationBasedCapabilitiesOperations,
+    LocationBasedCapabilitySetOperations,
+    LogFilesOperations,
+    LongRunningBackupOperations,
+    LongRunningBackupsOperations,
+    MaintenancesOperations,
+    OperationProgressOperations,
+    OperationResultsOperations,
+    Operations,
+    ReplicasOperations,
+    ServersMigrationOperations,
+    ServersOperations,
+)
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
-class MySQLManagementClient:    # pylint: disable=too-many-instance-attributes
+
+class MySQLManagementClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
     """The Microsoft Azure management API provides create, read, update, and delete functionality for
     Azure MySQL resources including servers, databases, firewall rules, VNET rules, log files and
     configurations with new business model.
 
+    :ivar azure_ad_administrators: AzureADAdministratorsOperations operations
+    :vartype azure_ad_administrators:
+     azure.mgmt.rdbms.mysql_flexibleservers.aio.operations.AzureADAdministratorsOperations
     :ivar backups: BackupsOperations operations
     :vartype backups: azure.mgmt.rdbms.mysql_flexibleservers.aio.operations.BackupsOperations
+    :ivar backup_and_export: BackupAndExportOperations operations
+    :vartype backup_and_export:
+     azure.mgmt.rdbms.mysql_flexibleservers.aio.operations.BackupAndExportOperations
+    :ivar long_running_backup: LongRunningBackupOperations operations
+    :vartype long_running_backup:
+     azure.mgmt.rdbms.mysql_flexibleservers.aio.operations.LongRunningBackupOperations
+    :ivar long_running_backups: LongRunningBackupsOperations operations
+    :vartype long_running_backups:
+     azure.mgmt.rdbms.mysql_flexibleservers.aio.operations.LongRunningBackupsOperations
     :ivar configurations: ConfigurationsOperations operations
     :vartype configurations:
      azure.mgmt.rdbms.mysql_flexibleservers.aio.operations.ConfigurationsOperations
@@ -41,11 +77,21 @@ class MySQLManagementClient:    # pylint: disable=too-many-instance-attributes
     :vartype servers: azure.mgmt.rdbms.mysql_flexibleservers.aio.operations.ServersOperations
     :ivar replicas: ReplicasOperations operations
     :vartype replicas: azure.mgmt.rdbms.mysql_flexibleservers.aio.operations.ReplicasOperations
+    :ivar servers_migration: ServersMigrationOperations operations
+    :vartype servers_migration:
+     azure.mgmt.rdbms.mysql_flexibleservers.aio.operations.ServersMigrationOperations
+    :ivar advanced_threat_protection_settings: AdvancedThreatProtectionSettingsOperations
+     operations
+    :vartype advanced_threat_protection_settings:
+     azure.mgmt.rdbms.mysql_flexibleservers.aio.operations.AdvancedThreatProtectionSettingsOperations
     :ivar log_files: LogFilesOperations operations
     :vartype log_files: azure.mgmt.rdbms.mysql_flexibleservers.aio.operations.LogFilesOperations
     :ivar location_based_capabilities: LocationBasedCapabilitiesOperations operations
     :vartype location_based_capabilities:
      azure.mgmt.rdbms.mysql_flexibleservers.aio.operations.LocationBasedCapabilitiesOperations
+    :ivar location_based_capability_set: LocationBasedCapabilitySetOperations operations
+    :vartype location_based_capability_set:
+     azure.mgmt.rdbms.mysql_flexibleservers.aio.operations.LocationBasedCapabilitySetOperations
     :ivar check_virtual_network_subnet_usage: CheckVirtualNetworkSubnetUsageOperations operations
     :vartype check_virtual_network_subnet_usage:
      azure.mgmt.rdbms.mysql_flexibleservers.aio.operations.CheckVirtualNetworkSubnetUsageOperations
@@ -56,23 +102,26 @@ class MySQLManagementClient:    # pylint: disable=too-many-instance-attributes
      operations
     :vartype check_name_availability_without_location:
      azure.mgmt.rdbms.mysql_flexibleservers.aio.operations.CheckNameAvailabilityWithoutLocationOperations
+    :ivar operation_results: OperationResultsOperations operations
+    :vartype operation_results:
+     azure.mgmt.rdbms.mysql_flexibleservers.aio.operations.OperationResultsOperations
+    :ivar operation_progress: OperationProgressOperations operations
+    :vartype operation_progress:
+     azure.mgmt.rdbms.mysql_flexibleservers.aio.operations.OperationProgressOperations
     :ivar get_private_dns_zone_suffix: GetPrivateDnsZoneSuffixOperations operations
     :vartype get_private_dns_zone_suffix:
      azure.mgmt.rdbms.mysql_flexibleservers.aio.operations.GetPrivateDnsZoneSuffixOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.rdbms.mysql_flexibleservers.aio.operations.Operations
-    :ivar azure_ad_administrators: AzureADAdministratorsOperations operations
-    :vartype azure_ad_administrators:
-     azure.mgmt.rdbms.mysql_flexibleservers.aio.operations.AzureADAdministratorsOperations
-    :param credential: Credential needed for the client to connect to Azure.
+    :ivar maintenances: MaintenancesOperations operations
+    :vartype maintenances:
+     azure.mgmt.rdbms.mysql_flexibleservers.aio.operations.MaintenancesOperations
+    :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param subscription_id: The ID of the target subscription.
+    :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2021-12-01-preview". Note that overriding
-     this default value may result in unsupported behavior.
-    :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
     """
@@ -84,35 +133,44 @@ class MySQLManagementClient:    # pylint: disable=too-many-instance-attributes
         base_url: str = "https://management.azure.com",
         **kwargs: Any
     ) -> None:
-        self._config = MySQLManagementClientConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
-        self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._config = MySQLManagementClientConfiguration(
+            credential=credential, subscription_id=subscription_id, **kwargs
+        )
+        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.backups = BackupsOperations(
+        self.azure_ad_administrators = AzureADAdministratorsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.configurations = ConfigurationsOperations(
+        self.backups = BackupsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.backup_and_export = BackupAndExportOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.databases = DatabasesOperations(
+        self.long_running_backup = LongRunningBackupOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.firewall_rules = FirewallRulesOperations(
+        self.long_running_backups = LongRunningBackupsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.servers = ServersOperations(
+        self.configurations = ConfigurationsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.databases = DatabasesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.firewall_rules = FirewallRulesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.servers = ServersOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.replicas = ReplicasOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.servers_migration = ServersMigrationOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.replicas = ReplicasOperations(
+        self.advanced_threat_protection_settings = AdvancedThreatProtectionSettingsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.log_files = LogFilesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.log_files = LogFilesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.location_based_capabilities = LocationBasedCapabilitiesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.location_based_capability_set = LocationBasedCapabilitySetOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.check_virtual_network_subnet_usage = CheckVirtualNetworkSubnetUsageOperations(
@@ -124,22 +182,19 @@ class MySQLManagementClient:    # pylint: disable=too-many-instance-attributes
         self.check_name_availability_without_location = CheckNameAvailabilityWithoutLocationOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.operation_results = OperationResultsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.operation_progress = OperationProgressOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.get_private_dns_zone_suffix = GetPrivateDnsZoneSuffixOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.operations = Operations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.azure_ad_administrators = AzureADAdministratorsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
+        self.maintenances = MaintenancesOperations(self._client, self._config, self._serialize, self._deserialize)
 
-
-    def _send_request(
-        self,
-        request: HttpRequest,
-        **kwargs: Any
-    ) -> Awaitable[AsyncHttpResponse]:
+    def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -148,7 +203,7 @@ class MySQLManagementClient:    # pylint: disable=too-many-instance-attributes
         >>> response = await client._send_request(request)
         <AsyncHttpResponse: 200 OK>
 
-        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
 
         :param request: The network request you want to make. Required.
         :type request: ~azure.core.rest.HttpRequest
@@ -168,5 +223,5 @@ class MySQLManagementClient:    # pylint: disable=too-many-instance-attributes
         await self._client.__aenter__()
         return self
 
-    async def __aexit__(self, *exc_details) -> None:
+    async def __aexit__(self, *exc_details: Any) -> None:
         await self._client.__aexit__(*exc_details)

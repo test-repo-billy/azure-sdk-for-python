@@ -3,23 +3,19 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Callable
 
-from devtools_testutils import AzureRecordedTestCase, is_live, set_bodiless_matcher
 import pytest
+from devtools_testutils import AzureRecordedTestCase, is_live
+from test_utilities.utils import sleep_if_live, wait_until_done
 
 from azure.ai.ml import MLClient, load_job
 from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.entities._builders.command_func import command
 from azure.ai.ml.entities._inputs_outputs import Input
-from azure.ai.ml.entities._job.job import Job
 from azure.ai.ml.entities._job.sweep.early_termination_policy import TruncationSelectionPolicy
 from azure.ai.ml.entities._job.sweep.search_space import LogUniform
-from azure.ai.ml.operations._job_ops_helper import _wait_before_polling
 from azure.ai.ml.operations._run_history_constants import JobStatus, RunHistoryConstants
 
-
-@pytest.mark.fixture(autouse=True)
-def bodiless_matching(test_proxy):
-    set_bodiless_matcher()
+# previous bodiless_matcher fixture doesn't take effect because of typo, please add it in method level if needed
 
 
 @pytest.mark.usefixtures(
@@ -28,7 +24,12 @@ def bodiless_matching(test_proxy):
     "mock_asset_name",
     "enable_environment_id_arm_expansion",
 )
+@pytest.mark.training_experiences_test
 class TestSweepJob(AzureRecordedTestCase):
+    @pytest.mark.skipif(
+        condition=not is_live(),
+        reason="TODO (2374610): hash sanitizer is being applied unnecessarily and forcing playback failures",
+    )
     @pytest.mark.e2etest
     def test_sweep_job_submit(self, randstr: Callable[[], str], client: MLClient) -> None:
         # TODO: need to create a workspace under a e2e-testing-only subscription and reousrce group
@@ -48,6 +49,31 @@ class TestSweepJob(AzureRecordedTestCase):
         sweep_job_resource_2 = client.jobs.get(job_name)
         assert sweep_job_resource.name == sweep_job_resource_2.name
 
+    @pytest.mark.e2etest
+    def test_sweep_job_submit_with_resources(self, randstr: Callable[[], str], client: MLClient) -> None:
+        # TODO: need to create a workspace under a e2e-testing-only subscription and reousrce group
+
+        job_name = randstr("job_name")
+
+        params_override = [{"name": job_name}]
+        sweep_job = load_job(
+            source="./tests/test_configs/sweep_job/sweep_job_test_with_resources.yaml",
+            params_override=params_override,
+        )
+
+        sweep_job_resource = client.jobs.create_or_update(job=sweep_job)
+        assert sweep_job_resource.name == job_name
+        assert sweep_job_resource.trial.environment_variables["test_var1"] == "set"
+        assert sweep_job_resource.status in RunHistoryConstants.IN_PROGRESS_STATUSES
+        assert sweep_job_resource.resources.instance_count == 2
+
+        sweep_job_resource_2 = client.jobs.get(job_name)
+        assert sweep_job_resource.name == sweep_job_resource_2.name
+
+    @pytest.mark.skipif(
+        condition=not is_live(),
+        reason="TODO (2374610): hash sanitizer is being applied unnecessarily and forcing playback failures",
+    )
     @pytest.mark.e2etest
     def test_sweep_job_submit_with_inputs(self, randstr: Callable[[str], str], client: MLClient) -> None:
         # TODO: need to create a workspace under a e2e-testing-only subscription and reousrce group
@@ -70,6 +96,10 @@ class TestSweepJob(AzureRecordedTestCase):
         assert "iris_csv" in sweep_job_resource_2.inputs
         assert "some_number" in sweep_job_resource_2.inputs
 
+    @pytest.mark.skipif(
+        condition=not is_live(),
+        reason="TODO (2374610): hash sanitizer is being applied unnecessarily and forcing playback failures",
+    )
     @pytest.mark.e2etest
     def test_sweep_job_submit_minimal(self, randstr: Callable[[str], str], client: MLClient) -> None:
         """Ensure the Minimal required properties does not fail on submisison"""
@@ -87,6 +117,10 @@ class TestSweepJob(AzureRecordedTestCase):
         sweep_job_resource_2 = client.jobs.get(job_name)
         assert sweep_job_resource.name == sweep_job_resource_2.name
 
+    @pytest.mark.skipif(
+        condition=not is_live(),
+        reason="TODO (2374610): hash sanitizer is being applied unnecessarily and forcing playback failures",
+    )
     @pytest.mark.e2etest
     def test_sweep_job_await_completion(self, randstr: Callable[[str], str], client: MLClient) -> None:
         """Ensure sweep job runs to completion"""
@@ -101,21 +135,13 @@ class TestSweepJob(AzureRecordedTestCase):
 
         assert sweep_job_resource.name == job_name
         # wait 3 minutes to check job has not failed.
-        if is_live():
-            time.sleep(3 * 60)
+        sleep_if_live(3 * 60)
         sweep_job_resource = client.jobs.get(job_name)
         assert sweep_job_resource.status in [JobStatus.COMPLETED, JobStatus.RUNNING]
 
     @pytest.mark.e2etest
     @pytest.mark.skip(reason="flaky test")
     def test_sweep_job_download(self, randstr: Callable[[str], str], client: MLClient) -> None:
-        def wait_until_done(job: Job) -> None:
-            poll_start_time = time.time()
-            while job.status not in RunHistoryConstants.TERMINAL_STATUSES:
-                time.sleep(_wait_before_polling(time.time() - poll_start_time))
-                job = client.jobs.get(job.name)
-            time.sleep(_wait_before_polling(time.time() - poll_start_time))
-
         job = client.jobs.create_or_update(
             load_job(
                 source="./tests/test_configs/sweep_job/sweep_job_minimal_outputs.yaml",
@@ -123,7 +149,7 @@ class TestSweepJob(AzureRecordedTestCase):
             )
         )
 
-        wait_until_done(job)
+        wait_until_done(job=job, client=client)
 
         with TemporaryDirectory() as tmp_dirname:
             tmp_path = Path(tmp_dirname)
@@ -142,7 +168,6 @@ class TestSweepJob(AzureRecordedTestCase):
 
     @pytest.mark.e2etest
     def test_sweep_job_builder(self, randstr: Callable[[str], str], client: MLClient) -> None:
-
         inputs = {
             "uri": Input(
                 type=AssetTypes.URI_FILE, path="azureml://datastores/workspaceblobstore/paths/python/data.csv"
@@ -153,7 +178,7 @@ class TestSweepJob(AzureRecordedTestCase):
         node = command(
             name=randstr("name"),
             description="description",
-            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
             inputs=inputs,
             command="echo ${{inputs.uri}} ${{search_space.learning_rate}}",
             display_name="builder_command_job",
@@ -172,7 +197,7 @@ class TestSweepJob(AzureRecordedTestCase):
 
         sweep_node.set_limits(max_concurrent_trials=2, max_total_trials=10, timeout=300)
 
-        assert sweep_node.trial.environment == "AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"
+        assert sweep_node.trial.environment == "AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33"
         assert sweep_node.display_name == "builder_command_job"
         assert sweep_node.compute == "testCompute"
         assert sweep_node.experiment_name == "mfe-test1-dataset"
@@ -184,7 +209,7 @@ class TestSweepJob(AzureRecordedTestCase):
 
         result = client.create_or_update(sweep_node)
         assert result.description == "new-description"
-        assert result.trial.environment == "AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"
+        assert result.trial.environment == "AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33"
         assert result.display_name == "new_builder_command_job"
         assert result.compute == "testCompute"
         assert result.experiment_name == "mfe-test1-dataset"

@@ -4,14 +4,11 @@
 
 # pylint: disable=R0902,too-many-locals
 
-from typing import Union
+from typing import Optional, Union
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import ImageModelDistributionSettingsClassification
-from azure.ai.ml.entities._job.automl.search_space_utils import (
-    _convert_from_rest_object,
-    _convert_to_rest_object,
-)
+from azure.ai.ml._restclient.v2023_04_01_preview.models import ImageModelDistributionSettingsClassification
 from azure.ai.ml.entities._job.automl.search_space import SearchSpace
+from azure.ai.ml.entities._job.automl.search_space_utils import _convert_from_rest_object, _convert_to_rest_object
 from azure.ai.ml.entities._job.sweep.search_space import SweepDistribution
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
@@ -21,7 +18,7 @@ class ImageClassificationSearchSpace(RestTranslatableMixin):
     Multilabel tasks.
 
     :param ams_gradient: Enable AMSGrad when optimizer is 'adam' or 'adamw'.
-    :type ams_gradient: str or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+    :type ams_gradient: bool or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
     :param beta1: Value of 'beta1' when optimizer is 'adam' or 'adamw'. Must be a float in the
         range [0, 1].
     :type beta1: float or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
@@ -88,7 +85,7 @@ class ImageClassificationSearchSpace(RestTranslatableMixin):
     :param training_batch_size: Training batch size. Must be a positive integer.
     :type training_batch_size: int or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
     :param validation_batch_size: Validation batch size. Must be a positive integer.
-    :type validation_batch_size: str or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+    :type validation_batch_size: int or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
     :param warmup_cosine_lr_cycles: Value of cosine cycle when learning rate scheduler is
         'warmup_cosine'. Must be a float in the range [0, 1].
     :type warmup_cosine_lr_cycles: float or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
@@ -111,42 +108,51 @@ class ImageClassificationSearchSpace(RestTranslatableMixin):
         1 for weighted loss with sqrt.(class_weights). 2 for weighted loss with class_weights. Must be
         0 or 1 or 2.
     :type weighted_loss: int or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_automl_image.py
+            :start-after: [START automl.automl_image_job.image_classification_search_space]
+            :end-before: [END automl.automl_image_job.image_classification_search_space]
+            :language: python
+            :dedent: 8
+            :caption: Defining an automl image classification search space
     """
 
     def __init__(
         self,
         *,
-        ams_gradient: Union[bool, SweepDistribution] = None,
-        beta1: Union[float, SweepDistribution] = None,
-        beta2: Union[float, SweepDistribution] = None,
-        distributed: Union[bool, SweepDistribution] = None,
-        early_stopping: Union[bool, SweepDistribution] = None,
-        early_stopping_delay: Union[int, SweepDistribution] = None,
-        early_stopping_patience: Union[int, SweepDistribution] = None,
-        enable_onnx_normalization: Union[bool, SweepDistribution] = None,
-        evaluation_frequency: Union[int, SweepDistribution] = None,
-        gradient_accumulation_step: Union[int, SweepDistribution] = None,
-        layers_to_freeze: Union[int, SweepDistribution] = None,
-        learning_rate: Union[float, SweepDistribution] = None,
-        learning_rate_scheduler: Union[str, SweepDistribution] = None,
-        model_name: Union[str, SweepDistribution] = None,
-        momentum: Union[float, SweepDistribution] = None,
-        nesterov: Union[bool, SweepDistribution] = None,
-        number_of_epochs: Union[int, SweepDistribution] = None,
-        number_of_workers: Union[int, SweepDistribution] = None,
-        optimizer: Union[str, SweepDistribution] = None,
-        random_seed: Union[int, SweepDistribution] = None,
-        step_lr_gamma: Union[float, SweepDistribution] = None,
-        step_lr_step_size: Union[int, SweepDistribution] = None,
-        training_batch_size: Union[int, SweepDistribution] = None,
-        validation_batch_size: Union[int, SweepDistribution] = None,
-        warmup_cosine_lr_cycles: Union[float, SweepDistribution] = None,
-        warmup_cosine_lr_warmup_epochs: Union[int, SweepDistribution] = None,
-        weight_decay: Union[float, SweepDistribution] = None,
-        training_crop_size: Union[int, SweepDistribution] = None,
-        validation_crop_size: Union[int, SweepDistribution] = None,
-        validation_resize_size: Union[int, SweepDistribution] = None,
-        weighted_loss: Union[int, SweepDistribution] = None,
+        ams_gradient: Optional[Union[bool, SweepDistribution]] = None,
+        beta1: Optional[Union[float, SweepDistribution]] = None,
+        beta2: Optional[Union[float, SweepDistribution]] = None,
+        distributed: Optional[Union[bool, SweepDistribution]] = None,
+        early_stopping: Optional[Union[bool, SweepDistribution]] = None,
+        early_stopping_delay: Optional[Union[int, SweepDistribution]] = None,
+        early_stopping_patience: Optional[Union[int, SweepDistribution]] = None,
+        enable_onnx_normalization: Optional[Union[bool, SweepDistribution]] = None,
+        evaluation_frequency: Optional[Union[int, SweepDistribution]] = None,
+        gradient_accumulation_step: Optional[Union[int, SweepDistribution]] = None,
+        layers_to_freeze: Optional[Union[int, SweepDistribution]] = None,
+        learning_rate: Optional[Union[float, SweepDistribution]] = None,
+        learning_rate_scheduler: Optional[Union[str, SweepDistribution]] = None,
+        model_name: Optional[Union[str, SweepDistribution]] = None,
+        momentum: Optional[Union[float, SweepDistribution]] = None,
+        nesterov: Optional[Union[bool, SweepDistribution]] = None,
+        number_of_epochs: Optional[Union[int, SweepDistribution]] = None,
+        number_of_workers: Optional[Union[int, SweepDistribution]] = None,
+        optimizer: Optional[Union[str, SweepDistribution]] = None,
+        random_seed: Optional[Union[int, SweepDistribution]] = None,
+        step_lr_gamma: Optional[Union[float, SweepDistribution]] = None,
+        step_lr_step_size: Optional[Union[int, SweepDistribution]] = None,
+        training_batch_size: Optional[Union[int, SweepDistribution]] = None,
+        validation_batch_size: Optional[Union[int, SweepDistribution]] = None,
+        warmup_cosine_lr_cycles: Optional[Union[float, SweepDistribution]] = None,
+        warmup_cosine_lr_warmup_epochs: Optional[Union[int, SweepDistribution]] = None,
+        weight_decay: Optional[Union[float, SweepDistribution]] = None,
+        training_crop_size: Optional[Union[int, SweepDistribution]] = None,
+        validation_crop_size: Optional[Union[int, SweepDistribution]] = None,
+        validation_resize_size: Optional[Union[int, SweepDistribution]] = None,
+        weighted_loss: Optional[Union[int, SweepDistribution]] = None,
     ) -> None:
         self.ams_gradient = ams_gradient
         self.beta1 = beta1

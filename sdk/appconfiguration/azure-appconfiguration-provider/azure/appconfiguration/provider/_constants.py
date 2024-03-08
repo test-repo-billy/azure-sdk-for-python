@@ -4,4 +4,15 @@
 # license information.
 # -------------------------------------------------------------------------
 
-KEY_VAULT_REFERENCE_CONTENT_TYPE = "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8"
+FEATURE_MANAGEMENT_KEY = "feature_management"
+FEATURE_FLAG_KEY = "feature_flags"
+FEATURE_FLAG_PREFIX = ".appconfig.featureflag/"
+
+EMPTY_LABEL = "\0"
+
+REQUEST_TRACING_DISABLED_ENVIRONMENT_VARIABLE = "AZURE_APP_CONFIGURATION_TRACING_DISABLED"
+AzureFunctionEnvironmentVariable = "FUNCTIONS_EXTENSION_VERSION"
+AzureWebAppEnvironmentVariable = "WEBSITE_SITE_NAME"
+ContainerAppEnvironmentVariable = "CONTAINER_APP_NAME"
+KubernetesEnvironmentVariable = "KUBERNETES_PORT"
+ServiceFabricEnvironmentVariable = "Fabric_NodeName"  # cspell:disable-line

@@ -10,6 +10,7 @@ autorest --use=@autorest/python@5.19.0 swagger/README.md --python-sdks-folder=<p
 
 We automatically hardcode in that this is `python` and `multiapi`.
 
+
 ## Basic
 
 ```yaml
@@ -32,6 +33,7 @@ batch:
   - tag: release_3_0
   - tag: release_3_1
   - tag: release_2022_05_01
+  - tag: release_2023_04_01
   - multiapiscript: true
 ```
 
@@ -74,6 +76,16 @@ namespace: azure.ai.textanalytics.v2022_05_01
 output-folder: $(python-sdks-folder)/textanalytics/azure-ai-textanalytics/azure/ai/textanalytics/_generated/v2022_05_01
 ```
 
+## Release v2023_04_01
+
+These settings apply only when `--tag=release_2023_04_01` is specified on the command line.
+
+```yaml $(tag) == 'release_2023_04_01'
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/53240ebc58b3c4e99de723194032064db1d97e63/specification/cognitiveservices/data-plane/Language/stable/2023-04-01/analyzetext.json
+namespace: azure.ai.textanalytics.v2023_04_01
+output-folder: $(python-sdks-folder)/textanalytics/azure-ai-textanalytics/azure/ai/textanalytics/_generated/v2023_04_01
+```
+
 ### Override Analyze's pager poller for v3.1
 
 ```yaml
@@ -102,7 +114,7 @@ directive:
       $["x-python-custom-default-polling-method-async"] = ".....aio._lro_async.AsyncAnalyzeHealthcareEntitiesLROPollingMethod";
 ```
 
-### Override Analyze's pager poller for 2022_05_01
+### Override Analyze's pager poller for 2022_05_01 and 2023_04_01
 
 ```yaml
 directive:
@@ -116,7 +128,6 @@ directive:
       $["x-python-custom-default-polling-method-async"] = ".....aio._lro_async.AsyncAnalyzeActionsLROPollingMethod";
 ```
 
-
 ### Override parameterizing the ApiVersion v3.1
 
 ```yaml $(tag) == 'release_3_1'
@@ -128,9 +139,9 @@ directive:
       $["parameters"] = [{"$ref": "#/parameters/Endpoint"}];
 ```
 
-### Fix naming clash with analyze_text method in ApiVersion v2022_05_01
+### Fix naming clash with analyze_text method
 
-```yaml $(tag) == 'release_2022_05_01'
+```yaml
 directive:
   - from: swagger-document
     where: '$["paths"]["/analyze-text/jobs"]["post"]'
@@ -138,9 +149,9 @@ directive:
       $["operationId"] = "AnalyzeTextSubmitJob";
 ```
 
-### Fix naming clash with analyze_text method in ApiVersion v2022_05_01
+### Fix naming clash with analyze_text method
 
-```yaml $(tag) == 'release_2022_05_01'
+```yaml
 directive:
   - from: swagger-document
     where: '$["paths"]["/analyze-text/jobs/{jobId}"]["get"]'
@@ -148,9 +159,9 @@ directive:
       $["operationId"] = "AnalyzeTextJobStatus";
 ```
 
-### Fix naming clash with analyze_text method in ApiVersion v2022_05_01
+### Fix naming clash with analyze_text method
 
-```yaml $(tag) == 'release_2022_05_01'
+```yaml
 directive:
   - from: swagger-document
     where: '$["paths"]["/analyze-text/jobs/{jobId}:cancel"]["post"]'
@@ -158,9 +169,9 @@ directive:
       $["operationId"] = "AnalyzeTextCancelJob";
 ```
 
-### Fix generation of operation class name with ApiVersion v2022_05_01
+### Fix generation of operation class name
 
-```yaml $(tag) == 'release_2022_05_01'
+```yaml
 directive:
   - from: swagger-document
     where: '$["info"]'
@@ -169,11 +180,42 @@ directive:
 ```
 
 
-### Rename changed JobState property with ApiVersion v2022_05_01
+### Rename changed JobState property
 
-```yaml $(tag) == 'release_2022_05_01'
+```yaml
 directive:
   - from: swagger-document
     where: $.definitions.JobState
     transform: $.properties.lastUpdatedDateTime["x-ms-client-name"] = "lastUpdateDateTime";
+```
+
+### Rename enums so we can expose generated types
+
+
+```yaml $(tag) != 'release_3_1'
+directive:
+  - from: swagger-document
+    where: $["definitions"]
+    transform: >
+      $["HealthcareAssertion"]["properties"]["association"]["x-ms-enum"]["name"] = "entityAssociation";
+  - from: swagger-document
+    where: $["definitions"]
+    transform: >
+      $["HealthcareAssertion"]["properties"]["certainty"]["x-ms-enum"]["name"] = "entityCertainty";
+  - from: swagger-document
+    where: $["definitions"]
+    transform: >
+      $["HealthcareAssertion"]["properties"]["conditionality"]["x-ms-enum"]["name"] = "entityConditionality";
+  - from: swagger-document
+    where: $["definitions"]
+    transform: >
+      $["HealthcareAssertion"]["properties"]["conditionality"]["x-ms-enum"]["name"] = "entityConditionality";
+  - from: swagger-document
+    where: $["definitions"]
+    transform: >
+      $["HealthcareRelation"]["properties"]["relationType"]["x-ms-enum"]["name"] = "healthcareEntityRelation";
+  - from: swagger-document
+    where: $["definitions"]
+    transform: >
+      $["PiiCategories"]["items"]["x-ms-enum"]["name"] = "piiEntityCategory";
 ```

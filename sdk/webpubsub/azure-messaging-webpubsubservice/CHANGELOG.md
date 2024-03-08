@@ -1,5 +1,20 @@
 # Release History
 
+## 1.1.0 (2024-02-28)
+
+### Bugs Fixed
+- Use the correct REST API parameter name `groups` in method `get_client_access_token`
+- Upgrade dependency package `pyjwt` to `>=2.0.0` which changes the return type of `jwt.encode(...)`. See https://pyjwt.readthedocs.io/en/stable/changelog.html#id30 for detail
+
+## 1.1.0b1 (2022-12-12)
+
+### Features Added
+- Operation `send_to_all` has a new optional parameter `filter`
+- Operation `send_to_user` has a new optional parameter `filter`
+- Operation `send_to_group` has a new optional parameter `filter`
+- Operation `get_client_access_token` has a new optional parameter `group`
+- Added operation `remove_connection_from_all_groups`
+
 ## 1.0.1 (2022-02-15)
 
 ### Bugs Fixed

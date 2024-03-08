@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 from os import PathLike
 from pathlib import Path
-from typing import Dict, Union
+from typing import Any, Dict, Optional, Union
 
 # from azure.ai.ml.entities._deployment.code_configuration import CodeConfiguration
 from azure.ai.ml._schema.component.parallel_task import ComponentParallelTaskSchema
@@ -52,16 +52,16 @@ class ParallelTask(RestTranslatableMixin, DictMixin):
     """
 
     def __init__(
-        self,
+        self,  # pylint: disable=unused-argument
         *,
-        type: str = None,  # pylint: disable=redefined-builtin
-        code: str = None,
-        entry_script: str = None,
-        program_arguments: str = None,
-        model: str = None,
-        append_row_to: str = None,
-        environment: Union[Environment, str] = None,
-        **kwargs,  # pylint: disable=unused-argument
+        type: Optional[str] = None,  # pylint: disable=redefined-builtin
+        code: Optional[str] = None,
+        entry_script: Optional[str] = None,
+        program_arguments: Optional[str] = None,
+        model: Optional[str] = None,
+        append_row_to: Optional[str] = None,
+        environment: Optional[Union[Environment, str]] = None,
+        **kwargs: Any,
     ):
         self.type = type
         self.code = code
@@ -69,18 +69,19 @@ class ParallelTask(RestTranslatableMixin, DictMixin):
         self.program_arguments = program_arguments
         self.model = model
         self.append_row_to = append_row_to
-        self.environment = environment
+        self.environment: Any = environment
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
-        return ComponentParallelTaskSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        res: dict = ComponentParallelTaskSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return res
 
     @classmethod
     def _load(
-        cls,
-        path: Union[PathLike, str] = None,
-        params_override: list = None,
-        **kwargs,  # pylint: disable=unused-argument
+        cls,  # pylint: disable=unused-argument
+        path: Optional[Union[PathLike, str]] = None,
+        params_override: Optional[list] = None,
+        **kwargs: Any,
     ) -> "ParallelTask":
         params_override = params_override or []
         data = load_yaml(path)
@@ -90,20 +91,20 @@ class ParallelTask(RestTranslatableMixin, DictMixin):
     def _load_from_dict(
         cls,
         data: dict,
-        path: Union[PathLike, str] = None,
-        params_override: list = None,
-        **kwargs,
+        path: Optional[Union[PathLike, str]] = None,
+        params_override: Optional[list] = None,
+        **kwargs: Any,
     ) -> "ParallelTask":
         params_override = params_override or []
         context = {
             BASE_PATH_CONTEXT_KEY: Path(path).parent if path else Path.cwd(),
             PARAMS_OVERRIDE_KEY: params_override,
         }
-        return load_from_dict(ComponentParallelTaskSchema, data, context, **kwargs)
+        res: ParallelTask = load_from_dict(ComponentParallelTaskSchema, data, context, **kwargs)
+        return res
 
     @classmethod
-    def _from_dict(cls, dct: dict):
-        """Convert a dict to an Input object."""
+    def _from_dict(cls, dct: dict) -> "ParallelTask":
         obj = cls(**dict(dct.items()))
         return obj
 

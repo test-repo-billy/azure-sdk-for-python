@@ -13,6 +13,7 @@ from ._models_py3 import CheckNameAvailabilityRequest
 from ._models_py3 import CheckNameAvailabilityResponse
 from ._models_py3 import ConnectionDetails
 from ._models_py3 import DiagnosticStorageProperties
+from ._models_py3 import Encryption
 from ._models_py3 import ErrorAdditionalInfo
 from ._models_py3 import ErrorDetail
 from ._models_py3 import ErrorResponse
@@ -64,7 +65,7 @@ from ._device_update_mgmt_client_enums import PublicNetworkAccess
 from ._device_update_mgmt_client_enums import Role
 from ._device_update_mgmt_client_enums import SKU
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
@@ -75,6 +76,7 @@ __all__ = [
     "CheckNameAvailabilityResponse",
     "ConnectionDetails",
     "DiagnosticStorageProperties",
+    "Encryption",
     "ErrorAdditionalInfo",
     "ErrorDetail",
     "ErrorResponse",

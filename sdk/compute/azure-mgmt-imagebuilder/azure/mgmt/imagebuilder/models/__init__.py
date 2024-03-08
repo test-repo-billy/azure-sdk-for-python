@@ -6,12 +6,17 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._models_py3 import CloudErrorBody
-from ._models_py3 import ComponentsVrq145SchemasImagetemplateidentityPropertiesUserassignedidentitiesAdditionalproperties
+from ._models_py3 import DistributeVersioner
+from ._models_py3 import DistributeVersionerLatest
+from ._models_py3 import DistributeVersionerSource
+from ._models_py3 import ErrorAdditionalInfo
+from ._models_py3 import ErrorDetail
+from ._models_py3 import ErrorResponse
 from ._models_py3 import ImageTemplate
 from ._models_py3 import ImageTemplateCustomizer
 from ._models_py3 import ImageTemplateDistributor
 from ._models_py3 import ImageTemplateFileCustomizer
+from ._models_py3 import ImageTemplateFileValidator
 from ._models_py3 import ImageTemplateIdentity
 from ._models_py3 import ImageTemplateInVMValidator
 from ._models_py3 import ImageTemplateLastRunStatus
@@ -21,6 +26,9 @@ from ._models_py3 import ImageTemplateManagedImageSource
 from ._models_py3 import ImageTemplatePlatformImageSource
 from ._models_py3 import ImageTemplatePowerShellCustomizer
 from ._models_py3 import ImageTemplatePowerShellValidator
+from ._models_py3 import ImageTemplatePropertiesErrorHandling
+from ._models_py3 import ImageTemplatePropertiesOptimize
+from ._models_py3 import ImageTemplatePropertiesOptimizeVmBoot
 from ._models_py3 import ImageTemplatePropertiesValidate
 from ._models_py3 import ImageTemplateRestartCustomizer
 from ._models_py3 import ImageTemplateSharedImageDistributor
@@ -29,6 +37,7 @@ from ._models_py3 import ImageTemplateShellCustomizer
 from ._models_py3 import ImageTemplateShellValidator
 from ._models_py3 import ImageTemplateSource
 from ._models_py3 import ImageTemplateUpdateParameters
+from ._models_py3 import ImageTemplateUpdateParametersProperties
 from ._models_py3 import ImageTemplateVhdDistributor
 from ._models_py3 import ImageTemplateVmProfile
 from ._models_py3 import ImageTemplateWindowsUpdateCustomizer
@@ -41,65 +50,94 @@ from ._models_py3 import ProxyResource
 from ._models_py3 import Resource
 from ._models_py3 import RunOutput
 from ._models_py3 import RunOutputCollection
+from ._models_py3 import SourceImageTriggerProperties
 from ._models_py3 import SystemData
+from ._models_py3 import TargetRegion
 from ._models_py3 import TrackedResource
+from ._models_py3 import Trigger
+from ._models_py3 import TriggerCollection
+from ._models_py3 import TriggerProperties
+from ._models_py3 import TriggerStatus
+from ._models_py3 import UserAssignedIdentity
 from ._models_py3 import VirtualNetworkConfig
 
-
-from ._image_builder_client_enums import (
-    CreatedByType,
-    ProvisioningErrorCode,
-    ProvisioningState,
-    ResourceIdentityType,
-    RunState,
-    RunSubState,
-    SharedImageStorageAccountType,
-)
+from ._image_builder_client_enums import CreatedByType
+from ._image_builder_client_enums import OnBuildError
+from ._image_builder_client_enums import ProvisioningErrorCode
+from ._image_builder_client_enums import ProvisioningState
+from ._image_builder_client_enums import ResourceIdentityType
+from ._image_builder_client_enums import RunState
+from ._image_builder_client_enums import RunSubState
+from ._image_builder_client_enums import SharedImageStorageAccountType
+from ._image_builder_client_enums import VMBootOptimizationState
+from ._patch import __all__ as _patch_all
+from ._patch import *  # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'CloudErrorBody',
-    'ComponentsVrq145SchemasImagetemplateidentityPropertiesUserassignedidentitiesAdditionalproperties',
-    'ImageTemplate',
-    'ImageTemplateCustomizer',
-    'ImageTemplateDistributor',
-    'ImageTemplateFileCustomizer',
-    'ImageTemplateIdentity',
-    'ImageTemplateInVMValidator',
-    'ImageTemplateLastRunStatus',
-    'ImageTemplateListResult',
-    'ImageTemplateManagedImageDistributor',
-    'ImageTemplateManagedImageSource',
-    'ImageTemplatePlatformImageSource',
-    'ImageTemplatePowerShellCustomizer',
-    'ImageTemplatePowerShellValidator',
-    'ImageTemplatePropertiesValidate',
-    'ImageTemplateRestartCustomizer',
-    'ImageTemplateSharedImageDistributor',
-    'ImageTemplateSharedImageVersionSource',
-    'ImageTemplateShellCustomizer',
-    'ImageTemplateShellValidator',
-    'ImageTemplateSource',
-    'ImageTemplateUpdateParameters',
-    'ImageTemplateVhdDistributor',
-    'ImageTemplateVmProfile',
-    'ImageTemplateWindowsUpdateCustomizer',
-    'Operation',
-    'OperationDisplay',
-    'OperationListResult',
-    'PlatformImagePurchasePlan',
-    'ProvisioningError',
-    'ProxyResource',
-    'Resource',
-    'RunOutput',
-    'RunOutputCollection',
-    'SystemData',
-    'TrackedResource',
-    'VirtualNetworkConfig',
-    'CreatedByType',
-    'ProvisioningErrorCode',
-    'ProvisioningState',
-    'ResourceIdentityType',
-    'RunState',
-    'RunSubState',
-    'SharedImageStorageAccountType',
+    "DistributeVersioner",
+    "DistributeVersionerLatest",
+    "DistributeVersionerSource",
+    "ErrorAdditionalInfo",
+    "ErrorDetail",
+    "ErrorResponse",
+    "ImageTemplate",
+    "ImageTemplateCustomizer",
+    "ImageTemplateDistributor",
+    "ImageTemplateFileCustomizer",
+    "ImageTemplateFileValidator",
+    "ImageTemplateIdentity",
+    "ImageTemplateInVMValidator",
+    "ImageTemplateLastRunStatus",
+    "ImageTemplateListResult",
+    "ImageTemplateManagedImageDistributor",
+    "ImageTemplateManagedImageSource",
+    "ImageTemplatePlatformImageSource",
+    "ImageTemplatePowerShellCustomizer",
+    "ImageTemplatePowerShellValidator",
+    "ImageTemplatePropertiesErrorHandling",
+    "ImageTemplatePropertiesOptimize",
+    "ImageTemplatePropertiesOptimizeVmBoot",
+    "ImageTemplatePropertiesValidate",
+    "ImageTemplateRestartCustomizer",
+    "ImageTemplateSharedImageDistributor",
+    "ImageTemplateSharedImageVersionSource",
+    "ImageTemplateShellCustomizer",
+    "ImageTemplateShellValidator",
+    "ImageTemplateSource",
+    "ImageTemplateUpdateParameters",
+    "ImageTemplateUpdateParametersProperties",
+    "ImageTemplateVhdDistributor",
+    "ImageTemplateVmProfile",
+    "ImageTemplateWindowsUpdateCustomizer",
+    "Operation",
+    "OperationDisplay",
+    "OperationListResult",
+    "PlatformImagePurchasePlan",
+    "ProvisioningError",
+    "ProxyResource",
+    "Resource",
+    "RunOutput",
+    "RunOutputCollection",
+    "SourceImageTriggerProperties",
+    "SystemData",
+    "TargetRegion",
+    "TrackedResource",
+    "Trigger",
+    "TriggerCollection",
+    "TriggerProperties",
+    "TriggerStatus",
+    "UserAssignedIdentity",
+    "VirtualNetworkConfig",
+    "CreatedByType",
+    "OnBuildError",
+    "ProvisioningErrorCode",
+    "ProvisioningState",
+    "ResourceIdentityType",
+    "RunState",
+    "RunSubState",
+    "SharedImageStorageAccountType",
+    "VMBootOptimizationState",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

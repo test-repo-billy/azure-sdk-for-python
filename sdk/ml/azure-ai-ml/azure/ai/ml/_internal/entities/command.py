@@ -2,25 +2,23 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 # pylint: disable=protected-access
-from typing import Dict, List, Union
+from typing import Dict, List, Optional, Union
 
 from marshmallow import INCLUDE, Schema
 
-from azure.ai.ml import MpiDistribution, PyTorchDistribution, TensorFlowDistribution
-from azure.ai.ml._internal._schema.component import NodeType
-from azure.ai.ml._internal.entities.component import InternalComponent
-from azure.ai.ml._internal.entities.node import InternalBaseNode
-from azure.ai.ml._restclient.v2022_10_01_preview.models import CommandJobLimits as RestCommandJobLimits
-from azure.ai.ml._restclient.v2022_10_01_preview.models import JobResourceConfiguration as RestJobResourceConfiguration
-from azure.ai.ml._schema import PathAwareSchema
-from azure.ai.ml._schema.core.fields import DistributionField
-from azure.ai.ml.entities import CommandJobLimits, JobResourceConfiguration
-from azure.ai.ml.entities._job.distribution import DistributionConfiguration
-from azure.ai.ml.entities._util import get_rest_dict_for_node_attrs
+from ... import MpiDistribution, PyTorchDistribution, RayDistribution, TensorFlowDistribution
+from ..._schema import PathAwareSchema
+from ..._schema.core.fields import DistributionField
+from ...entities import CommandJobLimits, JobResourceConfiguration
+from ...entities._util import get_rest_dict_for_node_attrs
+from .._schema.component import NodeType
+from ..entities.component import InternalComponent
+from ..entities.node import InternalBaseNode
 
 
 class Command(InternalBaseNode):
     """Node of internal command components in pipeline with specific run settings.
+
     Different from azure.ai.ml.entities.Command, type of this class is CommandComponent.
     """
 
@@ -31,28 +29,63 @@ class Command(InternalBaseNode):
         self._resources = kwargs.pop("resources", JobResourceConfiguration())
         self._compute = kwargs.pop("compute", None)
         self._environment = kwargs.pop("environment", None)
+        self._environment_variables = kwargs.pop("environment_variables", None)
         self._limits = kwargs.pop("limits", CommandJobLimits())
         self._init = False
 
     @property
-    def compute(self) -> str:
-        """Get the compute definition for the command."""
+    def compute(self) -> Optional[str]:
+        """Get the compute definition for the command.
+
+        :return: The compute definition
+        :rtype: Optional[str]
+        """
         return self._compute
 
     @compute.setter
-    def compute(self, value: str):
-        """Set the compute definition for the command."""
+    def compute(self, value: str) -> None:
+        """Set the compute definition for the command.
+
+        :param value: The new compute definition
+        :type value: str
+        """
         self._compute = value
 
     @property
-    def environment(self) -> str:
-        """Get the environment definition for the command."""
+    def environment(self) -> Optional[str]:
+        """Get the environment definition for the command.
+
+        :return: The environment definition
+        :rtype: Optional[str]
+        """
         return self._environment
 
     @environment.setter
-    def environment(self, value: str):
-        """Set the environment definition for the command."""
+    def environment(self, value: str) -> None:
+        """Set the environment definition for the command.
+
+        :param value: The new environment definition
+        :type value: str
+        """
         self._environment = value
+
+    @property
+    def environment_variables(self) -> Optional[Dict[str, str]]:
+        """Get the environment variables for the command.
+
+        :return: The environment variables
+        :rtype: Optional[Dict[str, str]]
+        """
+        return self._environment_variables
+
+    @environment_variables.setter
+    def environment_variables(self, value: Dict[str, str]) -> None:
+        """Set the environment variables for the command.
+
+        :param value: The new environment variables
+        :type value: Dict[str, str]
+        """
+        self._environment_variables = value
 
     @property
     def limits(self) -> CommandJobLimits:
@@ -64,7 +97,11 @@ class Command(InternalBaseNode):
 
     @property
     def resources(self) -> JobResourceConfiguration:
-        """Compute Resource configuration for the component."""
+        """Compute Resource configuration for the component.
+
+        :return: The resource configuration
+        :rtype: JobResourceConfiguration
+        """
         return self._resources
 
     @resources.setter
@@ -73,7 +110,7 @@ class Command(InternalBaseNode):
 
     @classmethod
     def _picked_fields_from_dict_to_rest_object(cls) -> List[str]:
-        return ["environment", "limits", "resources"]
+        return ["environment", "limits", "resources", "environment_variables"]
 
     @classmethod
     def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
@@ -84,26 +121,23 @@ class Command(InternalBaseNode):
     def _to_rest_object(self, **kwargs) -> dict:
         rest_obj = super()._to_rest_object(**kwargs)
         rest_obj.update(
-            dict(
-                limits=get_rest_dict_for_node_attrs(self.limits, clear_empty_value=True),
-                resources=get_rest_dict_for_node_attrs(self.resources, clear_empty_value=True),
-            )
+            {
+                "limits": get_rest_dict_for_node_attrs(self.limits, clear_empty_value=True),
+                "resources": get_rest_dict_for_node_attrs(self.resources, clear_empty_value=True),
+            }
         )
         return rest_obj
 
     @classmethod
-    def _rest_object_to_init_params(cls, obj):
-        obj = InternalBaseNode._rest_object_to_init_params(obj)
+    def _from_rest_object_to_init_params(cls, obj):
+        obj = InternalBaseNode._from_rest_object_to_init_params(obj)
 
-        # resources
         if "resources" in obj and obj["resources"]:
-            resources = RestJobResourceConfiguration.from_dict(obj["resources"])
-            obj["resources"] = JobResourceConfiguration._from_rest_object(resources)
+            obj["resources"] = JobResourceConfiguration._from_rest_object(obj["resources"])
 
         # handle limits
         if "limits" in obj and obj["limits"]:
-            rest_limits = RestCommandJobLimits.from_dict(obj["limits"])
-            obj["limits"] = CommandJobLimits()._from_rest_object(rest_limits)
+            obj["limits"] = CommandJobLimits._from_rest_object(obj["limits"])
         return obj
 
 
@@ -130,14 +164,18 @@ class Distributed(Command):
     @property
     def distribution(
         self,
-    ) -> Union[PyTorchDistribution, MpiDistribution, TensorFlowDistribution]:
-        """The distribution config of component, e.g. distribution={'type': 'mpi'}."""
+    ) -> Union[PyTorchDistribution, MpiDistribution, TensorFlowDistribution, RayDistribution]:
+        """The distribution config of component, e.g. distribution={'type': 'mpi'}.
+
+        :return: The distribution config
+        :rtype: Union[PyTorchDistribution, MpiDistribution, TensorFlowDistribution, RayDistribution]
+        """
         return self._distribution
 
     @distribution.setter
     def distribution(
         self,
-        value: Union[Dict, PyTorchDistribution, TensorFlowDistribution, MpiDistribution],
+        value: Union[Dict, PyTorchDistribution, TensorFlowDistribution, MpiDistribution, RayDistribution],
     ):
         if isinstance(value, dict):
             dist_schema = DistributionField(unknown=INCLUDE)
@@ -151,16 +189,6 @@ class Distributed(Command):
         return DistributedSchema(context=context)
 
     @classmethod
-    def _rest_object_to_init_params(cls, obj: dict):
-        obj = Command._rest_object_to_init_params(obj)
-
-        # distribution
-        if "distribution" in obj and obj["distribution"]:
-            obj["distribution"] = DistributionConfiguration._from_rest_object(obj["distribution"])
-
-        return obj
-
-    @classmethod
     def _picked_fields_from_dict_to_rest_object(cls) -> List[str]:
         return Command._picked_fields_from_dict_to_rest_object() + ["distribution"]
 
@@ -168,8 +196,8 @@ class Distributed(Command):
         rest_obj = super()._to_rest_object(**kwargs)
         distribution = self.distribution._to_rest_object() if self.distribution else None  # pylint: disable=no-member
         rest_obj.update(
-            dict(
-                distribution=get_rest_dict_for_node_attrs(distribution),
-            )
+            {
+                "distribution": get_rest_dict_for_node_attrs(distribution),
+            }
         )
         return rest_obj

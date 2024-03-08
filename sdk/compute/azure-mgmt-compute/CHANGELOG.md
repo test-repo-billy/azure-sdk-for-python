@@ -1,5 +1,178 @@
 # Release History
 
+## 30.5.0 (2024-01-22)
+
+### Features Added
+
+  - Model CreationData has a new parameter provisioned_bandwidth_copy_speed
+  - Model PurchasePlan has a new parameter promotion_code
+
+## 30.4.0 (2023-12-18)
+
+### Features Added
+
+  - Added operation DedicatedHostsOperations.begin_redeploy
+  - Added operation VirtualMachineScaleSetVMsOperations.begin_approve_rolling_upgrade
+  - Added operation VirtualMachineScaleSetVMsOperations.begin_attach_detach_data_disks
+  - Added operation VirtualMachineScaleSetsOperations.begin_approve_rolling_upgrade
+  - Added operation VirtualMachinesOperations.begin_attach_detach_data_disks
+  - Model AutomaticOSUpgradePolicy has a new parameter os_rolling_upgrade_deferral
+  - Model CapacityReservationGroup has a new parameter sharing_profile
+  - Model CapacityReservationGroupInstanceView has a new parameter shared_subscription_ids
+  - Model CapacityReservationGroupUpdate has a new parameter sharing_profile
+  - Model CommunityGallery has a new parameter artifact_tags
+  - Model CommunityGallery has a new parameter community_metadata
+  - Model CommunityGallery has a new parameter disclaimer
+  - Model CommunityGalleryImage has a new parameter artifact_tags
+  - Model CommunityGalleryImage has a new parameter disclaimer
+  - Model CommunityGalleryImageVersion has a new parameter artifact_tags
+  - Model CommunityGalleryImageVersion has a new parameter disclaimer
+  - Model GalleryImageVersion has a new parameter security_profile
+  - Model GalleryImageVersionUpdate has a new parameter security_profile
+  - Model RestorePointSourceVMStorageProfile has a new parameter disk_controller_type
+  - Model SecurityProfile has a new parameter encryption_identity
+  - Model SecurityProfile has a new parameter proxy_agent_settings
+  - Model SharedGallery has a new parameter artifact_tags
+  - Model SharedGalleryImage has a new parameter artifact_tags
+  - Model SharedGalleryImageVersion has a new parameter artifact_tags
+  - Model VirtualMachine has a new parameter etag
+  - Model VirtualMachine has a new parameter managed_by
+  - Model VirtualMachineInstanceView has a new parameter is_vm_in_standby_pool
+  - Model VirtualMachineScaleSet has a new parameter etag
+  - Model VirtualMachineScaleSet has a new parameter resiliency_policy
+  - Model VirtualMachineScaleSetUpdate has a new parameter resiliency_policy
+  - Model VirtualMachineScaleSetVM has a new parameter etag
+  - Model VirtualMachineScaleSetVMProfile has a new parameter time_created
+  - Operation SshPublicKeysOperations.generate_key_pair has a new optional parameter parameters
+  - Operation VirtualMachineScaleSetVMsOperations.begin_update has a new optional parameter if_match
+  - Operation VirtualMachineScaleSetVMsOperations.begin_update has a new optional parameter if_none_match
+  - Operation VirtualMachineScaleSetsOperations.begin_create_or_update has a new optional parameter if_match
+  - Operation VirtualMachineScaleSetsOperations.begin_create_or_update has a new optional parameter if_none_match
+  - Operation VirtualMachineScaleSetsOperations.begin_update has a new optional parameter if_match
+  - Operation VirtualMachineScaleSetsOperations.begin_update has a new optional parameter if_none_match
+  - Operation VirtualMachinesOperations.begin_create_or_update has a new optional parameter if_match
+  - Operation VirtualMachinesOperations.begin_create_or_update has a new optional parameter if_none_match
+  - Operation VirtualMachinesOperations.begin_update has a new optional parameter if_match
+  - Operation VirtualMachinesOperations.begin_update has a new optional parameter if_none_match
+
+## 30.3.0 (2023-10-23)
+
+### Features Added
+
+  - Model CreationData has a new parameter elastic_san_resource_id
+  - Model Disk has a new parameter last_ownership_update_time
+
+## 30.2.0 (2023-09-15)
+
+### Features Added
+
+  - Model VirtualMachineNetworkInterfaceConfiguration has a new parameter auxiliary_mode
+  - Model VirtualMachineNetworkInterfaceConfiguration has a new parameter auxiliary_sku
+  - Model VirtualMachinePublicIPAddressDnsSettingsConfiguration has a new parameter domain_name_label_scope
+  - Model VirtualMachineScaleSetNetworkConfiguration has a new parameter auxiliary_mode
+  - Model VirtualMachineScaleSetNetworkConfiguration has a new parameter auxiliary_sku
+  - Model VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings has a new parameter domain_name_label_scope
+  - Model VirtualMachineScaleSetUpdateNetworkConfiguration has a new parameter auxiliary_mode
+  - Model VirtualMachineScaleSetUpdateNetworkConfiguration has a new parameter auxiliary_sku
+  - Model VirtualMachineScaleSetVM has a new parameter time_created
+
+## 30.1.0 (2023-07-21)
+
+### Features Added
+
+  - Model GrantAccessData has a new parameter file_format
+
+## 30.0.0 (2023-05-25)
+
+### Features Added
+
+  - Added operation DedicatedHostsOperations.list_available_sizes
+  - Added operation VirtualMachineScaleSetsOperations.begin_reapply
+  - Model DedicatedHostUpdate has a new parameter sku
+  - Model LinuxVMGuestPatchAutomaticByPlatformSettings has a new parameter bypass_platform_safety_checks_on_user_schedule
+  - Model RestorePointSourceMetadata has a new parameter hyper_v_generation
+  - Model RestorePointSourceVMDataDisk has a new parameter write_accelerator_enabled
+  - Model RestorePointSourceVMOSDisk has a new parameter write_accelerator_enabled
+  - Model VirtualMachineExtension has a new parameter provision_after_extensions
+  - Model VirtualMachineRunCommand has a new parameter error_blob_managed_identity
+  - Model VirtualMachineRunCommand has a new parameter output_blob_managed_identity
+  - Model VirtualMachineRunCommand has a new parameter treat_failure_as_deployment_failure
+  - Model VirtualMachineRunCommandScriptSource has a new parameter script_uri_managed_identity
+  - Model VirtualMachineRunCommandUpdate has a new parameter error_blob_managed_identity
+  - Model VirtualMachineRunCommandUpdate has a new parameter output_blob_managed_identity
+  - Model VirtualMachineRunCommandUpdate has a new parameter treat_failure_as_deployment_failure
+  - Model VirtualMachineScaleSetUpdate has a new parameter priority_mix_policy
+  - Model VirtualMachineScaleSetUpdate has a new parameter spot_restore_policy
+  - Model VirtualMachineScaleSetVMExtension has a new parameter location
+  - Model VirtualMachineScaleSetVMExtension has a new parameter provision_after_extensions
+  - Model VirtualMachineScaleSetVMInstanceView has a new parameter computer_name
+  - Model VirtualMachineScaleSetVMInstanceView has a new parameter hyper_v_generation
+  - Model VirtualMachineScaleSetVMInstanceView has a new parameter os_name
+  - Model VirtualMachineScaleSetVMInstanceView has a new parameter os_version
+  - Model VirtualMachineScaleSetVMProfile has a new parameter security_posture_reference
+  - Model WindowsVMGuestPatchAutomaticByPlatformSettings has a new parameter bypass_platform_safety_checks_on_user_schedule
+  - Operation VirtualMachineScaleSetsOperations.begin_deallocate has a new optional parameter hibernate
+  - Operation VirtualMachinesOperations.list has a new optional parameter expand
+  - Operation VirtualMachinesOperations.list_all has a new optional parameter expand
+
+### Breaking Changes
+
+  - Model VirtualMachineScaleSetIPConfiguration no longer has parameter id
+  - Model VirtualMachineScaleSetNetworkConfiguration no longer has parameter id
+  - Model VirtualMachineScaleSetUpdateIPConfiguration no longer has parameter id
+  - Model VirtualMachineScaleSetUpdateNetworkConfiguration no longer has parameter id
+
+## 29.2.0b2 (2023-04-12)
+
+### Features Added
+
+  - Model VirtualMachineScaleSetVMInstanceView has a new parameter computer_name
+  - Model VirtualMachineScaleSetVMInstanceView has a new parameter hyper_v_generation
+  - Model VirtualMachineScaleSetVMInstanceView has a new parameter os_name
+  - Model VirtualMachineScaleSetVMInstanceView has a new parameter os_version
+
+### Breaking Changes
+
+  - All query and header parameters are now keyword-only
+  - Removed api version subfolders. This means you can no longer access any `azure.mgmt.compute.v20xx_xx_xx` modules.
+  - Removed `.models` method from `ComputeManagementClient`. Instead, import models from `azure.mgmt.compute.models`.
+  - Model VirtualMachineScaleSetIPConfiguration no longer has parameter id
+  - Model VirtualMachineScaleSetNetworkConfiguration no longer has parameter id
+
+### Other Changes
+
+  - Initial stable release with our new combined multiapi package. Package size is now 5% of what it used to be.
+
+
+## 29.2.0b1 (2023-02-20)
+
+### Features Added
+
+  - Model VirtualMachineScaleSetVMInstanceView has a new parameter computer_name
+  - Model VirtualMachineScaleSetVMInstanceView has a new parameter hyper_v_generation
+  - Model VirtualMachineScaleSetVMInstanceView has a new parameter os_name
+  - Model VirtualMachineScaleSetVMInstanceView has a new parameter os_version
+
+## 29.1.0 (2023-01-17)
+
+### Features Added
+
+  - Model CloudService has a new parameter zones
+  - Model RestorePointSourceMetadata has a new parameter user_data
+  - Model RollingUpgradePolicy has a new parameter max_surge
+  - Model RollingUpgradePolicy has a new parameter rollback_failed_instances_on_policy_breach
+  - Model ScheduledEventsProfile has a new parameter os_image_notification_profile
+  - Model VirtualMachineImage has a new parameter image_deprecation_status
+  - Model VirtualMachineReimageParameters has a new parameter exact_version
+  - Model VirtualMachineReimageParameters has a new parameter os_profile
+  - Model VirtualMachineScaleSet has a new parameter constrained_maximum_capacity
+  - Model VirtualMachineScaleSetOSProfile has a new parameter require_guest_provision_signal
+  - Model VirtualMachineScaleSetReimageParameters has a new parameter exact_version
+  - Model VirtualMachineScaleSetReimageParameters has a new parameter os_profile
+  - Model VirtualMachineScaleSetVMProfile has a new parameter service_artifact_reference
+  - Model VirtualMachineScaleSetVMReimageParameters has a new parameter exact_version
+  - Model VirtualMachineScaleSetVMReimageParameters has a new parameter os_profile
+
 ## 29.0.0 (2022-10-13)
 
 ### Features Added

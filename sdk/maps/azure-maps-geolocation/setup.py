@@ -60,6 +60,7 @@ setup(
     author='Microsoft Corporation',
     author_email='azpysdkhelp@microsoft.com',
     url='https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/maps/azure-maps-geolocation',
+    keywords="azure, azure sdk",
     classifiers=[
         "Development Status :: 4 - Beta",
         "Programming Language :: Python",
@@ -78,6 +79,7 @@ setup(
         'azure',
         'azure.maps',
     ]),
+    include_package_data=True,
     install_requires=[
         'msrest>=0.6.21',
         'azure-common~=1.1',

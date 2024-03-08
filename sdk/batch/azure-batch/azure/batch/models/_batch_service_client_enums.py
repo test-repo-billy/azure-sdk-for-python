@@ -114,8 +114,15 @@ class CachingType(str, Enum):
 
 class StorageAccountType(str, Enum):
 
-    standard_lrs = "standard_lrs"  #: The data disk should use standard locally redundant storage.
-    premium_lrs = "premium_lrs"  #: The data disk should use premium locally redundant storage.
+    standard_lrs = "standard_lrs"  #: The data disk / OS disk should use standard locally redundant storage.
+    premium_lrs = "premium_lrs"  #: The data disk / OS disk should use premium locally redundant storage.
+    standard_ssdlrs = "standardssd_lrs"  #: The data disk / OS disk should use standard SSD locally redundant storage.
+
+
+class ContainerType(str, Enum):
+
+    docker_compatible = "dockerCompatible"  #: A Docker compatible container technology will be used to launch the containers.
+    cri_compatible = "criCompatible"  #: A CRI based technology will be used to launch the containers.
 
 
 class DiskEncryptionTarget(str, Enum):
@@ -133,6 +140,11 @@ class NodePlacementPolicyType(str, Enum):
 class DiffDiskPlacement(str, Enum):
 
     cache_disk = "CacheDisk"  #: The Ephemeral OS Disk is stored on the VM cache.
+
+
+class SecurityTypes(str, Enum):
+
+    trusted_launch = "trustedLaunch"  #: Trusted launch protects against advanced and persistent attack techniques.
 
 
 class DynamicVNetAssignmentScope(str, Enum):
@@ -158,6 +170,13 @@ class IPAddressProvisioningType(str, Enum):
     batch_managed = "batchmanaged"  #: A public IP will be created and managed by Batch. There may be multiple public IPs depending on the size of the Pool.
     user_managed = "usermanaged"  #: Public IPs are provided by the user and will be used to provision the Compute Nodes.
     no_public_ip_addresses = "nopublicipaddresses"  #: No public IP Address will be created.
+
+
+class NodeCommunicationMode(str, Enum):
+
+    default = "default"  #: The node communication mode is automatically set by the Batch service.
+    classic = "classic"  #: Nodes using the classic communication mode require inbound TCP communication on ports 29876 and 29877 from the "BatchNodeManagement.{region}" service tag and outbound TCP communication on port 443 to the "Storage.region" and "BatchNodeManagement.{region}" service tags.
+    simplified = "simplified"  #: Nodes using the simplified communication mode require outbound TCP communication on port 443 to the "BatchNodeManagement.{region}" service tag. No open inbound ports are required.
 
 
 class PoolLifetimeOption(str, Enum):
@@ -220,11 +239,6 @@ class JobReleaseTaskState(str, Enum):
 
     running = "running"  #: The Task is currently running (including retrying).
     completed = "completed"  #: The Task has exited with exit code 0, or the Task has exhausted its retry limit, or the Batch service was unable to start the Task due to Task preparation errors (such as resource file download failures).
-
-
-class ContainerType(str, Enum):
-
-    docker_compatible = "dockerCompatible"  #: A Docker compatible container technology will be used to launch the containers.
 
 
 class StatusLevelTypes(str, Enum):

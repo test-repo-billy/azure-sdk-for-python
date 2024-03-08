@@ -1,6 +1,6 @@
 # Release History
 
-## 4.7.0b1 (Unreleased)
+## 4.8.1 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,68 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 4.8.0 (2024-02-22)
+
+### Features Added
+- Added support for service API version `7.5`
+
+### Breaking Changes
+> These changes do not impact the API of stable versions such as 4.7.0. Only code written against a beta version such as 4.8.0b2 may be affected.
+- Removed `CertificateProperties.x509_thumbprint_string`. To get the certificate's thumbprint in hex, use
+  `CertificateProperties.x509_thumbprint.hex()` or print the `CertificateProperties` instance.
+
+### Bugs Fixed
+- (From 4.8.0b1) Token requests made during AD FS authentication no longer specify an erroneous "adfs" tenant ID
+  ([#29888](https://github.com/Azure/azure-sdk-for-python/issues/29888))
+
+### Other Changes
+- Python 3.7 is no longer supported. Please use Python version 3.8 or later.
+- `asyncio` is no longer directly referenced by the library
+  ([#33819](https://github.com/Azure/azure-sdk-for-python/pull/33819))
+- Key Vault API version `7.5` is now the default
+- Updated minimum `azure-core` version to 1.29.5
+- Dropped `azure-common` requirement
+
+## 4.8.0b3 (2023-11-03)
+
+### Features Added
+- Added support for service API version `7.5-preview.1`
+
+### Other Changes
+- Key Vault API version `7.5-preview.1` is now the default
+
+## 4.8.0b2 (2023-07-11)
+
+### Features Added
+- Added `CertificateProperties.x509_thumbprint_string` to return the hexadecimal string representation of the SHA-1 hash
+  of the certificate ([#30166](https://github.com/Azure/azure-sdk-for-python/issues/30166))
+
+## 4.8.0b1 (2023-05-16)
+
+### Bugs Fixed
+- Token requests made during AD FS authentication no longer specify an erroneous "adfs" tenant ID
+  ([#29888](https://github.com/Azure/azure-sdk-for-python/issues/29888))
+
+## 4.7.0 (2023-03-16)
+
+### Features Added
+- Added support for service API version `7.4`
+- Clients each have a `send_request` method that can be used to send custom requests using the
+  client's existing pipeline ([#25172](https://github.com/Azure/azure-sdk-for-python/issues/25172))
+
+### Bugs Fixed
+- The type hints for `KeyVaultCertificate.cer` and `DeletedCertificate.cer` are now
+  `Optional[bytearray]` instead of `Optional[bytes]`
+  ([#28959](https://github.com/Azure/azure-sdk-for-python/issues/28959))
+
+### Other Changes
+- Python 3.6 is no longer supported. Please use Python version 3.7 or later.
+- Key Vault API version `7.4` is now the default
+- Updated minimum `azure-core` version to 1.24.0
+- Dropped `msrest` requirement
+- Added requirement for `isodate>=0.6.1` (`isodate` was required by `msrest`)
+- Added requirement for `typing-extensions>=4.0.1`
 
 ## 4.6.0 (2022-09-19)
 

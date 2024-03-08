@@ -41,8 +41,10 @@ class AzureSkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     STANDARD_L16_S_V2 = "Standard_L16s_v2"
     STANDARD_L8_S_V3 = "Standard_L8s_v3"
     STANDARD_L16_S_V3 = "Standard_L16s_v3"
+    STANDARD_L32_S_V3 = "Standard_L32s_v3"
     STANDARD_L8_AS_V3 = "Standard_L8as_v3"
     STANDARD_L16_AS_V3 = "Standard_L16as_v3"
+    STANDARD_L32_AS_V3 = "Standard_L32as_v3"
     STANDARD_E64_I_V3 = "Standard_E64i_v3"
     STANDARD_E80_IDS_V4 = "Standard_E80ids_v4"
     STANDARD_E2_A_V4 = "Standard_E2a_v4"
@@ -180,6 +182,7 @@ class DataConnectionKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     EVENT_HUB = "EventHub"
     EVENT_GRID = "EventGrid"
     IOT_HUB = "IotHub"
+    COSMOS_DB = "CosmosDb"
 
 
 class DefaultPrincipalsModificationKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -279,11 +282,34 @@ class Kind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     READ_ONLY_FOLLOWING = "ReadOnlyFollowing"
 
 
+class Language(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The language name, for example Python."""
+
+    PYTHON = "Python"
+
+
+class LanguageExtensionImageName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Language extension image name."""
+
+    R = "R"
+    PYTHON3_6_5 = "Python3_6_5"
+    PYTHON3_10_8 = "Python3_10_8"
+    PYTHON3_10_8_DL = "Python3_10_8_DL"
+    PYTHON_CUSTOM_IMAGE = "PythonCustomImage"
+
+
 class LanguageExtensionName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Language extension that can run within KQL query."""
 
     PYTHON = "PYTHON"
     R = "R"
+
+
+class MigrationClusterRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The role of the cluster in the migration process."""
+
+    SOURCE = "Source"
+    DESTINATION = "Destination"
 
 
 class PrincipalsModificationKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -311,6 +337,7 @@ class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"
     MOVING = "Moving"
+    CANCELED = "Canceled"
 
 
 class PublicIPType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -348,6 +375,7 @@ class State(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     STOPPED = "Stopped"
     STARTING = "Starting"
     UPDATING = "Updating"
+    MIGRATED = "Migrated"
 
 
 class Status(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -366,3 +394,12 @@ class Type(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     MICROSOFT_KUSTO_CLUSTERS_ATTACHED_DATABASE_CONFIGURATIONS = (
         "Microsoft.Kusto/clusters/attachedDatabaseConfigurations"
     )
+
+
+class VnetState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """When enabled, the cluster is deployed into the configured subnet, when disabled it will be
+    removed from the subnet.
+    """
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"

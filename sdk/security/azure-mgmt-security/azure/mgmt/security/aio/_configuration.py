@@ -28,7 +28,7 @@ class SecurityCenterConfiguration(Configuration):
 
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param subscription_id: Azure subscription ID. Required.
+    :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
     :type subscription_id: str
     """
 
@@ -36,7 +36,7 @@ class SecurityCenterConfiguration(Configuration):
         self,
         credential: "AsyncTokenCredential",
         subscription_id: str,
-        **kwargs  # type: Any
+        **kwargs: Any
     ) -> None:
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")

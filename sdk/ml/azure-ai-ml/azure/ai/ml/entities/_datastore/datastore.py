@@ -4,15 +4,22 @@
 
 # pylint: disable=protected-access,redefined-builtin,arguments-renamed
 
-from abc import ABC, abstractclassmethod, abstractmethod
+from abc import ABC, abstractmethod
 from os import PathLike
 from pathlib import Path
-from typing import IO, Any, AnyStr, Dict, Union
+from typing import IO, Any, AnyStr, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2022_05_01.models import DatastoreData, DatastoreType
+from azure.ai.ml._restclient.v2023_04_01_preview.models import Datastore as DatastoreData
+from azure.ai.ml._restclient.v2023_04_01_preview.models import DatastoreType
 from azure.ai.ml._utils.utils import camel_to_snake, dump_yaml_to_file
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, CommonYamlFields
-from azure.ai.ml.entities._credentials import NoneCredentialConfiguration
+from azure.ai.ml.entities._credentials import (
+    AccountKeyConfiguration,
+    CertificateConfiguration,
+    NoneCredentialConfiguration,
+    SasTokenConfiguration,
+    ServicePrincipalConfiguration,
+)
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._util import find_type_in_override
@@ -20,7 +27,6 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorTy
 
 
 class Datastore(Resource, RestTranslatableMixin, ABC):
-
     """Datastore of an Azure ML workspace, abstract class.
 
     :param name: Name of the datastore.
@@ -28,7 +34,14 @@ class Datastore(Resource, RestTranslatableMixin, ABC):
     :param description: Description of the resource.
     :type description: str
     :param credentials: Credentials to use for Azure ML workspace to connect to the storage.
-    :type credentials: Union[ServicePrincipalSection, CertificateSection]
+    :type credentials: Optional[Union[
+        ~azure.ai.ml.entities.ServicePrincipalConfiguration,
+        ~azure.ai.ml.entities.CertificateConfiguration,
+        ~azure.ai.ml.entities.NoneCredentialConfiguration,
+        ~azure.ai.ml.entities.AccountKeyConfiguration,
+        ~azure.ai.ml.entities.SasTokenConfiguration
+
+        ]]
     :param tags: Tag dictionary. Tags can be added, removed, and updated.
     :type tags: dict[str, str]
     :param properties: The asset property dictionary.
@@ -39,14 +52,22 @@ class Datastore(Resource, RestTranslatableMixin, ABC):
 
     def __init__(
         self,
-        credentials: Any,
-        name: str = None,
-        description: str = None,
-        tags: Dict = None,
-        properties: Dict = None,
-        **kwargs,
+        credentials: Optional[
+            Union[
+                ServicePrincipalConfiguration,
+                CertificateConfiguration,
+                NoneCredentialConfiguration,
+                AccountKeyConfiguration,
+                SasTokenConfiguration,
+            ]
+        ],
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        tags: Optional[Dict] = None,
+        properties: Optional[Dict] = None,
+        **kwargs: Any,
     ):
-        self._type = kwargs.pop("type", None)
+        self._type: str = kwargs.pop("type", None)
         super().__init__(
             name=name,
             description=description,
@@ -61,7 +82,7 @@ class Datastore(Resource, RestTranslatableMixin, ABC):
     def type(self) -> str:
         return self._type
 
-    def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs) -> None:
+    def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs: Any) -> None:
         """Dump the datastore content into a file in yaml format.
 
         :param dest: The destination to receive this datastore's content.
@@ -82,10 +103,10 @@ class Datastore(Resource, RestTranslatableMixin, ABC):
     @classmethod
     def _load(
         cls,
-        data: Dict = None,
-        yaml_path: Union[PathLike, str] = None,
-        params_override: list = None,
-        **kwargs,
+        data: Optional[Dict] = None,
+        yaml_path: Optional[Union[PathLike, str]] = None,
+        params_override: Optional[list] = None,
+        **kwargs: Any,
     ) -> "Datastore":
         data = data or {}
         params_override = params_override or []
@@ -100,13 +121,14 @@ class Datastore(Resource, RestTranslatableMixin, ABC):
             AzureDataLakeGen1Datastore,
             AzureDataLakeGen2Datastore,
             AzureFileDatastore,
+            OneLakeDatastore,
         )
 
         # from azure.ai.ml.entities._datastore._on_prem import (
         #     HdfsDatastore
         # )
 
-        ds_type = None
+        ds_type: Any = None
         type_in_override = find_type_in_override(params_override)
         type = type_in_override or data.get(
             CommonYamlFields.TYPE, DatastoreType.AZURE_BLOB
@@ -121,6 +143,8 @@ class Datastore(Resource, RestTranslatableMixin, ABC):
             ds_type = AzureDataLakeGen1Datastore
         elif type == camel_to_snake(DatastoreType.AZURE_DATA_LAKE_GEN2):
             ds_type = AzureDataLakeGen2Datastore
+        elif type == camel_to_snake(DatastoreType.ONE_LAKE):
+            ds_type = OneLakeDatastore
         # disable unless preview release
         # elif type == camel_to_snake(DatastoreTypePreview.HDFS):
         #    ds_type = HdfsDatastore
@@ -134,21 +158,22 @@ class Datastore(Resource, RestTranslatableMixin, ABC):
                 error_category=ErrorCategory.USER_ERROR,
             )
 
-        return ds_type._load_from_dict(
+        res: Datastore = ds_type._load_from_dict(
             data=data,
             context=context,
             additional_message="If the datastore type is incorrect, change the 'type' property.",
             **kwargs,
         )
+        return res
 
     @classmethod
     def _from_rest_object(cls, datastore_resource: DatastoreData) -> "Datastore":
-
         from azure.ai.ml.entities import (
             AzureBlobDatastore,
             AzureDataLakeGen1Datastore,
             AzureDataLakeGen2Datastore,
             AzureFileDatastore,
+            OneLakeDatastore,
         )
 
         # from azure.ai.ml.entities._datastore._on_prem import (
@@ -157,13 +182,20 @@ class Datastore(Resource, RestTranslatableMixin, ABC):
 
         datastore_type = datastore_resource.properties.datastore_type
         if datastore_type == DatastoreType.AZURE_DATA_LAKE_GEN1:
-            return AzureDataLakeGen1Datastore._from_rest_object(datastore_resource)
+            res_adl_gen1: Datastore = AzureDataLakeGen1Datastore._from_rest_object(datastore_resource)
+            return res_adl_gen1
         if datastore_type == DatastoreType.AZURE_DATA_LAKE_GEN2:
-            return AzureDataLakeGen2Datastore._from_rest_object(datastore_resource)
+            res_adl_gen2: Datastore = AzureDataLakeGen2Datastore._from_rest_object(datastore_resource)
+            return res_adl_gen2
         if datastore_type == DatastoreType.AZURE_BLOB:
-            return AzureBlobDatastore._from_rest_object(datastore_resource)
+            res_abd: Datastore = AzureBlobDatastore._from_rest_object(datastore_resource)
+            return res_abd
         if datastore_type == DatastoreType.AZURE_FILE:
-            return AzureFileDatastore._from_rest_object(datastore_resource)
+            res_afd: Datastore = AzureFileDatastore._from_rest_object(datastore_resource)
+            return res_afd
+        if datastore_type == DatastoreType.ONE_LAKE:
+            res_old: Datastore = OneLakeDatastore._from_rest_object(datastore_resource)
+            return res_old
         # disable unless preview release
         # elif datastore_type == DatastoreTypePreview.HDFS:
         #     return HdfsDatastore._from_rest_object(datastore_resource)
@@ -176,12 +208,14 @@ class Datastore(Resource, RestTranslatableMixin, ABC):
             error_category=ErrorCategory.SYSTEM_ERROR,
         )
 
-    @abstractclassmethod
-    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs) -> "Datastore":
+    @classmethod
+    @abstractmethod
+    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs: Any) -> "Datastore":
         pass
 
-    def __eq__(self, other) -> bool:
-        return self.name == other.name and self.type == other.type and self.credentials == other.credentials
+    def __eq__(self, other: Any) -> bool:
+        res: bool = self.name == other.name and self.type == other.type and self.credentials == other.credentials
+        return res
 
-    def __ne__(self, other) -> bool:
+    def __ne__(self, other: Any) -> bool:
         return not self.__eq__(other)

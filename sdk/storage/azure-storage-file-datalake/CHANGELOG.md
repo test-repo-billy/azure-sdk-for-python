@@ -1,18 +1,108 @@
 # Release History
 
-## 12.9.1 (Unreleased)
+## 12.15.0b1 (Unreleased)
+
+This version and all future versions will require Python 3.8+. Python 3.7 is no longer supported.
 
 ### Features Added
-
-### Breaking Changes
+- The `services` parameter has been added to the `generate_account_sas` API, which enables the ability to generate SAS
+tokens to be used with multiple services. By default, the SAS token service scope will default to the current service.
 
 ### Bugs Fixed
+- Bumped dependency of `typing-extensions` to `>=4.6.0` to avoid potential `TypeError` with `typing.TypeVar` on
+Python 3.12.
+- Fixed an issue where authentication errors could raise `AttributeError` instead of `ClientAuthenticationError` when
+using async OAuth credentials.
+
+## 12.14.0 (2023-11-07)
+
+### Features Added
+- Stable release of features from 12.14.0b1
+
+## 12.14.0b1 (2023-10-17)
+
+### Features Added
+- Added support for service version 2023-11-03.
+- Added `audience` as an optional keyword that can be specified on APIs that have a `credential` parameter. This
+keyword only has an effect when the credential provided is of type `TokenCredential`.
+
+## 12.13.2 (2023-10-10)
+
+### Bugs Fixed
+- Fixed an issue when an invalid type was provided for `credential` during client construction, the
+`__str__` of the object would be present in the exception message and therefore potentially logged.
+
+## 12.13.1 (2023-09-13)
+
+### Bugs Fixed
+- Fixed breaking `KeyError: 'sdk_moniker'` in `create_configuration`.
+NOTE: This is not an exported method and therefore should not be imported/called directly.
+
+## 12.13.0 (2023-09-12)
+
+### Features Added
+- Stable release of features from 12.13.0b1
+
+## 12.13.0b1 (2023-08-08)
+
+### Features Added
+- Added support for service versions 2023-05-03 and 2023-08-03.
+
+## 12.12.0 (2023-07-11)
+
+### Features Added
+- Stable release of features from 12.12.0b1
+
+## 12.12.0b1 (2023-05-30)
+
+### Features Added
+- Added support for service version 2023-01-03.
+- Added support for `encryption_context` to the `upload_data` API. Previously, `encryption_context` support was only on the `create_file` API.
+- Added `owner`, `group`, and `permission` properties to `DirectoryProperties` and `FileProperties`.
+
+## 12.11.0 (2023-04-12)
+
+### Features Added
+- Stable release of features from 12.11.0b1
+
+## 12.11.0b1 (2023-03-28)
+
+### Features Added
+- Added support for service version 2022-11-02.
+- Added support for `encryption_context`, a string value that can be passed when creating a file that will not be
+encrypted with the file. This value is returned on `download_file`, `get_file_properties` and `get_paths`.
+
+## 12.10.1 (2023-03-08)
+
+### Bugs Fixed
+- Fixed "duplicate type signatures" MyPy error.
+
+## 12.10.0 (2023-02-22)
+
+### Features Added
+- Stable release of features from 12.10.0b1
+
+## 12.10.0b1 (2023-02-02)
+
+### Features Added
+- Added support for service version 2021-12-02.
+- Added ability to perform leasing actions on file append and flush. See new keyword `lease_action` for details.
+- Added support for `AsyncIterable` as data type for async file upload.
+
+### Bugs Fixed
+- Fixed an issue where `rename_file` and `rename_directory` would not work correctly if the new file/directory name
+contained a `?` character.
 
 ### Other Changes
 - Removed `msrest` dependency.
 - Added `typing-extensions>=4.0.1` as a dependency.
 - Added `isodate>=0.6.1` as a dependency.
 - Added extra dependency `aio` for installing optional async dependencies. Use `pip install azure-storage-file-datalake[aio]` to install.
+
+## 12.9.1 (2022-10-18)
+
+### Bugs Fixed
+- Fixed possible `ValueError` for invalid content range that gets raised when downloading empty files through Azurite.
 
 ## 12.9.0 (2022-10-11)
 
@@ -102,7 +192,7 @@ in a future release.
     - `permanent_delete`
     - `set_immutability_policy`
 **Fixes**
-- `FileSystemProperties` was not subscriptable. Now it is both subscriptable and attributes can also be accessed directly (#20772) 
+- `FileSystemProperties` was not subscriptable. Now it is both subscriptable and attributes can also be accessed directly (#20772)
 - Datalake Client Typing annotation issues have been resolved (#19906)
 
 ## 12.5.0 (2021-09-15)

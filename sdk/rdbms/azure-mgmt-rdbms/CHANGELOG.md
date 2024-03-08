@@ -1,5 +1,207 @@
 # Release History
 
+## 10.2.0b15 (2024-03-04)
+
+### Features Added
+
+  - Added operation AdvancedThreatProtectionSettingsOperations.begin_update_put
+  - Added operation group LongRunningBackupOperations
+  - Added operation group LongRunningBackupsOperations
+  - Added operation group MaintenancesOperations
+  - Added operation group OperationProgressOperations
+
+## 10.2.0b14 (2024-01-23)
+
+### Features Added
+
+  - Added operation group AdvancedThreatProtectionSettingsOperations
+  - Added operation group LocationBasedCapabilitySetOperations
+  - Added operation group OperationResultsOperations
+
+## 10.2.0b13 (2023-12-18)
+
+### Other Changes
+
+  - Fix for ServerThreatProtectionSettingsOperations.begin_create_or_update
+
+## 10.2.0b12 (2023-11-20)
+
+### Features Added
+
+  - Added operation group PrivateEndpointConnectionOperations
+  - Added operation group QuotaUsagesOperations
+  - Added operation group ServerThreatProtectionSettingsOperations
+  - Added operation group VirtualEndpointsOperations
+  - Model MigrationResource has a new parameter migration_option
+  - Model MigrationResource has a new parameter source_type
+  - Model MigrationResource has a new parameter ssl_mode
+  - Model MigrationSubStateDetails has a new parameter db_details
+  - Model MigrationSubStateDetails has a new parameter validation_details
+  - Model PrivateEndpointConnection has a new parameter group_ids
+  - Model PrivateEndpointConnection has a new parameter system_data
+  - Model PrivateLinkResource has a new parameter group_id
+  - Model PrivateLinkResource has a new parameter required_members
+  - Model PrivateLinkResource has a new parameter required_zone_names
+  - Model PrivateLinkResource has a new parameter system_data
+  - Model Server has a new parameter private_endpoint_connections
+  - Model Server has a new parameter replica
+  - Model ServerForUpdate has a new parameter replica
+  - Model Storage has a new parameter throughput
+  - Model Storage has a new parameter type
+  - Model StorageMbCapability has a new parameter maximum_storage_size_mb
+  - Model StorageMbCapability has a new parameter supported_maximum_iops
+  - Model StorageMbCapability has a new parameter supported_maximum_throughput
+  - Model StorageMbCapability has a new parameter supported_throughput
+
+### Breaking Changes
+
+  - Model PrivateLinkResource no longer has parameter properties
+  - Removed operation PrivateEndpointConnectionsOperations.begin_create_or_update
+  - Removed operation PrivateEndpointConnectionsOperations.begin_delete
+  - Removed operation PrivateEndpointConnectionsOperations.begin_update_tags
+
+## 10.2.0b11 (2023-09-27)
+
+### Features Added
+
+  - Added operation group ServersMigrationOperations in `mysql_flexibleservers`
+  - Model BackupAndExportResponse has a new parameter system_data in `mysql_flexibleservers`
+  - Model ErrorResponse has a new parameter error in `mysql_flexibleservers`
+  - Model ProxyResource has a new parameter system_data in `mysql_flexibleservers`
+  - Model Resource has a new parameter system_data in `mysql_flexibleservers`
+  - Model Server has a new parameter import_source_properties in `mysql_flexibleservers`
+  - Model Server has a new parameter private_endpoint_connections in `mysql_flexibleservers`
+  - Model TrackedResource has a new parameter system_data in `mysql_flexibleservers`
+
+### Breaking Changes
+
+  - Model ErrorResponse no longer has parameter additional_info in `mysql_flexibleservers`
+  - Model ErrorResponse no longer has parameter code in `mysql_flexibleservers`
+  - Model ErrorResponse no longer has parameter details in `mysql_flexibleservers`
+  - Model ErrorResponse no longer has parameter message in `mysql_flexibleservers`
+  - Model ErrorResponse no longer has parameter target in `mysql_flexibleservers`
+  - Enum BackupFormat has new value RAW and removes NONE in `mysql_flexibleservers`
+  - Enum SkuTier is renamed to ServerSkuTier in `mysql_flexibleservers`
+  - Model Storage rename parameter iops_tier to tier in `postgresql_flexibleservers`
+
+## 10.2.0b10 (2023-06-08)
+
+### Other Changes
+
+  - Updated auto-generated samples
+
+## 10.2.0b9 (2023-05-26)
+
+### Features Added
+
+  - Added operation group FlexibleServerOperations
+  - Added operation group LogFilesOperations
+  - Added operation group LtrBackupOperationsOperations
+  - Added operation group MigrationsOperations
+  - Added operation group PostgreSQLManagementClientOperationsMixin
+  - Added operation group ServerCapabilitiesOperations
+  - Model DataEncryption has a new parameter geo_backup_encryption_key_status
+  - Model DataEncryption has a new parameter geo_backup_key_uri
+  - Model DataEncryption has a new parameter geo_backup_user_assigned_identity_id
+  - Model DataEncryption has a new parameter primary_encryption_key_status
+  - Model FastProvisioningEditionCapability has a new parameter reason
+  - Model FastProvisioningEditionCapability has a new parameter server_count
+  - Model FastProvisioningEditionCapability has a new parameter status
+  - Model FastProvisioningEditionCapability has a new parameter supported_tier
+  - Model FlexibleServerEditionCapability has a new parameter default_sku_name
+  - Model FlexibleServerEditionCapability has a new parameter reason
+  - Model FlexibleServerEditionCapability has a new parameter supported_server_skus
+  - Model ServerForUpdate has a new parameter network
+  - Model ServerVersionCapability has a new parameter reason
+  - Model Storage has a new parameter auto_grow
+  - Model Storage has a new parameter iops
+  - Model Storage has a new parameter iops_tier
+  - Model StorageEditionCapability has a new parameter default_storage_size_mb
+  - Model StorageEditionCapability has a new parameter reason
+  - Model StorageTierCapability has a new parameter reason
+  - Model UserAssignedIdentity has a new parameter tenant_id
+
+### Breaking Changes
+
+  - Model FlexibleServerEditionCapability no longer has parameter supported_server_versions
+  - Model ServerVersionCapability no longer has parameter supported_vcores
+  - Model StorageTierCapability no longer has parameter is_baseline
+  - Model StorageTierCapability no longer has parameter tier_name
+
+## 10.2.0b8 (2023-05-12)
+
+### Features Added
+
+  - Model ServerForUpdate has a new parameter network
+
+## 10.2.0b7 (2023-04-18)
+
+### Features Added
+
+  - Added operation group BackupAndExportOperations
+
+### Breaking Changes
+
+  - Renamed `SYSTEM_ASSIGNED` to `SYSTEM_MANAGED` in enum `ArmServerKeyType`
+  - Removed `SECONDARY`, `WAL_REPLICA`, `SYNC_REPLICA`, `GEO_SYNC_REPLICA` from enum `ReplicationRole`
+
+## 10.2.0b6 (2023-01-04)
+
+### Features Added
+
+  - Model AuthConfig has a new parameter active_directory_auth
+  - Model AuthConfig has a new parameter password_auth
+
+### Breaking Changes
+
+  - Model AuthConfig no longer has parameter active_directory_auth_enabled
+  - Model AuthConfig no longer has parameter password_auth_enabled
+
+## 10.2.0b5 (2022-11-14)
+
+### Features Added
+
+  - Model ServerForUpdate has a new parameter replication_role
+
+## 10.2.0b4 (2022-11-02)
+
+### Features Added
+
+  - Added operation group AdministratorsOperations
+  - Added operation group CheckNameAvailabilityWithLocationOperations
+  - Model CapabilityProperties has a new parameter fast_provisioning_supported
+  - Model CapabilityProperties has a new parameter supported_fast_provisioning_editions
+  - Model ErrorResponse has a new parameter error
+  - Model ProxyResource has a new parameter system_data
+  - Model Resource has a new parameter system_data
+  - Model Server has a new parameter auth_config
+  - Model Server has a new parameter data_encryption
+  - Model Server has a new parameter identity
+  - Model Server has a new parameter replica_capacity
+  - Model Server has a new parameter replication_role
+  - Model ServerForUpdate has a new parameter auth_config
+  - Model ServerForUpdate has a new parameter data_encryption
+  - Model ServerForUpdate has a new parameter identity
+  - Model ServerForUpdate has a new parameter version
+  - Model ServerVersionCapability has a new parameter supported_versions_to_upgrade
+  - Model StorageMBCapability has a new parameter supported_upgradable_tier_list
+  - Model TrackedResource has a new parameter system_data
+  - Model UserAssignedIdentity has a new parameter user_assigned_identities
+
+### Breaking Changes
+
+  - Model DataEncryption no longer has parameter geo_backup_key_uri
+  - Model DataEncryption no longer has parameter geo_backup_user_assigned_identity_id
+  - Model ErrorResponse no longer has parameter additional_info
+  - Model ErrorResponse no longer has parameter code
+  - Model ErrorResponse no longer has parameter details
+  - Model ErrorResponse no longer has parameter message
+  - Model ErrorResponse no longer has parameter target
+  - Model ServerForUpdate no longer has parameter location
+  - Model UserAssignedIdentity has a new required parameter type
+  - Model UserAssignedIdentity no longer has parameter client_id
+  - Model UserAssignedIdentity no longer has parameter principal_id
+
 ## 10.2.0b3 (2022-08-09)
 
 **Features**

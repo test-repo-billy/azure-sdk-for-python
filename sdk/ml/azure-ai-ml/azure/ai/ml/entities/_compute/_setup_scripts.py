@@ -4,30 +4,28 @@
 # pylint: disable=protected-access
 
 import re
-from typing import Optional
+from typing import Optional, cast
 
-from azure.ai.ml._restclient.v2022_01_01_preview.models import ScriptReference as RestScriptReference
-from azure.ai.ml._restclient.v2022_01_01_preview.models import ScriptsToExecute as RestScriptsToExecute
-from azure.ai.ml._restclient.v2022_01_01_preview.models import SetupScripts as RestSetupScripts
-from azure.ai.ml._utils._experimental import experimental
+from azure.ai.ml._restclient.v2022_10_01_preview.models import ScriptReference as RestScriptReference
+from azure.ai.ml._restclient.v2022_10_01_preview.models import ScriptsToExecute as RestScriptsToExecute
+from azure.ai.ml._restclient.v2022_10_01_preview.models import SetupScripts as RestSetupScripts
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
-@experimental
 class ScriptReference(RestTranslatableMixin):
     """Script reference.
 
-    :param path: The location of scripts in workspace storage.
-    :type path: Optional[str], optional
-    :param command: Optional command line arguments passed to the script to run.
-    :type command: Optional[str], optional
-    :param timeout_minutes: Optional time period passed to timeout command.
-    :type timeout_minutes: Optional[int], optional
+    :keyword path: The location of scripts in workspace storage.
+    :paramtype path: Optional[str]
+    :keyword command: Command line arguments passed to the script to run.
+    :paramtype command: Optional[str]
+    :keyword timeout_minutes: Timeout, in minutes, for the script to run.
+    :paramtype timeout_minutes: Optional[int]
     """
 
     def __init__(
         self, *, path: Optional[str] = None, command: Optional[str] = None, timeout_minutes: Optional[int] = None
-    ):
+    ) -> None:
         self.path = path
         self.command = command
         self.timeout_minutes = timeout_minutes
@@ -41,7 +39,7 @@ class ScriptReference(RestTranslatableMixin):
         )
 
     @classmethod
-    def _from_rest_object(cls, obj: RestScriptReference) -> "ScriptReference":
+    def _from_rest_object(cls, obj: RestScriptReference) -> Optional["ScriptReference"]:
         if obj is None:
             return obj
         timeout_match = re.match(r"(\d+)m", obj.timeout) if obj.timeout else None
@@ -49,24 +47,23 @@ class ScriptReference(RestTranslatableMixin):
         script_reference = ScriptReference(
             path=obj.script_data if obj.script_data else None,
             command=obj.script_arguments if obj.script_arguments else None,
-            timeout_minutes=timeout_minutes,
+            timeout_minutes=cast(Optional[int], timeout_minutes),
         )
         return script_reference
 
 
-@experimental
 class SetupScripts(RestTranslatableMixin):
     """Customized setup scripts.
 
-    :param startup_script: Script that's run every time the machine starts.
-    :type startup_script: Optional[ScriptReference], optional
-    :param creation_script: Script that's run only once during provision of the compute.
-    :type creation_script: Optional[ScriptReference], optional
+    :keyword startup_script: The script to be run every time the compute is started.
+    :paramtype startup_script: Optional[~azure.ai.ml.entities.ScriptReference]
+    :keyword creation_script: The script to be run only when the compute is created.
+    :paramtype creation_script: Optional[~azure.ai.ml.entities.ScriptReference]
     """
 
     def __init__(
         self, *, startup_script: Optional[ScriptReference] = None, creation_script: Optional[ScriptReference] = None
-    ):
+    ) -> None:
         self.startup_script = startup_script
         self.creation_script = creation_script
 
@@ -78,7 +75,7 @@ class SetupScripts(RestTranslatableMixin):
         return RestSetupScripts(scripts=scripts_to_execute)
 
     @classmethod
-    def _from_rest_object(cls, obj: RestSetupScripts) -> "SetupScripts":
+    def _from_rest_object(cls, obj: RestSetupScripts) -> Optional["SetupScripts"]:
         if obj is None or obj.scripts is None:
             return None
         scripts = obj.scripts

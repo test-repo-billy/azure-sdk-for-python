@@ -7,146 +7,171 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class ActionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Enum. Indicates the action type. "Internal" refers to actions that are for internal only APIs.
-    """
+class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum. Indicates the action type. "Internal" refers to actions that are for internal only APIs."""
 
     INTERNAL = "Internal"
 
-class ArcSettingAggregateState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Aggregate state of Arc agent across the nodes in this HCI cluster.
-    """
 
-    NOT_SPECIFIED = "NotSpecified"
-    ERROR = "Error"
-    SUCCEEDED = "Succeeded"
-    CANCELED = "Canceled"
-    FAILED = "Failed"
-    CONNECTED = "Connected"
-    DISCONNECTED = "Disconnected"
-    DELETED = "Deleted"
-    CREATING = "Creating"
-    UPDATING = "Updating"
-    DELETING = "Deleting"
-    MOVING = "Moving"
-    PARTIALLY_SUCCEEDED = "PartiallySucceeded"
-    PARTIALLY_CONNECTED = "PartiallyConnected"
-    IN_PROGRESS = "InProgress"
+class CloudInitDataSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Datasource for the gallery image when provisioning with cloud-init [NoCloud, Azure]."""
 
-class CreatedByType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of identity that created the resource.
-    """
+    NO_CLOUD = "NoCloud"
+    AZURE = "Azure"
+
+
+class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity that created the resource."""
 
     USER = "User"
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
-class DiagnosticLevel(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Desired level of diagnostic data emitted by the cluster.
+
+class DiskFileFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The format of the actual VHD file [vhd, vhdx]."""
+
+    VHDX = "vhdx"
+    VHD = "vhd"
+
+
+class ExtendedLocationTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of extendedLocation."""
+
+    CUSTOM_LOCATION = "CustomLocation"
+
+
+class HyperVGeneration(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The hypervisor generation of the Virtual Machine [V1, V2]."""
+
+    V1 = "V1"
+    V2 = "V2"
+
+
+class IpAllocationMethodEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """IPAllocationMethod - The IP address allocation method. Possible values include: 'Static',
+    'Dynamic'.
     """
 
-    OFF = "Off"
-    BASIC = "Basic"
-    ENHANCED = "Enhanced"
+    DYNAMIC = "Dynamic"
+    STATIC = "Static"
 
-class ExtensionAggregateState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Aggregate state of Arc Extensions across the nodes in this HCI cluster.
-    """
 
-    NOT_SPECIFIED = "NotSpecified"
-    ERROR = "Error"
-    SUCCEEDED = "Succeeded"
-    CANCELED = "Canceled"
-    FAILED = "Failed"
-    CONNECTED = "Connected"
-    DISCONNECTED = "Disconnected"
-    DELETED = "Deleted"
-    CREATING = "Creating"
-    UPDATING = "Updating"
-    DELETING = "Deleting"
-    MOVING = "Moving"
-    PARTIALLY_SUCCEEDED = "PartiallySucceeded"
-    PARTIALLY_CONNECTED = "PartiallyConnected"
-    IN_PROGRESS = "InProgress"
+class IPPoolTypeEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the IP Pool [vm, vippool]."""
 
-class ImdsAttestation(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """IMDS attestation status of the cluster.
-    """
+    VM = "vm"
+    VIPPOOL = "vippool"
 
-    DISABLED = "Disabled"
-    ENABLED = "Enabled"
 
-class NodeArcState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """State of Arc agent in this node.
-    """
+class OperatingSystemTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Operating system type that the gallery image uses [Windows, Linux]."""
 
-    NOT_SPECIFIED = "NotSpecified"
-    ERROR = "Error"
-    SUCCEEDED = "Succeeded"
-    CANCELED = "Canceled"
-    FAILED = "Failed"
-    CONNECTED = "Connected"
-    DISCONNECTED = "Disconnected"
-    DELETED = "Deleted"
-    CREATING = "Creating"
-    UPDATING = "Updating"
-    DELETING = "Deleting"
-    MOVING = "Moving"
+    WINDOWS = "Windows"
+    LINUX = "Linux"
 
-class NodeExtensionState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """State of Arc Extension in this node.
-    """
 
-    NOT_SPECIFIED = "NotSpecified"
-    ERROR = "Error"
-    SUCCEEDED = "Succeeded"
-    CANCELED = "Canceled"
-    FAILED = "Failed"
-    CONNECTED = "Connected"
-    DISCONNECTED = "Disconnected"
-    DELETED = "Deleted"
-    CREATING = "Creating"
-    UPDATING = "Updating"
-    DELETING = "Deleting"
-    MOVING = "Moving"
-
-class Origin(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
-    logs UX. Default value is "user,system"
+    logs UX. Default value is "user,system".
     """
 
     USER = "user"
     SYSTEM = "system"
     USER_SYSTEM = "user,system"
 
-class ProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Provisioning state of the ArcSetting proxy resource.
-    """
+
+class PowerStateEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The power state of the virtual machine instance."""
+
+    DEALLOCATED = "Deallocated"
+    DEALLOCATING = "Deallocating"
+    RUNNING = "Running"
+    STARTING = "Starting"
+    STOPPED = "Stopped"
+    STOPPING = "Stopping"
+    UNKNOWN = "Unknown"
+
+
+class ProvisioningAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Defines the different types of operations for guest agent."""
+
+    INSTALL = "install"
+    UNINSTALL = "uninstall"
+    REPAIR = "repair"
+
+
+class ProvisioningStateEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Provisioning state of the gallery image."""
 
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"
-    CANCELED = "Canceled"
+    IN_PROGRESS = "InProgress"
     ACCEPTED = "Accepted"
-    PROVISIONING = "Provisioning"
+    DELETING = "Deleting"
+    CANCELED = "Canceled"
 
-class Status(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Status of the cluster agent.
+
+class SecurityTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies the SecurityType of the virtual machine. EnableTPM and SecureBootEnabled must be set
+    to true for SecurityType to function.
     """
 
-    NOT_YET_REGISTERED = "NotYetRegistered"
-    CONNECTED_RECENTLY = "ConnectedRecently"
-    NOT_CONNECTED_RECENTLY = "NotConnectedRecently"
-    DISCONNECTED = "Disconnected"
+    TRUSTED_LAUNCH = "TrustedLaunch"
+    CONFIDENTIAL_VM = "ConfidentialVM"
+
+
+class Status(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The status of the operation performed on the gallery image [Succeeded, Failed, InProgress]."""
+
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
+    IN_PROGRESS = "InProgress"
+
+
+class StatusLevelTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The level code."""
+
+    INFO = "Info"
+    WARNING = "Warning"
     ERROR = "Error"
 
-class WindowsServerSubscription(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Desired state of Windows Server Subscription.
-    """
 
-    DISABLED = "Disabled"
-    ENABLED = "Enabled"
+class StatusTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The installation status of the hybrid machine agent installation."""
+
+    SUCCEEDED = "Succeeded"
+    IN_PROGRESS = "InProgress"
+    FAILED = "Failed"
+
+
+class VmSizeEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """VmSizeEnum."""
+
+    DEFAULT = "Default"
+    STANDARD_A2_V2 = "Standard_A2_v2"
+    STANDARD_A4_V2 = "Standard_A4_v2"
+    STANDARD_D2_S_V3 = "Standard_D2s_v3"
+    STANDARD_D4_S_V3 = "Standard_D4s_v3"
+    STANDARD_D8_S_V3 = "Standard_D8s_v3"
+    STANDARD_D16_S_V3 = "Standard_D16s_v3"
+    STANDARD_D32_S_V3 = "Standard_D32s_v3"
+    STANDARD_DS2_V2 = "Standard_DS2_v2"
+    STANDARD_DS3_V2 = "Standard_DS3_v2"
+    STANDARD_DS4_V2 = "Standard_DS4_v2"
+    STANDARD_DS5_V2 = "Standard_DS5_v2"
+    STANDARD_DS13_V2 = "Standard_DS13_v2"
+    STANDARD_K8_S_V1 = "Standard_K8S_v1"
+    STANDARD_K8_S2_V1 = "Standard_K8S2_v1"
+    STANDARD_K8_S3_V1 = "Standard_K8S3_v1"
+    STANDARD_K8_S4_V1 = "Standard_K8S4_v1"
+    STANDARD_NK6 = "Standard_NK6"
+    STANDARD_NK12 = "Standard_NK12"
+    STANDARD_NV6 = "Standard_NV6"
+    STANDARD_NV12 = "Standard_NV12"
+    STANDARD_K8_S5_V1 = "Standard_K8S5_v1"
+    CUSTOM = "Custom"

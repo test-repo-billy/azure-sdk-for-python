@@ -1,5 +1,162 @@
 # Release History
 
+## 4.0.0b15 (2024-01-11)
+
+### Features Added
+
+  - Added operation ManagedInstancesOperations.begin_refresh_status
+  - Model ManagedInstance has a new parameter authentication_metadata
+  - Model ManagedInstance has a new parameter create_time
+  - Model ManagedInstance has a new parameter database_format
+  - Model ManagedInstance has a new parameter external_governance_status
+  - Model ManagedInstance has a new parameter hybrid_secondary_usage
+  - Model ManagedInstance has a new parameter hybrid_secondary_usage_detected
+  - Model ManagedInstance has a new parameter is_general_purpose_v2
+  - Model ManagedInstance has a new parameter pricing_model
+  - Model ManagedInstance has a new parameter storage_i_ops
+  - Model ManagedInstance has a new parameter storage_throughput_m_bps
+  - Model ManagedInstance has a new parameter virtual_cluster_id
+  - Model ManagedInstanceUpdate has a new parameter authentication_metadata
+  - Model ManagedInstanceUpdate has a new parameter create_time
+  - Model ManagedInstanceUpdate has a new parameter database_format
+  - Model ManagedInstanceUpdate has a new parameter external_governance_status
+  - Model ManagedInstanceUpdate has a new parameter hybrid_secondary_usage
+  - Model ManagedInstanceUpdate has a new parameter hybrid_secondary_usage_detected
+  - Model ManagedInstanceUpdate has a new parameter is_general_purpose_v2
+  - Model ManagedInstanceUpdate has a new parameter pricing_model
+  - Model ManagedInstanceUpdate has a new parameter storage_i_ops
+  - Model ManagedInstanceUpdate has a new parameter storage_throughput_m_bps
+  - Model ManagedInstanceUpdate has a new parameter virtual_cluster_id
+
+## 4.0.0b14 (2023-12-18)
+
+### Features Added
+
+  - Added operation LongTermRetentionBackupsOperations.begin_change_access_tier
+  - Added operation LongTermRetentionBackupsOperations.begin_change_access_tier_by_resource_group
+  - Model LongTermRetentionBackup has a new parameter backup_storage_access_tier
+  - Model LongTermRetentionBackup has a new parameter is_backup_immutable
+  - Model LongTermRetentionPolicy has a new parameter backup_storage_access_tier
+  - Model LongTermRetentionPolicy has a new parameter make_backups_immutable
+
+## 4.0.0b13 (2023-11-17)
+
+### Features Added
+
+  - Added operation group JobPrivateEndpointsOperations
+  - Model FailoverGroupReadOnlyEndpoint has a new parameter target_server
+  - Model FailoverGroupUpdate has a new parameter partner_servers
+  - Model InstancePool has a new parameter dns_zone
+  - Model InstancePool has a new parameter maintenance_configuration_id
+  - Model InstancePoolUpdate has a new parameter dns_zone
+  - Model InstancePoolUpdate has a new parameter license_type
+  - Model InstancePoolUpdate has a new parameter maintenance_configuration_id
+  - Model InstancePoolUpdate has a new parameter sku
+  - Model InstancePoolUpdate has a new parameter subnet_id
+  - Model InstancePoolUpdate has a new parameter v_cores
+  - Model Server has a new parameter is_i_pv6_enabled
+  - Model ServerUpdate has a new parameter is_i_pv6_enabled
+
+## 4.0.0b12 (2023-08-30)
+
+### Features Added
+
+  - Model Database has a new parameter encryption_protector_auto_rotation
+  - Model Database has a new parameter free_limit_exhaustion_behavior
+  - Model Database has a new parameter use_free_limit
+  - Model DatabaseUpdate has a new parameter encryption_protector_auto_rotation
+  - Model DatabaseUpdate has a new parameter free_limit_exhaustion_behavior
+  - Model DatabaseUpdate has a new parameter use_free_limit
+
+## 4.0.0b11 (2023-07-28)
+
+### Features Added
+
+  - Added operation FailoverGroupsOperations.begin_try_planned_before_forced_failover
+  - Model PrivateEndpointConnection has a new parameter group_ids
+  - Model SqlVulnerabilityAssessmentScanRecord has a new parameter last_scan_time
+
+## 4.0.0b10 (2023-04-11)
+
+### Features Added
+
+  - Model ManagedDatabase has a new parameter is_ledger_on
+  - Model ManagedDatabaseUpdate has a new parameter is_ledger_on
+
+## 4.0.0b9 (2023-03-24)
+
+### Features Added
+
+  - Model ElasticPool has a new parameter availability_zone
+  - Model ElasticPool has a new parameter min_capacity
+  - Model ElasticPool has a new parameter preferred_enclave_type
+  - Model ElasticPoolUpdate has a new parameter availability_zone
+  - Model ElasticPoolUpdate has a new parameter min_capacity
+  - Model ElasticPoolUpdate has a new parameter preferred_enclave_type
+
+## 4.0.0b8 (2023-02-17)
+
+### Features Added
+
+  - Added operation ManagedInstancesOperations.begin_start
+  - Added operation ManagedInstancesOperations.begin_stop
+  - Added operation ManagedInstancesOperations.list_outbound_network_dependencies_by_managed_instance
+  - Added operation ServersOperations.begin_refresh_status
+  - Added operation group DatabaseEncryptionProtectorsOperations
+  - Added operation group ManagedLedgerDigestUploadsOperations
+  - Added operation group ServerConfigurationOptionsOperations
+  - Added operation group StartStopManagedInstanceSchedulesOperations
+  - Model Database has a new parameter availability_zone
+  - Model Database has a new parameter encryption_protector
+  - Model Database has a new parameter keys
+  - Model Database has a new parameter manual_cutover
+  - Model Database has a new parameter perform_cutover
+  - Model DatabaseUpdate has a new parameter encryption_protector
+  - Model DatabaseUpdate has a new parameter keys
+  - Model DatabaseUpdate has a new parameter manual_cutover
+  - Model DatabaseUpdate has a new parameter perform_cutover
+  - Model PrivateEndpointConnectionProperties has a new parameter group_ids
+  - Model RecoverableDatabase has a new parameter keys
+  - Model RecoverableDatabaseListResult has a new parameter next_link
+  - Model RestorableDroppedDatabase has a new parameter keys
+  - Model Server has a new parameter external_governance_status
+  - Model ServerUpdate has a new parameter external_governance_status
+  - Operation DatabasesOperations.get has a new optional parameter expand
+  - Operation DatabasesOperations.get has a new optional parameter filter
+  - Operation RecoverableDatabasesOperations.get has a new optional parameter expand
+  - Operation RecoverableDatabasesOperations.get has a new optional parameter filter
+  - Operation RestorableDroppedDatabasesOperations.get has a new optional parameter expand
+  - Operation RestorableDroppedDatabasesOperations.get has a new optional parameter filter
+
+### Breaking Changes
+
+  - Renamed operation TransparentDataEncryptionsOperations.create_or_update to TransparentDataEncryptionsOperations.begin_create_or_update
+
+## 4.0.0b7 (2023-01-29)
+
+### Features Added
+
+  - Model InstanceFailoverGroup has a new parameter secondary_type
+  - Model ManagedDatabase has a new parameter cross_subscription_restorable_dropped_database_id
+  - Model ManagedDatabase has a new parameter cross_subscription_source_database_id
+  - Model ManagedDatabase has a new parameter cross_subscription_target_managed_instance_id
+  - Model ManagedDatabaseUpdate has a new parameter cross_subscription_restorable_dropped_database_id
+  - Model ManagedDatabaseUpdate has a new parameter cross_subscription_source_database_id
+  - Model ManagedDatabaseUpdate has a new parameter cross_subscription_target_managed_instance_id
+
+## 4.0.0b6 (2022-12-30)
+
+### Features Added
+
+  - Model Database has a new parameter preferred_enclave_type
+  - Model DatabaseUpdate has a new parameter preferred_enclave_type
+
+## 4.0.0b5 (2022-11-10)
+
+### Features Added
+
+  - Model ServerDevOpsAuditingSettings has a new parameter is_managed_identity_in_use
+
 ## 4.0.0b4 (2022-09-29)
 
 ### Features Added

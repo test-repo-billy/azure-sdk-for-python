@@ -4,10 +4,9 @@
 
 from marshmallow import fields, post_dump, post_load
 
-from azure.ai.ml._schema import StringTransformedEnum, UnionField, PatchedSchemaMeta
-from azure.ai.ml._schema.component.input_output import InputPortSchema, ParameterSchema
-from azure.ai.ml._schema.core.fields import DumpableFloatField, DumpableIntegerField, DumpableEnumField
-
+from ..._schema import PatchedSchemaMeta, StringTransformedEnum, UnionField
+from ..._schema.component.input_output import InputPortSchema, ParameterSchema
+from ..._schema.core.fields import DumpableEnumField, PrimitiveValueField
 
 SUPPORTED_INTERNAL_PARAM_TYPES = [
     "integer",
@@ -18,7 +17,10 @@ SUPPORTED_INTERNAL_PARAM_TYPES = [
     "String",
     "float",
     "Float",
+    "double",
+    "Double",
 ]
+
 
 class InternalInputPortSchema(InputPortSchema):
     # skip client-side validate for type enum & support list
@@ -34,7 +36,7 @@ class InternalInputPortSchema(InputPortSchema):
     datastore_mode = fields.Str()
 
     @post_dump(pass_original=True)
-    def resolve_list_type(self, data, original_data, **kwargs):  # pylint: disable=unused-argument, no-self-use
+    def resolve_list_type(self, data, original_data, **kwargs):  # pylint: disable=unused-argument
         if isinstance(original_data.type, list):
             data["type"] = original_data.type
         return data
@@ -57,7 +59,6 @@ class InternalPrimitiveOutputSchema(metaclass=PatchedSchemaMeta):
         required=True,
     )
     description = fields.Str()
-    is_control = fields.Bool()
 
 
 class InternalParameterSchema(ParameterSchema):
@@ -74,35 +75,15 @@ class InternalEnumParameterSchema(ParameterSchema):
         required=True,
         data_key="type",
     )
-    default = UnionField(
-        [
-            DumpableIntegerField(strict=True),
-            # Use DumpableFloatField to avoid '1'(str) serialized to 1.0(float)
-            DumpableFloatField(),
-            # put string schema after Int and Float to make sure they won't dump to string
-            fields.Str(),
-            # fields.Bool comes last since it'll parse anything non-falsy to True
-            fields.Bool(),
-        ],
-    )
+    default = PrimitiveValueField()
     enum = fields.List(
-        UnionField(
-            [
-                DumpableIntegerField(strict=True),
-                # Use DumpableFloatField to avoid '1'(str) serialized to 1.0(float)
-                DumpableFloatField(),
-                # put string schema after Int and Float to make sure they won't dump to string
-                fields.Str(),
-                # fields.Bool comes last since it'll parse anything non-falsy to True
-                fields.Bool(),
-            ]
-        ),
+        PrimitiveValueField(),
         required=True,
     )
 
     @post_dump
     @post_load
-    def enum_value_to_string(self, data, **kwargs):  # pylint: disable=unused-argument, disable=no-self-use
+    def enum_value_to_string(self, data, **kwargs):  # pylint: disable=unused-argument
         if "enum" in data:
             data["enum"] = list(map(str, data["enum"]))
         if "default" in data and data["default"] is not None:

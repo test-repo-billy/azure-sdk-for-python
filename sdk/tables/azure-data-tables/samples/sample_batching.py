@@ -22,21 +22,23 @@ USAGE:
     3) TABLES_PRIMARY_STORAGE_ACCOUNT_KEY - the storage account access key
 """
 
-
 import os
-import sys
 from dotenv import find_dotenv, load_dotenv
+from typing import Any, List, Mapping, Tuple, Union
+from azure.data.tables import TableEntity, TransactionOperation
+
+EntityType = Union[TableEntity, Mapping[str, Any]]
+OperationType = Union[TransactionOperation, str]
+TransactionOperationType = Union[Tuple[OperationType, EntityType], Tuple[OperationType, EntityType, Mapping[str, Any]]]
 
 
 class CreateClients(object):
     def __init__(self):
         load_dotenv(find_dotenv())
-        self.access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
-        self.endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
-        self.account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
-        self.connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
-            self.account_name, self.access_key, self.endpoint_suffix
-        )
+        self.access_key = os.environ["TABLES_PRIMARY_STORAGE_ACCOUNT_KEY"]
+        self.endpoint_suffix = os.environ["TABLES_STORAGE_ENDPOINT_SUFFIX"]
+        self.account_name = os.environ["TABLES_STORAGE_ACCOUNT_NAME"]
+        self.connection_string = f"DefaultEndpointsProtocol=https;AccountName={self.account_name};AccountKey={self.access_key};EndpointSuffix={self.endpoint_suffix}"
         self.table_name = "sampleTransaction"
 
     def sample_transaction(self):
@@ -64,7 +66,7 @@ class CreateClients(object):
         self.table_client.upsert_entity(entity3)
         self.table_client.upsert_entity(entity4)
 
-        operations = [
+        operations: List[TransactionOperationType] = [
             ("upsert", entity1),
             ("delete", entity2),
             ("upsert", entity3),
@@ -74,7 +76,7 @@ class CreateClients(object):
             self.table_client.submit_transaction(operations)
         except TableTransactionError as e:
             print("There was an error with the transaction operation")
-            print(e)
+            print(f"Error: {e}")
         # [END batching]
 
     def clean_up(self):
@@ -83,9 +85,8 @@ class CreateClients(object):
 
 
 if __name__ == "__main__":
-    if sys.version_info > (3, 5):
-        sample = CreateClients()
-        try:
-            sample.sample_transaction()
-        finally:
-            sample.clean_up()
+    sample = CreateClients()
+    try:
+        sample.sample_transaction()
+    finally:
+        sample.clean_up()

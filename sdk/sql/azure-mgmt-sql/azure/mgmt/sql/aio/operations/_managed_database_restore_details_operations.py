@@ -56,7 +56,7 @@ class ManagedDatabaseRestoreDetailsOperations:
         resource_group_name: str,
         managed_instance_name: str,
         database_name: str,
-        restore_details_name: Union[str, "_models.RestoreDetailsName"],
+        restore_details_name: Union[str, _models.RestoreDetailsName],
         **kwargs: Any
     ) -> _models.ManagedDatabaseRestoreDetailsResult:
         """Gets managed database restore details.
@@ -86,8 +86,8 @@ class ManagedDatabaseRestoreDetailsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-02-01-preview"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ManagedDatabaseRestoreDetailsResult]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01-preview"))
+        cls: ClsType[_models.ManagedDatabaseRestoreDetailsResult] = kwargs.pop("cls", None)
 
         request = build_get_request(
             resource_group_name=resource_group_name,
@@ -101,10 +101,11 @@ class ManagedDatabaseRestoreDetailsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -120,4 +121,6 @@ class ManagedDatabaseRestoreDetailsOperations:
 
         return deserialized
 
-    get.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/databases/{databaseName}/restoreDetails/{restoreDetailsName}"}  # type: ignore
+    get.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/databases/{databaseName}/restoreDetails/{restoreDetailsName}"
+    }

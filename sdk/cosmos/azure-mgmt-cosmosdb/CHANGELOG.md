@@ -1,5 +1,419 @@
 # Release History
 
+## 10.0.0b2 (2024-01-26)
+
+### Features Added
+
+  - Added operation CassandraClustersOperations.begin_invoke_command_async
+  - Added operation CassandraClustersOperations.get_command_async
+  - Added operation CassandraClustersOperations.list_command
+  - Added operation group ThroughputPoolAccountOperations
+  - Added operation group ThroughputPoolAccountsOperations
+  - Added operation group ThroughputPoolOperations
+  - Added operation group ThroughputPoolsOperations
+  - Model BackupResource has a new parameter backup_expiry_timestamp
+  - Model BackupResource has a new parameter backup_id
+  - Model BackupResource has a new parameter backup_start_timestamp
+  - Model BackupResource has a new parameter backup_state
+  - Model BackupResource has a new parameter backup_stop_timestamp
+  - Model CassandraClusterDataCenterNodeItem has a new parameter is_latest_model
+  - Model ClusterResourceProperties has a new parameter auto_replicate
+  - Model ClusterResourceProperties has a new parameter azure_connection_method
+  - Model ClusterResourceProperties has a new parameter backup_schedules
+  - Model ClusterResourceProperties has a new parameter cluster_type
+  - Model ClusterResourceProperties has a new parameter extensions
+  - Model ClusterResourceProperties has a new parameter external_data_centers
+  - Model ClusterResourceProperties has a new parameter private_link_resource_id
+  - Model ClusterResourceProperties has a new parameter scheduled_event_strategy
+  - Model CommandPostBody has a new parameter read_write
+  - Model CosmosCassandraDataTransferDataSourceSink has a new parameter remote_account_name
+  - Model CosmosMongoDataTransferDataSourceSink has a new parameter remote_account_name
+  - Model CosmosSqlDataTransferDataSourceSink has a new parameter remote_account_name
+  - Model DataCenterResourceProperties has a new parameter private_endpoint_ip_address
+  - Model DataTransferJobGetResults has a new parameter duration
+  - Model DataTransferJobGetResults has a new parameter mode
+  - Model DataTransferJobProperties has a new parameter duration
+  - Model DataTransferJobProperties has a new parameter mode
+  - Model DatabaseAccountCreateUpdateParameters has a new parameter customer_managed_key_status
+  - Model DatabaseAccountCreateUpdateParameters has a new parameter default_priority_level
+  - Model DatabaseAccountCreateUpdateParameters has a new parameter enable_priority_based_execution
+  - Model DatabaseAccountGetResults has a new parameter customer_managed_key_status
+  - Model DatabaseAccountGetResults has a new parameter default_priority_level
+  - Model DatabaseAccountGetResults has a new parameter enable_priority_based_execution
+  - Model DatabaseAccountUpdateParameters has a new parameter customer_managed_key_status
+  - Model DatabaseAccountUpdateParameters has a new parameter default_priority_level
+  - Model DatabaseAccountUpdateParameters has a new parameter enable_priority_based_execution
+  - Model RestorableGremlinDatabasePropertiesResource has a new parameter can_undelete
+  - Model RestorableGremlinDatabasePropertiesResource has a new parameter can_undelete_reason
+  - Model RestorableGremlinGraphPropertiesResource has a new parameter can_undelete
+  - Model RestorableGremlinGraphPropertiesResource has a new parameter can_undelete_reason
+  - Model RestorableMongodbCollectionPropertiesResource has a new parameter can_undelete
+  - Model RestorableMongodbCollectionPropertiesResource has a new parameter can_undelete_reason
+  - Model RestorableMongodbDatabasePropertiesResource has a new parameter can_undelete
+  - Model RestorableMongodbDatabasePropertiesResource has a new parameter can_undelete_reason
+  - Model RestorableSqlContainerPropertiesResource has a new parameter can_undelete
+  - Model RestorableSqlContainerPropertiesResource has a new parameter can_undelete_reason
+  - Model RestorableSqlContainerPropertiesResourceContainer has a new parameter computed_properties
+  - Model RestorableSqlDatabasePropertiesResource has a new parameter can_undelete
+  - Model RestorableSqlDatabasePropertiesResource has a new parameter can_undelete_reason
+  - Model RestorableTablePropertiesResource has a new parameter can_undelete
+  - Model RestorableTablePropertiesResource has a new parameter can_undelete_reason
+  - Model SqlContainerGetPropertiesResource has a new parameter computed_properties
+  - Model SqlContainerResource has a new parameter computed_properties
+  - Model ThroughputSettingsGetPropertiesResource has a new parameter instant_maximum_throughput
+  - Model ThroughputSettingsGetPropertiesResource has a new parameter soft_allowed_maximum_throughput
+  - Model ThroughputSettingsResource has a new parameter instant_maximum_throughput
+  - Model ThroughputSettingsResource has a new parameter soft_allowed_maximum_throughput
+  - Operation CassandraClustersOperations.begin_deallocate has a new optional parameter x_ms_force_deallocate
+
+### Breaking Changes
+
+  - Model BackupResource no longer has parameter id
+  - Model BackupResource no longer has parameter name
+  - Model BackupResource no longer has parameter properties
+  - Model BackupResource no longer has parameter type
+  - Model CommandPostBody no longer has parameter readwrite
+
+## 9.4.0 (2023-12-19)
+
+### Features Added
+
+  - Model GremlinDatabaseGetPropertiesResource has a new parameter create_mode
+  - Model GremlinDatabaseGetPropertiesResource has a new parameter restore_parameters
+  - Model GremlinDatabaseResource has a new parameter create_mode
+  - Model GremlinDatabaseResource has a new parameter restore_parameters
+  - Model GremlinGraphGetPropertiesResource has a new parameter create_mode
+  - Model GremlinGraphGetPropertiesResource has a new parameter restore_parameters
+  - Model GremlinGraphResource has a new parameter create_mode
+  - Model GremlinGraphResource has a new parameter restore_parameters
+  - Model MongoDBCollectionGetPropertiesResource has a new parameter create_mode
+  - Model MongoDBCollectionGetPropertiesResource has a new parameter restore_parameters
+  - Model MongoDBCollectionResource has a new parameter create_mode
+  - Model MongoDBCollectionResource has a new parameter restore_parameters
+  - Model MongoDBDatabaseGetPropertiesResource has a new parameter create_mode
+  - Model MongoDBDatabaseGetPropertiesResource has a new parameter restore_parameters
+  - Model MongoDBDatabaseResource has a new parameter create_mode
+  - Model MongoDBDatabaseResource has a new parameter restore_parameters
+  - Model RestorableGremlinDatabasePropertiesResource has a new parameter can_undelete
+  - Model RestorableGremlinDatabasePropertiesResource has a new parameter can_undelete_reason
+  - Model RestorableGremlinGraphPropertiesResource has a new parameter can_undelete
+  - Model RestorableGremlinGraphPropertiesResource has a new parameter can_undelete_reason
+  - Model RestorableMongodbCollectionPropertiesResource has a new parameter can_undelete
+  - Model RestorableMongodbCollectionPropertiesResource has a new parameter can_undelete_reason
+  - Model RestorableMongodbDatabasePropertiesResource has a new parameter can_undelete
+  - Model RestorableMongodbDatabasePropertiesResource has a new parameter can_undelete_reason
+  - Model RestorableSqlContainerPropertiesResource has a new parameter can_undelete
+  - Model RestorableSqlContainerPropertiesResource has a new parameter can_undelete_reason
+  - Model RestorableSqlContainerPropertiesResourceContainer has a new parameter computed_properties
+  - Model RestorableSqlContainerPropertiesResourceContainer has a new parameter create_mode
+  - Model RestorableSqlContainerPropertiesResourceContainer has a new parameter restore_parameters
+  - Model RestorableSqlDatabasePropertiesResource has a new parameter can_undelete
+  - Model RestorableSqlDatabasePropertiesResource has a new parameter can_undelete_reason
+  - Model RestorableSqlDatabasePropertiesResourceDatabase has a new parameter create_mode
+  - Model RestorableSqlDatabasePropertiesResourceDatabase has a new parameter restore_parameters
+  - Model RestorableTablePropertiesResource has a new parameter can_undelete
+  - Model RestorableTablePropertiesResource has a new parameter can_undelete_reason
+  - Model SqlContainerGetPropertiesResource has a new parameter computed_properties
+  - Model SqlContainerGetPropertiesResource has a new parameter create_mode
+  - Model SqlContainerGetPropertiesResource has a new parameter restore_parameters
+  - Model SqlContainerResource has a new parameter computed_properties
+  - Model SqlContainerResource has a new parameter create_mode
+  - Model SqlContainerResource has a new parameter restore_parameters
+  - Model SqlDatabaseGetPropertiesResource has a new parameter create_mode
+  - Model SqlDatabaseGetPropertiesResource has a new parameter restore_parameters
+  - Model SqlDatabaseResource has a new parameter create_mode
+  - Model SqlDatabaseResource has a new parameter restore_parameters
+  - Model TableGetPropertiesResource has a new parameter create_mode
+  - Model TableGetPropertiesResource has a new parameter restore_parameters
+  - Model TableResource has a new parameter create_mode
+  - Model TableResource has a new parameter restore_parameters
+
+## 9.3.0 (2023-10-23)
+
+### Features Added
+
+  - Model DatabaseAccountCreateUpdateParameters has a new parameter customer_managed_key_status
+  - Model DatabaseAccountCreateUpdateParameters has a new parameter enable_burst_capacity
+  - Model DatabaseAccountGetResults has a new parameter customer_managed_key_status
+  - Model DatabaseAccountGetResults has a new parameter enable_burst_capacity
+  - Model DatabaseAccountUpdateParameters has a new parameter customer_managed_key_status
+  - Model DatabaseAccountUpdateParameters has a new parameter enable_burst_capacity
+
+## 10.0.0b1 (2023-06-16)
+
+### Features Added
+
+  - Added operation CassandraClustersOperations.get_backup
+  - Added operation CassandraClustersOperations.list_backups
+  - Added operation CassandraResourcesOperations.begin_create_update_cassandra_view
+  - Added operation CassandraResourcesOperations.begin_delete_cassandra_view
+  - Added operation CassandraResourcesOperations.begin_migrate_cassandra_view_to_autoscale
+  - Added operation CassandraResourcesOperations.begin_migrate_cassandra_view_to_manual_throughput
+  - Added operation CassandraResourcesOperations.begin_update_cassandra_view_throughput
+  - Added operation CassandraResourcesOperations.get_cassandra_view
+  - Added operation CassandraResourcesOperations.get_cassandra_view_throughput
+  - Added operation CassandraResourcesOperations.list_cassandra_views
+  - Added operation MongoDBResourcesOperations.begin_list_mongo_db_collection_partition_merge
+  - Added operation MongoDBResourcesOperations.begin_mongo_db_container_redistribute_throughput
+  - Added operation MongoDBResourcesOperations.begin_mongo_db_container_retrieve_throughput_distribution
+  - Added operation MongoDBResourcesOperations.begin_mongo_db_database_partition_merge
+  - Added operation MongoDBResourcesOperations.begin_mongo_db_database_redistribute_throughput
+  - Added operation MongoDBResourcesOperations.begin_mongo_db_database_retrieve_throughput_distribution
+  - Added operation SqlResourcesOperations.begin_list_sql_container_partition_merge
+  - Added operation SqlResourcesOperations.begin_sql_container_redistribute_throughput
+  - Added operation SqlResourcesOperations.begin_sql_container_retrieve_throughput_distribution
+  - Added operation SqlResourcesOperations.begin_sql_database_partition_merge
+  - Added operation SqlResourcesOperations.begin_sql_database_redistribute_throughput
+  - Added operation SqlResourcesOperations.begin_sql_database_retrieve_throughput_distribution
+  - Added operation group DataTransferJobsOperations
+  - Added operation group GraphResourcesOperations
+  - Added operation group MongoClustersOperations
+  - Model ARMResourceProperties has a new parameter identity
+  - Model CassandraKeyspaceCreateUpdateParameters has a new parameter identity
+  - Model CassandraKeyspaceGetResults has a new parameter identity
+  - Model CassandraTableCreateUpdateParameters has a new parameter identity
+  - Model CassandraTableGetResults has a new parameter identity
+  - Model DatabaseAccountCreateUpdateParameters has a new parameter diagnostic_log_settings
+  - Model DatabaseAccountCreateUpdateParameters has a new parameter enable_burst_capacity
+  - Model DatabaseAccountCreateUpdateParameters has a new parameter enable_materialized_views
+  - Model DatabaseAccountGetResults has a new parameter diagnostic_log_settings
+  - Model DatabaseAccountGetResults has a new parameter enable_burst_capacity
+  - Model DatabaseAccountGetResults has a new parameter enable_materialized_views
+  - Model DatabaseAccountUpdateParameters has a new parameter diagnostic_log_settings
+  - Model DatabaseAccountUpdateParameters has a new parameter enable_burst_capacity
+  - Model DatabaseAccountUpdateParameters has a new parameter enable_materialized_views
+  - Model GremlinDatabaseCreateUpdateParameters has a new parameter identity
+  - Model GremlinDatabaseGetPropertiesResource has a new parameter create_mode
+  - Model GremlinDatabaseGetPropertiesResource has a new parameter restore_parameters
+  - Model GremlinDatabaseGetResults has a new parameter identity
+  - Model GremlinDatabaseResource has a new parameter create_mode
+  - Model GremlinDatabaseResource has a new parameter restore_parameters
+  - Model GremlinGraphCreateUpdateParameters has a new parameter identity
+  - Model GremlinGraphGetPropertiesResource has a new parameter create_mode
+  - Model GremlinGraphGetPropertiesResource has a new parameter restore_parameters
+  - Model GremlinGraphGetResults has a new parameter identity
+  - Model GremlinGraphResource has a new parameter create_mode
+  - Model GremlinGraphResource has a new parameter restore_parameters
+  - Model MongoDBCollectionCreateUpdateParameters has a new parameter identity
+  - Model MongoDBCollectionGetPropertiesResource has a new parameter create_mode
+  - Model MongoDBCollectionGetPropertiesResource has a new parameter restore_parameters
+  - Model MongoDBCollectionGetResults has a new parameter identity
+  - Model MongoDBCollectionResource has a new parameter create_mode
+  - Model MongoDBCollectionResource has a new parameter restore_parameters
+  - Model MongoDBDatabaseCreateUpdateParameters has a new parameter identity
+  - Model MongoDBDatabaseGetPropertiesResource has a new parameter create_mode
+  - Model MongoDBDatabaseGetPropertiesResource has a new parameter restore_parameters
+  - Model MongoDBDatabaseGetResults has a new parameter identity
+  - Model MongoDBDatabaseResource has a new parameter create_mode
+  - Model MongoDBDatabaseResource has a new parameter restore_parameters
+  - Model RestorableSqlContainerPropertiesResourceContainer has a new parameter create_mode
+  - Model RestorableSqlContainerPropertiesResourceContainer has a new parameter materialized_view_definition
+  - Model RestorableSqlContainerPropertiesResourceContainer has a new parameter restore_parameters
+  - Model RestorableSqlDatabasePropertiesResourceDatabase has a new parameter create_mode
+  - Model RestorableSqlDatabasePropertiesResourceDatabase has a new parameter restore_parameters
+  - Model RestoreParameters has a new parameter source_backup_location
+  - Model SqlContainerCreateUpdateParameters has a new parameter identity
+  - Model SqlContainerGetPropertiesResource has a new parameter create_mode
+  - Model SqlContainerGetPropertiesResource has a new parameter materialized_view_definition
+  - Model SqlContainerGetPropertiesResource has a new parameter restore_parameters
+  - Model SqlContainerGetResults has a new parameter identity
+  - Model SqlContainerResource has a new parameter create_mode
+  - Model SqlContainerResource has a new parameter materialized_view_definition
+  - Model SqlContainerResource has a new parameter restore_parameters
+  - Model SqlDatabaseCreateUpdateParameters has a new parameter identity
+  - Model SqlDatabaseGetPropertiesResource has a new parameter create_mode
+  - Model SqlDatabaseGetPropertiesResource has a new parameter restore_parameters
+  - Model SqlDatabaseGetResults has a new parameter identity
+  - Model SqlDatabaseResource has a new parameter create_mode
+  - Model SqlDatabaseResource has a new parameter restore_parameters
+  - Model SqlStoredProcedureCreateUpdateParameters has a new parameter identity
+  - Model SqlStoredProcedureGetResults has a new parameter identity
+  - Model SqlTriggerCreateUpdateParameters has a new parameter identity
+  - Model SqlTriggerGetResults has a new parameter identity
+  - Model SqlUserDefinedFunctionCreateUpdateParameters has a new parameter identity
+  - Model SqlUserDefinedFunctionGetResults has a new parameter identity
+  - Model TableCreateUpdateParameters has a new parameter identity
+  - Model TableGetPropertiesResource has a new parameter create_mode
+  - Model TableGetPropertiesResource has a new parameter restore_parameters
+  - Model TableGetResults has a new parameter identity
+  - Model TableResource has a new parameter create_mode
+  - Model TableResource has a new parameter restore_parameters
+  - Model ThroughputSettingsGetResults has a new parameter identity
+  - Model ThroughputSettingsUpdateParameters has a new parameter identity
+
+### Breaking Changes
+
+  - Model ThroughputSettingsGetPropertiesResource no longer has parameter instant_maximum_throughput
+  - Model ThroughputSettingsGetPropertiesResource no longer has parameter soft_allowed_maximum_throughput
+  - Model ThroughputSettingsResource no longer has parameter instant_maximum_throughput
+  - Model ThroughputSettingsResource no longer has parameter soft_allowed_maximum_throughput
+
+## 9.2.0 (2023-05-08)
+
+### Features Added
+
+  - Model ContinuousModeBackupPolicy has a new parameter continuous_mode_properties
+  - Model RestorableDatabaseAccountGetResult has a new parameter oldest_restorable_time
+  - Model ThroughputSettingsGetPropertiesResource has a new parameter instant_maximum_throughput
+  - Model ThroughputSettingsGetPropertiesResource has a new parameter soft_allowed_maximum_throughput
+  - Model ThroughputSettingsResource has a new parameter instant_maximum_throughput
+  - Model ThroughputSettingsResource has a new parameter soft_allowed_maximum_throughput
+  - Added new enum type `ContinuousTier`
+  - Enum `PublicNetworkAccess` has a new value `SECURED_BY_PERIMETER`
+
+## 9.1.0 (2023-04-21)
+
+### Features Added
+
+  - Model CassandraClusterDataCenterNodeItem has a new parameter cassandra_process_status
+  - Model CassandraClusterPublicStatus has a new parameter errors
+  - Model ClusterResourceProperties has a new parameter provision_error
+  - Model DataCenterResourceProperties has a new parameter authentication_method_ldap_properties
+  - Model DataCenterResourceProperties has a new parameter deallocated
+  - Model DataCenterResourceProperties has a new parameter provision_error
+  - Model DatabaseAccountConnectionString has a new parameter key_kind
+  - Model DatabaseAccountConnectionString has a new parameter type
+  - Model LocationProperties has a new parameter is_subscription_region_access_allowed_for_az
+  - Model LocationProperties has a new parameter is_subscription_region_access_allowed_for_regular
+  - Model LocationProperties has a new parameter status
+
+## 9.1.0b2 (2023-04-20)
+
+### Features Added
+
+  - Added operation group MongoClustersOperations
+
+## 9.1.0b1 (2023-03-20)
+
+### Features Added
+
+  - Added operation CassandraClustersOperations.get_backup
+  - Added operation CassandraClustersOperations.list_backups
+  - Added operation CassandraResourcesOperations.begin_create_update_cassandra_view
+  - Added operation CassandraResourcesOperations.begin_delete_cassandra_view
+  - Added operation CassandraResourcesOperations.begin_migrate_cassandra_view_to_autoscale
+  - Added operation CassandraResourcesOperations.begin_migrate_cassandra_view_to_manual_throughput
+  - Added operation CassandraResourcesOperations.begin_update_cassandra_view_throughput
+  - Added operation CassandraResourcesOperations.get_cassandra_view
+  - Added operation CassandraResourcesOperations.get_cassandra_view_throughput
+  - Added operation CassandraResourcesOperations.list_cassandra_views
+  - Added operation MongoDBResourcesOperations.begin_list_mongo_db_collection_partition_merge
+  - Added operation MongoDBResourcesOperations.begin_mongo_db_container_redistribute_throughput
+  - Added operation MongoDBResourcesOperations.begin_mongo_db_container_retrieve_throughput_distribution
+  - Added operation MongoDBResourcesOperations.begin_mongo_db_database_redistribute_throughput
+  - Added operation MongoDBResourcesOperations.begin_mongo_db_database_retrieve_throughput_distribution
+  - Added operation SqlResourcesOperations.begin_list_sql_container_partition_merge
+  - Added operation SqlResourcesOperations.begin_sql_container_redistribute_throughput
+  - Added operation SqlResourcesOperations.begin_sql_container_retrieve_throughput_distribution
+  - Added operation SqlResourcesOperations.begin_sql_database_redistribute_throughput
+  - Added operation SqlResourcesOperations.begin_sql_database_retrieve_throughput_distribution
+  - Added operation group DataTransferJobsOperations
+  - Added operation group GraphResourcesOperations
+  - Model ARMResourceProperties has a new parameter identity
+  - Model CassandraKeyspaceCreateUpdateParameters has a new parameter identity
+  - Model CassandraKeyspaceGetResults has a new parameter identity
+  - Model CassandraTableCreateUpdateParameters has a new parameter identity
+  - Model CassandraTableGetResults has a new parameter identity
+  - Model ContinuousModeBackupPolicy has a new parameter continuous_mode_properties
+  - Model DataCenterResourceProperties has a new parameter authentication_method_ldap_properties
+  - Model DatabaseAccountCreateUpdateParameters has a new parameter diagnostic_log_settings
+  - Model DatabaseAccountCreateUpdateParameters has a new parameter enable_burst_capacity
+  - Model DatabaseAccountCreateUpdateParameters has a new parameter enable_materialized_views
+  - Model DatabaseAccountGetResults has a new parameter diagnostic_log_settings
+  - Model DatabaseAccountGetResults has a new parameter enable_burst_capacity
+  - Model DatabaseAccountGetResults has a new parameter enable_materialized_views
+  - Model DatabaseAccountUpdateParameters has a new parameter diagnostic_log_settings
+  - Model DatabaseAccountUpdateParameters has a new parameter enable_burst_capacity
+  - Model DatabaseAccountUpdateParameters has a new parameter enable_materialized_views
+  - Model GremlinDatabaseCreateUpdateParameters has a new parameter identity
+  - Model GremlinDatabaseGetPropertiesResource has a new parameter create_mode
+  - Model GremlinDatabaseGetPropertiesResource has a new parameter restore_parameters
+  - Model GremlinDatabaseGetResults has a new parameter identity
+  - Model GremlinDatabaseResource has a new parameter create_mode
+  - Model GremlinDatabaseResource has a new parameter restore_parameters
+  - Model GremlinGraphCreateUpdateParameters has a new parameter identity
+  - Model GremlinGraphGetPropertiesResource has a new parameter create_mode
+  - Model GremlinGraphGetPropertiesResource has a new parameter restore_parameters
+  - Model GremlinGraphGetResults has a new parameter identity
+  - Model GremlinGraphResource has a new parameter create_mode
+  - Model GremlinGraphResource has a new parameter restore_parameters
+  - Model LocationProperties has a new parameter status
+  - Model MongoDBCollectionCreateUpdateParameters has a new parameter identity
+  - Model MongoDBCollectionGetPropertiesResource has a new parameter create_mode
+  - Model MongoDBCollectionGetPropertiesResource has a new parameter restore_parameters
+  - Model MongoDBCollectionGetResults has a new parameter identity
+  - Model MongoDBCollectionResource has a new parameter create_mode
+  - Model MongoDBCollectionResource has a new parameter restore_parameters
+  - Model MongoDBDatabaseCreateUpdateParameters has a new parameter identity
+  - Model MongoDBDatabaseGetPropertiesResource has a new parameter create_mode
+  - Model MongoDBDatabaseGetPropertiesResource has a new parameter restore_parameters
+  - Model MongoDBDatabaseGetResults has a new parameter identity
+  - Model MongoDBDatabaseResource has a new parameter create_mode
+  - Model MongoDBDatabaseResource has a new parameter restore_parameters
+  - Model RestorableDatabaseAccountGetResult has a new parameter oldest_restorable_time
+  - Model RestorableSqlContainerPropertiesResourceContainer has a new parameter create_mode
+  - Model RestorableSqlContainerPropertiesResourceContainer has a new parameter restore_parameters
+  - Model RestorableSqlDatabasePropertiesResourceDatabase has a new parameter create_mode
+  - Model RestorableSqlDatabasePropertiesResourceDatabase has a new parameter restore_parameters
+  - Model RestoreParameters has a new parameter source_backup_location
+  - Model SqlContainerCreateUpdateParameters has a new parameter identity
+  - Model SqlContainerGetPropertiesResource has a new parameter create_mode
+  - Model SqlContainerGetPropertiesResource has a new parameter restore_parameters
+  - Model SqlContainerGetResults has a new parameter identity
+  - Model SqlContainerResource has a new parameter create_mode
+  - Model SqlContainerResource has a new parameter restore_parameters
+  - Model SqlDatabaseCreateUpdateParameters has a new parameter identity
+  - Model SqlDatabaseGetPropertiesResource has a new parameter create_mode
+  - Model SqlDatabaseGetPropertiesResource has a new parameter restore_parameters
+  - Model SqlDatabaseGetResults has a new parameter identity
+  - Model SqlDatabaseResource has a new parameter create_mode
+  - Model SqlDatabaseResource has a new parameter restore_parameters
+  - Model SqlStoredProcedureCreateUpdateParameters has a new parameter identity
+  - Model SqlStoredProcedureGetResults has a new parameter identity
+  - Model SqlTriggerCreateUpdateParameters has a new parameter identity
+  - Model SqlTriggerGetResults has a new parameter identity
+  - Model SqlUserDefinedFunctionCreateUpdateParameters has a new parameter identity
+  - Model SqlUserDefinedFunctionGetResults has a new parameter identity
+  - Model TableCreateUpdateParameters has a new parameter identity
+  - Model TableGetPropertiesResource has a new parameter create_mode
+  - Model TableGetPropertiesResource has a new parameter restore_parameters
+  - Model TableGetResults has a new parameter identity
+  - Model TableResource has a new parameter create_mode
+  - Model TableResource has a new parameter restore_parameters
+  - Model ThroughputSettingsGetResults has a new parameter identity
+  - Model ThroughputSettingsUpdateParameters has a new parameter identity
+
+## 9.0.0 (2023-02-15)
+
+### Features Added
+
+  - Added operation GremlinResourcesOperations.begin_retrieve_continuous_backup_information
+  - Added operation SqlResourcesOperations.begin_create_update_client_encryption_key
+  - Added operation SqlResourcesOperations.get_client_encryption_key
+  - Added operation SqlResourcesOperations.list_client_encryption_keys
+  - Added operation TableResourcesOperations.begin_retrieve_continuous_backup_information
+  - Added operation group RestorableGremlinDatabasesOperations
+  - Added operation group RestorableGremlinGraphsOperations
+  - Added operation group RestorableGremlinResourcesOperations
+  - Added operation group RestorableTableResourcesOperations
+  - Added operation group RestorableTablesOperations
+  - Model DatabaseAccountCreateUpdateParameters has a new parameter minimal_tls_version
+  - Model DatabaseAccountGetResults has a new parameter minimal_tls_version
+  - Model DatabaseAccountUpdateParameters has a new parameter minimal_tls_version
+  - Model RestorableSqlContainerPropertiesResourceContainer has a new parameter client_encryption_policy
+  - Model RestoreParameters has a new parameter gremlin_databases_to_restore
+  - Model RestoreParameters has a new parameter tables_to_restore
+  - Model SqlContainerGetPropertiesResource has a new parameter client_encryption_policy
+  - Model SqlContainerResource has a new parameter client_encryption_policy
+  - Operation RestorableMongodbCollectionsOperations.list has a new optional parameter end_time
+  - Operation RestorableMongodbCollectionsOperations.list has a new optional parameter start_time
+
+## 9.0.0b2 (2022-10-26)
+
+### Features Added
+
+  - Added model CosmosMongoDataTransferDataSourceSink
+
 ## 9.0.0b1 (2022-10-10)
 
 ### Features Added

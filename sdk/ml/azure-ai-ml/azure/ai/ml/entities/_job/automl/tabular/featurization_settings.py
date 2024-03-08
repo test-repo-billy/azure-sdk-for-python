@@ -5,11 +5,11 @@
 # pylint: disable=protected-access
 
 import logging
-from typing import Dict, List, Union
+from typing import Dict, List, Optional, Union
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import BlockedTransformers
-from azure.ai.ml._restclient.v2022_10_01_preview.models import ColumnTransformer as RestColumnTransformer
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+from azure.ai.ml._restclient.v2023_04_01_preview.models import BlockedTransformers
+from azure.ai.ml._restclient.v2023_04_01_preview.models import ColumnTransformer as RestColumnTransformer
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     TableVerticalFeaturizationSettings as RestTabularFeaturizationSettings,
 )
 from azure.ai.ml._utils.utils import camel_to_snake
@@ -32,8 +32,8 @@ class ColumnTransformer(RestTranslatableMixin):
     def __init__(
         self,
         *,
-        fields: List[str] = None,
-        parameters: Dict[str, Union[str, float]] = None,
+        fields: Optional[List[str]] = None,
+        parameters: Optional[Dict[str, Union[str, float]]] = None,
     ):
         self.fields = fields
         self.parameters = parameters
@@ -42,11 +42,12 @@ class ColumnTransformer(RestTranslatableMixin):
         return RestColumnTransformer(fields=self.fields, parameters=self.parameters)
 
     @classmethod
-    def _from_rest_object(cls, obj: RestColumnTransformer) -> "ColumnTransformer":
+    def _from_rest_object(cls, obj: RestColumnTransformer) -> Optional["ColumnTransformer"]:
         if obj:
             fields = obj.fields
             parameters = obj.parameters
             return ColumnTransformer(fields=fields, parameters=parameters)
+        return None
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, ColumnTransformer):
@@ -63,12 +64,12 @@ class TabularFeaturizationSettings(FeaturizationSettings):
     def __init__(
         self,
         *,
-        blocked_transformers: List[Union[BlockedTransformers, str]] = None,
-        column_name_and_types: Dict[str, str] = None,
-        dataset_language: str = None,
-        transformer_params: Dict[str, List[ColumnTransformer]] = None,
-        mode: str = None,
-        enable_dnn_featurization: bool = None,
+        blocked_transformers: Optional[List[Union[BlockedTransformers, str]]] = None,
+        column_name_and_types: Optional[Dict[str, str]] = None,
+        dataset_language: Optional[str] = None,
+        transformer_params: Optional[Dict[str, List[ColumnTransformer]]] = None,
+        mode: Optional[str] = None,
+        enable_dnn_featurization: Optional[bool] = None,
     ):
         """
         :param blocked_transformers: A list of transformers to ignore when featurizing.
@@ -95,7 +96,7 @@ class TabularFeaturizationSettings(FeaturizationSettings):
         self.type = FeaturizationSettingsType.TABULAR
 
     @property
-    def transformer_params(self) -> Dict[str, List[ColumnTransformer]]:
+    def transformer_params(self) -> Optional[Dict[str, List[ColumnTransformer]]]:
         """A dictionary of transformers and their parameters."""
         return self._transformer_params
 
@@ -108,12 +109,12 @@ class TabularFeaturizationSettings(FeaturizationSettings):
         )
 
     @property
-    def blocked_transformers(self) -> List[Union[BlockedTransformers, str]]:
-        """ A list of transformers to ignore when featurizing."""
+    def blocked_transformers(self) -> Optional[List[Union[BlockedTransformers, str]]]:
+        """A list of transformers to ignore when featurizing."""
         return self._blocked_transformers
 
     @blocked_transformers.setter
-    def blocked_transformers(self, blocked_transformers_list: List[Union[BlockedTransformers, str]]):
+    def blocked_transformers(self, blocked_transformers_list: List[Union[BlockedTransformers, str]]) -> None:
         self._blocked_transformers = (
             None
             if blocked_transformers_list is None
@@ -137,7 +138,7 @@ class TabularFeaturizationSettings(FeaturizationSettings):
     @classmethod
     def _from_rest_object(cls, obj: RestTabularFeaturizationSettings) -> "TabularFeaturizationSettings":
         rest_transformers_params = obj.transformer_params
-        transformer_dict = None
+        transformer_dict: Optional[Dict] = None
         if rest_transformers_params:
             transformer_dict = {}
             for key, settings in rest_transformers_params.items():

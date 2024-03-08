@@ -12,7 +12,7 @@ from typing import Any, Awaitable, TYPE_CHECKING
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
 
-from .. import models
+from .. import models as _models
 from ..._serialization import Deserializer, Serializer
 from ._configuration import SecurityCenterConfiguration
 from .operations import (
@@ -61,19 +61,23 @@ class SecurityCenter:  # pylint: disable=client-accepts-api-version-keyword
         **kwargs: Any
     ) -> None:
         self._config = SecurityCenterConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
-        self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.applications = ApplicationsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.application = ApplicationOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.applications = ApplicationsOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2022-07-01-preview"
+        )
+        self.application = ApplicationOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2022-07-01-preview"
+        )
         self.security_connector_applications = SecurityConnectorApplicationsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2022-07-01-preview"
         )
         self.security_connector_application = SecurityConnectorApplicationOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2022-07-01-preview"
         )
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
@@ -105,5 +109,5 @@ class SecurityCenter:  # pylint: disable=client-accepts-api-version-keyword
         await self._client.__aenter__()
         return self
 
-    async def __aexit__(self, *exc_details) -> None:
+    async def __aexit__(self, *exc_details: Any) -> None:
         await self._client.__aexit__(*exc_details)

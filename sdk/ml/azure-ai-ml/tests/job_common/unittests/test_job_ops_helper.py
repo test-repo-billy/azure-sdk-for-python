@@ -6,7 +6,6 @@ from typing import Dict
 from unittest.mock import Mock
 
 import pytest
-import vcr
 from mock import mock_open, patch
 
 from azure.ai.ml._restclient.runhistory.models import RunDetails, RunDetailsWarning
@@ -67,6 +66,7 @@ def mock_run_operations(mock_workspace_scope: OperationScope, mock_aml_services_
 
 @pytest.mark.skip("TODO 1907352: Relies on a missing VCR.py recording + test suite needs to be reworked")
 @pytest.mark.unittest
+@pytest.mark.training_experiences_test
 class TestJobLogManager:
     def test_wait_for_completion_with_output(self, mock_run_operations):
         dummy_job = DummyJob()
@@ -179,7 +179,6 @@ class TestJobLogManager:
         ) as get_run_mock, patch.object(time, "sleep",) as fake_time, my_vcr.use_cassette(
             "cassettes/test_stream_logs.yaml"
         ):
-
             stream_logs_until_completion(mock_run_operations, DummyJob())
 
             # get_run_mock was called, and all the sequence of run details was consumed

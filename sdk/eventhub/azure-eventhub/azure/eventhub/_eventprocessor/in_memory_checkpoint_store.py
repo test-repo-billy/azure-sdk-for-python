@@ -12,7 +12,7 @@ from .checkpoint_store import CheckpointStore
 _LOGGER = logging.getLogger(__name__)
 
 
-class _TrieNode(object):
+class _TrieNode:
     def __init__(self, value, is_leaf):
         self.value = value
         self.is_leaf = is_leaf
@@ -64,7 +64,7 @@ def _set_ele_trie(root, ele, keys_path, path_index):
     _set_ele_trie(next_node, ele, keys_path, path_index + 1)
 
 
-class _DictTrie(object):
+class _DictTrie:
     def __init__(self, root_name, keys_path):
         self._root = _TrieNode(root_name, False)
         self._keys_path = keys_path
@@ -105,16 +105,22 @@ class InMemoryCheckpointStore(CheckpointStore):
         )
 
     def list_ownership(
-        self, fully_qualified_namespace, eventhub_name, consumer_group, **kwargs
-    ):
-        # type: (str, str, str, Any) -> Iterable[Dict[str, Any]]
+        self,
+        fully_qualified_namespace: str,
+        eventhub_name: str,
+        consumer_group: str,
+        **kwargs: Any
+    ) -> Iterable[Dict[str, Any]]:
         consumer_group_node = self._ownerships_trie.lookup(
             (fully_qualified_namespace, eventhub_name, consumer_group)
         )
         return self._ownerships_trie.list_leaves(consumer_group_node)
 
-    def claim_ownership(self, ownership_list, **kwargs):
-        # type: (Iterable[Dict[str, Any]], Any) -> Iterable[Dict[str, Any]]
+    def claim_ownership(
+        self,
+        ownership_list: Iterable[Dict[str, Any]],
+        **kwargs: Any
+    ) -> Iterable[Dict[str, Any]]:
         result = []
         for ownership in ownership_list:
             fully_qualified_namespace = ownership["fully_qualified_namespace"]
@@ -143,8 +149,7 @@ class InMemoryCheckpointStore(CheckpointStore):
                 result.append(ownership)
         return result
 
-    def update_checkpoint(self, checkpoint, **kwargs):
-        # type: (Dict[str, Optional[Union[str, int]]], Any) -> None
+    def update_checkpoint(self, checkpoint: Dict[str, Optional[Union[str, int]]], **kwargs: Any) -> None:
         return self._checkpoints_trie.set_ele(checkpoint)
 
     def list_checkpoints(

@@ -9,13 +9,8 @@ from azure.mgmt.batch import models
 import azure.batch
 from azure.batch.batch_auth import SharedKeyCredentials
 
-from azure_devtools.scenario_tests.preparers import (
-    AbstractPreparer,
-    SingleValueReplacer,
-)
-from azure_devtools.scenario_tests.exceptions import AzureTestError
-
-from devtools_testutils import AzureMgmtPreparer, ResourceGroupPreparer, FakeResource
+from devtools_testutils import AzureMgmtPreparer, AzureTestError, ResourceGroupPreparer, FakeResource
+from devtools_testutils.fake_credentials import BATCH_TEST_PASSWORD
 from devtools_testutils.resource_testcase import RESOURCE_GROUP_PARAM
 
 AZURE_ARM_ENDPOINT = 'https://management.azure.com'
@@ -87,7 +82,7 @@ class AccountPreparer(AzureMgmtPreparer):
             storage = self._get_storage_account(**kwargs)
             if storage:
                 storage_resource = '/subscriptions/{}/resourceGroups/{}/providers/Microsoft.Storage/storageAccounts/{}'.format(
-                    self.test_class_instance.settings.SUBSCRIPTION_ID,
+                    self.test_class_instance.settings.get("AZURE_SUBSCRIPTION_ID"),
                     group.name,
                     storage.name
                 )
@@ -106,10 +101,6 @@ class AccountPreparer(AzureMgmtPreparer):
                 keys.primary)
             if storage:
                 self._add_app_package(group.name, name)
-            self.test_class_instance.scrubber.register_name_pair(
-                name,
-                self.resource_moniker
-            )
         else:
             # If using pilotprod, need to prefix the region with the environment.
             # IE: myaccount.pilotprod1.eastus.batch.azure.com
@@ -182,7 +173,7 @@ class PoolPreparer(AzureMgmtPreparer):
                 base_url=AZURE_ARM_ENDPOINT)
             group = self._get_resource_group(**kwargs)
             batch_account = self._get_batch_account(**kwargs)
-            user = models.UserAccount(name='task-user', password='kt#_gahr!@aGERDXA', elevation_level=models.ElevationLevel.admin)
+            user = models.UserAccount(name='task-user', password=BATCH_TEST_PASSWORD, elevation_level=models.ElevationLevel.admin)
             vm_size = 'standard_d2_v2'
 
             if self.config == 'paas':

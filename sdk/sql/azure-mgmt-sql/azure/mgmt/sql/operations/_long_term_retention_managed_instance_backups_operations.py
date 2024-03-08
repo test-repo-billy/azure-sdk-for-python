@@ -28,7 +28,7 @@ from azure.mgmt.core.polling.arm_polling import ARMPolling
 
 from .. import models as _models
 from .._serialization import Serializer
-from .._vendor import _convert_request, _format_url_section
+from .._vendor import _convert_request
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -48,7 +48,7 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))  # type: str
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -64,7 +64,7 @@ def build_get_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -85,7 +85,7 @@ def build_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))  # type: str
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))
     # Construct URL
     _url = kwargs.pop(
         "template_url",
@@ -99,7 +99,7 @@ def build_delete_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -114,13 +114,13 @@ def build_list_by_database_request(
     subscription_id: str,
     *,
     only_latest_per_database: Optional[bool] = None,
-    database_state: Optional[Union[str, "_models.DatabaseState"]] = None,
+    database_state: Optional[Union[str, _models.DatabaseState]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))  # type: str
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -135,7 +135,7 @@ def build_list_by_database_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     if only_latest_per_database is not None:
@@ -158,13 +158,13 @@ def build_list_by_instance_request(
     subscription_id: str,
     *,
     only_latest_per_database: Optional[bool] = None,
-    database_state: Optional[Union[str, "_models.DatabaseState"]] = None,
+    database_state: Optional[Union[str, _models.DatabaseState]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))  # type: str
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -178,7 +178,7 @@ def build_list_by_instance_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     if only_latest_per_database is not None:
@@ -200,13 +200,13 @@ def build_list_by_location_request(
     subscription_id: str,
     *,
     only_latest_per_database: Optional[bool] = None,
-    database_state: Optional[Union[str, "_models.DatabaseState"]] = None,
+    database_state: Optional[Union[str, _models.DatabaseState]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))  # type: str
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -219,7 +219,7 @@ def build_list_by_location_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     if only_latest_per_database is not None:
@@ -248,7 +248,7 @@ def build_get_by_resource_group_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))  # type: str
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -265,7 +265,7 @@ def build_get_by_resource_group_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -287,7 +287,7 @@ def build_delete_by_resource_group_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))  # type: str
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))
     # Construct URL
     _url = kwargs.pop(
         "template_url",
@@ -302,7 +302,7 @@ def build_delete_by_resource_group_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -318,13 +318,13 @@ def build_list_by_resource_group_database_request(
     subscription_id: str,
     *,
     only_latest_per_database: Optional[bool] = None,
-    database_state: Optional[Union[str, "_models.DatabaseState"]] = None,
+    database_state: Optional[Union[str, _models.DatabaseState]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))  # type: str
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -340,7 +340,7 @@ def build_list_by_resource_group_database_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     if only_latest_per_database is not None:
@@ -364,13 +364,13 @@ def build_list_by_resource_group_instance_request(
     subscription_id: str,
     *,
     only_latest_per_database: Optional[bool] = None,
-    database_state: Optional[Union[str, "_models.DatabaseState"]] = None,
+    database_state: Optional[Union[str, _models.DatabaseState]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))  # type: str
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -385,7 +385,7 @@ def build_list_by_resource_group_instance_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     if only_latest_per_database is not None:
@@ -408,13 +408,13 @@ def build_list_by_resource_group_location_request(
     subscription_id: str,
     *,
     only_latest_per_database: Optional[bool] = None,
-    database_state: Optional[Union[str, "_models.DatabaseState"]] = None,
+    database_state: Optional[Union[str, _models.DatabaseState]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))  # type: str
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -428,7 +428,7 @@ def build_list_by_resource_group_location_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     if only_latest_per_database is not None:
@@ -494,8 +494,8 @@ class LongTermRetentionManagedInstanceBackupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ManagedInstanceLongTermRetentionBackup]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))
+        cls: ClsType[_models.ManagedInstanceLongTermRetentionBackup] = kwargs.pop("cls", None)
 
         request = build_get_request(
             location_name=location_name,
@@ -509,10 +509,11 @@ class LongTermRetentionManagedInstanceBackupsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -528,7 +529,9 @@ class LongTermRetentionManagedInstanceBackupsOperations:
 
         return deserialized
 
-    get.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Sql/locations/{locationName}/longTermRetentionManagedInstances/{managedInstanceName}/longTermRetentionDatabases/{databaseName}/longTermRetentionManagedInstanceBackups/{backupName}"}  # type: ignore
+    get.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Sql/locations/{locationName}/longTermRetentionManagedInstances/{managedInstanceName}/longTermRetentionDatabases/{databaseName}/longTermRetentionManagedInstanceBackups/{backupName}"
+    }
 
     def _delete_initial(  # pylint: disable=inconsistent-return-statements
         self, location_name: str, managed_instance_name: str, database_name: str, backup_name: str, **kwargs: Any
@@ -544,8 +547,8 @@ class LongTermRetentionManagedInstanceBackupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_delete_request(
             location_name=location_name,
@@ -559,10 +562,11 @@ class LongTermRetentionManagedInstanceBackupsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -574,7 +578,9 @@ class LongTermRetentionManagedInstanceBackupsOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    _delete_initial.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Sql/locations/{locationName}/longTermRetentionManagedInstances/{managedInstanceName}/longTermRetentionDatabases/{databaseName}/longTermRetentionManagedInstanceBackups/{backupName}"}  # type: ignore
+    _delete_initial.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Sql/locations/{locationName}/longTermRetentionManagedInstances/{managedInstanceName}/longTermRetentionDatabases/{databaseName}/longTermRetentionManagedInstanceBackups/{backupName}"
+    }
 
     @distributed_trace
     def begin_delete(
@@ -605,11 +611,11 @@ class LongTermRetentionManagedInstanceBackupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = self._delete_initial(  # type: ignore
                 location_name=location_name,
@@ -629,7 +635,7 @@ class LongTermRetentionManagedInstanceBackupsOperations:
                 return cls(pipeline_response, None, {})
 
         if polling is True:
-            polling_method = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))  # type: PollingMethod
+            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -641,9 +647,11 @@ class LongTermRetentionManagedInstanceBackupsOperations:
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_delete.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Sql/locations/{locationName}/longTermRetentionManagedInstances/{managedInstanceName}/longTermRetentionDatabases/{databaseName}/longTermRetentionManagedInstanceBackups/{backupName}"}  # type: ignore
+    begin_delete.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Sql/locations/{locationName}/longTermRetentionManagedInstances/{managedInstanceName}/longTermRetentionDatabases/{databaseName}/longTermRetentionManagedInstanceBackups/{backupName}"
+    }
 
     @distributed_trace
     def list_by_database(
@@ -652,7 +660,7 @@ class LongTermRetentionManagedInstanceBackupsOperations:
         managed_instance_name: str,
         database_name: str,
         only_latest_per_database: Optional[bool] = None,
-        database_state: Optional[Union[str, "_models.DatabaseState"]] = None,
+        database_state: Optional[Union[str, _models.DatabaseState]] = None,
         **kwargs: Any
     ) -> Iterable["_models.ManagedInstanceLongTermRetentionBackup"]:
         """Lists all long term retention backups for a managed database.
@@ -679,8 +687,8 @@ class LongTermRetentionManagedInstanceBackupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ManagedInstanceLongTermRetentionBackupListResult]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))
+        cls: ClsType[_models.ManagedInstanceLongTermRetentionBackupListResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -706,12 +714,12 @@ class LongTermRetentionManagedInstanceBackupsOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 request = HttpRequest("GET", next_link)
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -719,14 +727,15 @@ class LongTermRetentionManagedInstanceBackupsOperations:
             deserialized = self._deserialize("ManagedInstanceLongTermRetentionBackupListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=False, **kwargs
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -738,7 +747,9 @@ class LongTermRetentionManagedInstanceBackupsOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    list_by_database.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Sql/locations/{locationName}/longTermRetentionManagedInstances/{managedInstanceName}/longTermRetentionDatabases/{databaseName}/longTermRetentionManagedInstanceBackups"}  # type: ignore
+    list_by_database.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Sql/locations/{locationName}/longTermRetentionManagedInstances/{managedInstanceName}/longTermRetentionDatabases/{databaseName}/longTermRetentionManagedInstanceBackups"
+    }
 
     @distributed_trace
     def list_by_instance(
@@ -746,7 +757,7 @@ class LongTermRetentionManagedInstanceBackupsOperations:
         location_name: str,
         managed_instance_name: str,
         only_latest_per_database: Optional[bool] = None,
-        database_state: Optional[Union[str, "_models.DatabaseState"]] = None,
+        database_state: Optional[Union[str, _models.DatabaseState]] = None,
         **kwargs: Any
     ) -> Iterable["_models.ManagedInstanceLongTermRetentionBackup"]:
         """Lists the long term retention backups for a given managed instance.
@@ -771,8 +782,8 @@ class LongTermRetentionManagedInstanceBackupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ManagedInstanceLongTermRetentionBackupListResult]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))
+        cls: ClsType[_models.ManagedInstanceLongTermRetentionBackupListResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -797,12 +808,12 @@ class LongTermRetentionManagedInstanceBackupsOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 request = HttpRequest("GET", next_link)
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -810,14 +821,15 @@ class LongTermRetentionManagedInstanceBackupsOperations:
             deserialized = self._deserialize("ManagedInstanceLongTermRetentionBackupListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=False, **kwargs
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -829,14 +841,16 @@ class LongTermRetentionManagedInstanceBackupsOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    list_by_instance.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Sql/locations/{locationName}/longTermRetentionManagedInstances/{managedInstanceName}/longTermRetentionManagedInstanceBackups"}  # type: ignore
+    list_by_instance.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Sql/locations/{locationName}/longTermRetentionManagedInstances/{managedInstanceName}/longTermRetentionManagedInstanceBackups"
+    }
 
     @distributed_trace
     def list_by_location(
         self,
         location_name: str,
         only_latest_per_database: Optional[bool] = None,
-        database_state: Optional[Union[str, "_models.DatabaseState"]] = None,
+        database_state: Optional[Union[str, _models.DatabaseState]] = None,
         **kwargs: Any
     ) -> Iterable["_models.ManagedInstanceLongTermRetentionBackup"]:
         """Lists the long term retention backups for managed databases in a given location.
@@ -859,8 +873,8 @@ class LongTermRetentionManagedInstanceBackupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ManagedInstanceLongTermRetentionBackupListResult]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))
+        cls: ClsType[_models.ManagedInstanceLongTermRetentionBackupListResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -884,12 +898,12 @@ class LongTermRetentionManagedInstanceBackupsOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 request = HttpRequest("GET", next_link)
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -897,14 +911,15 @@ class LongTermRetentionManagedInstanceBackupsOperations:
             deserialized = self._deserialize("ManagedInstanceLongTermRetentionBackupListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=False, **kwargs
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -916,7 +931,9 @@ class LongTermRetentionManagedInstanceBackupsOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    list_by_location.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Sql/locations/{locationName}/longTermRetentionManagedInstanceBackups"}  # type: ignore
+    list_by_location.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Sql/locations/{locationName}/longTermRetentionManagedInstanceBackups"
+    }
 
     @distributed_trace
     def get_by_resource_group(
@@ -957,8 +974,8 @@ class LongTermRetentionManagedInstanceBackupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ManagedInstanceLongTermRetentionBackup]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))
+        cls: ClsType[_models.ManagedInstanceLongTermRetentionBackup] = kwargs.pop("cls", None)
 
         request = build_get_by_resource_group_request(
             resource_group_name=resource_group_name,
@@ -973,10 +990,11 @@ class LongTermRetentionManagedInstanceBackupsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -992,7 +1010,9 @@ class LongTermRetentionManagedInstanceBackupsOperations:
 
         return deserialized
 
-    get_by_resource_group.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/locations/{locationName}/longTermRetentionManagedInstances/{managedInstanceName}/longTermRetentionDatabases/{databaseName}/longTermRetentionManagedInstanceBackups/{backupName}"}  # type: ignore
+    get_by_resource_group.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/locations/{locationName}/longTermRetentionManagedInstances/{managedInstanceName}/longTermRetentionDatabases/{databaseName}/longTermRetentionManagedInstanceBackups/{backupName}"
+    }
 
     def _delete_by_resource_group_initial(  # pylint: disable=inconsistent-return-statements
         self,
@@ -1014,8 +1034,8 @@ class LongTermRetentionManagedInstanceBackupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_delete_by_resource_group_request(
             resource_group_name=resource_group_name,
@@ -1030,10 +1050,11 @@ class LongTermRetentionManagedInstanceBackupsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1045,7 +1066,9 @@ class LongTermRetentionManagedInstanceBackupsOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    _delete_by_resource_group_initial.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/locations/{locationName}/longTermRetentionManagedInstances/{managedInstanceName}/longTermRetentionDatabases/{databaseName}/longTermRetentionManagedInstanceBackups/{backupName}"}  # type: ignore
+    _delete_by_resource_group_initial.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/locations/{locationName}/longTermRetentionManagedInstances/{managedInstanceName}/longTermRetentionDatabases/{databaseName}/longTermRetentionManagedInstanceBackups/{backupName}"
+    }
 
     @distributed_trace
     def begin_delete_by_resource_group(
@@ -1085,11 +1108,11 @@ class LongTermRetentionManagedInstanceBackupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = self._delete_by_resource_group_initial(  # type: ignore
                 resource_group_name=resource_group_name,
@@ -1110,7 +1133,7 @@ class LongTermRetentionManagedInstanceBackupsOperations:
                 return cls(pipeline_response, None, {})
 
         if polling is True:
-            polling_method = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))  # type: PollingMethod
+            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -1122,9 +1145,11 @@ class LongTermRetentionManagedInstanceBackupsOperations:
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_delete_by_resource_group.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/locations/{locationName}/longTermRetentionManagedInstances/{managedInstanceName}/longTermRetentionDatabases/{databaseName}/longTermRetentionManagedInstanceBackups/{backupName}"}  # type: ignore
+    begin_delete_by_resource_group.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/locations/{locationName}/longTermRetentionManagedInstances/{managedInstanceName}/longTermRetentionDatabases/{databaseName}/longTermRetentionManagedInstanceBackups/{backupName}"
+    }
 
     @distributed_trace
     def list_by_resource_group_database(
@@ -1134,7 +1159,7 @@ class LongTermRetentionManagedInstanceBackupsOperations:
         managed_instance_name: str,
         database_name: str,
         only_latest_per_database: Optional[bool] = None,
-        database_state: Optional[Union[str, "_models.DatabaseState"]] = None,
+        database_state: Optional[Union[str, _models.DatabaseState]] = None,
         **kwargs: Any
     ) -> Iterable["_models.ManagedInstanceLongTermRetentionBackup"]:
         """Lists all long term retention backups for a managed database.
@@ -1164,8 +1189,8 @@ class LongTermRetentionManagedInstanceBackupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ManagedInstanceLongTermRetentionBackupListResult]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))
+        cls: ClsType[_models.ManagedInstanceLongTermRetentionBackupListResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -1192,12 +1217,12 @@ class LongTermRetentionManagedInstanceBackupsOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 request = HttpRequest("GET", next_link)
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -1205,14 +1230,15 @@ class LongTermRetentionManagedInstanceBackupsOperations:
             deserialized = self._deserialize("ManagedInstanceLongTermRetentionBackupListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=False, **kwargs
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1224,7 +1250,9 @@ class LongTermRetentionManagedInstanceBackupsOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    list_by_resource_group_database.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/locations/{locationName}/longTermRetentionManagedInstances/{managedInstanceName}/longTermRetentionDatabases/{databaseName}/longTermRetentionManagedInstanceBackups"}  # type: ignore
+    list_by_resource_group_database.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/locations/{locationName}/longTermRetentionManagedInstances/{managedInstanceName}/longTermRetentionDatabases/{databaseName}/longTermRetentionManagedInstanceBackups"
+    }
 
     @distributed_trace
     def list_by_resource_group_instance(
@@ -1233,7 +1261,7 @@ class LongTermRetentionManagedInstanceBackupsOperations:
         location_name: str,
         managed_instance_name: str,
         only_latest_per_database: Optional[bool] = None,
-        database_state: Optional[Union[str, "_models.DatabaseState"]] = None,
+        database_state: Optional[Union[str, _models.DatabaseState]] = None,
         **kwargs: Any
     ) -> Iterable["_models.ManagedInstanceLongTermRetentionBackup"]:
         """Lists the long term retention backups for a given managed instance.
@@ -1261,8 +1289,8 @@ class LongTermRetentionManagedInstanceBackupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ManagedInstanceLongTermRetentionBackupListResult]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))
+        cls: ClsType[_models.ManagedInstanceLongTermRetentionBackupListResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -1288,12 +1316,12 @@ class LongTermRetentionManagedInstanceBackupsOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 request = HttpRequest("GET", next_link)
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -1301,14 +1329,15 @@ class LongTermRetentionManagedInstanceBackupsOperations:
             deserialized = self._deserialize("ManagedInstanceLongTermRetentionBackupListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=False, **kwargs
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1320,7 +1349,9 @@ class LongTermRetentionManagedInstanceBackupsOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    list_by_resource_group_instance.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/locations/{locationName}/longTermRetentionManagedInstances/{managedInstanceName}/longTermRetentionManagedInstanceBackups"}  # type: ignore
+    list_by_resource_group_instance.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/locations/{locationName}/longTermRetentionManagedInstances/{managedInstanceName}/longTermRetentionManagedInstanceBackups"
+    }
 
     @distributed_trace
     def list_by_resource_group_location(
@@ -1328,7 +1359,7 @@ class LongTermRetentionManagedInstanceBackupsOperations:
         resource_group_name: str,
         location_name: str,
         only_latest_per_database: Optional[bool] = None,
-        database_state: Optional[Union[str, "_models.DatabaseState"]] = None,
+        database_state: Optional[Union[str, _models.DatabaseState]] = None,
         **kwargs: Any
     ) -> Iterable["_models.ManagedInstanceLongTermRetentionBackup"]:
         """Lists the long term retention backups for managed databases in a given location.
@@ -1354,8 +1385,8 @@ class LongTermRetentionManagedInstanceBackupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ManagedInstanceLongTermRetentionBackupListResult]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))
+        cls: ClsType[_models.ManagedInstanceLongTermRetentionBackupListResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -1380,12 +1411,12 @@ class LongTermRetentionManagedInstanceBackupsOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 request = HttpRequest("GET", next_link)
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -1393,14 +1424,15 @@ class LongTermRetentionManagedInstanceBackupsOperations:
             deserialized = self._deserialize("ManagedInstanceLongTermRetentionBackupListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=False, **kwargs
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1412,4 +1444,6 @@ class LongTermRetentionManagedInstanceBackupsOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    list_by_resource_group_location.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/locations/{locationName}/longTermRetentionManagedInstanceBackups"}  # type: ignore
+    list_by_resource_group_location.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/locations/{locationName}/longTermRetentionManagedInstanceBackups"
+    }

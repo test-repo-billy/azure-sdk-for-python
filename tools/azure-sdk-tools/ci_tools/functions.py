@@ -1,39 +1,38 @@
+import fnmatch
+import subprocess
+import shutil
+import zipfile
+import tarfile
+import stat
 from ast import Not
 from packaging.specifiers import SpecifierSet
-from packaging.version import Version, parse
+from packaging.version import Version, parse, InvalidVersion
 from pkg_resources import Requirement
 
-from ci_tools.variables import discover_repo_root, get_artifact_directory, DEV_BUILD_IDENTIFIER
-import os, sys, platform, glob, re
-
-from ci_tools.parsing import ParsedSetup
+from ci_tools.variables import discover_repo_root, DEV_BUILD_IDENTIFIER
+from ci_tools.parsing import ParsedSetup, get_config_setting
 from pypi_tools.pypi import PyPIClient
 
+import os, sys, platform, glob, re, logging
+from typing import List, Any
 
-from typing import List
-import logging
+INACTIVE_CLASSIFIER = "Development Status :: 7 - Inactive"
 
-
-OMITTED_CI_PACKAGES = [
-    "azure-mgmt-documentdb",
-    "azure-servicemanagement-legacy",
-    "azure-mgmt-scheduler",
-    "azure",
-    "azure-mgmt",
-    "azure-storage",
-    "azure-monitor",
-    "azure-mgmt-regionmove",
-]
 MANAGEMENT_PACKAGE_IDENTIFIERS = [
     "mgmt",
+    "nspkg",
     "azure-cognitiveservices",
     "azure-servicefabric",
-    "nspkg",
     "azure-keyvault",
     "azure-synapse",
     "azure-ai-anomalydetector",
 ]
+
+NO_TESTS_ALLOWED = []
+
+
 META_PACKAGES = ["azure", "azure-mgmt", "azure-keyvault"]
+
 REGRESSION_EXCLUDED_PACKAGES = [
     "azure-common",
 ]
@@ -49,8 +48,9 @@ omit_regression = (
     and "mgmt" not in x
     and os.path.basename(x) not in MANAGEMENT_PACKAGE_IDENTIFIERS
     and os.path.basename(x) not in META_PACKAGES
-    and os.path.basename(x) not in REGRESSION_EXCLUDED_PACKAGES
+    and str_to_bool(get_config_setting(x, "regression", True))
 )
+
 omit_docs = lambda x: "nspkg" not in x and os.path.basename(x) not in META_PACKAGES
 omit_build = lambda x: x  # Dummy lambda to match omit type
 lambda_filter_azure_pkg = lambda x: x.startswith("azure") and "-nspkg" not in x
@@ -66,7 +66,20 @@ omit_function_dict = {
 }
 
 
-def filter_for_compatibility(package_set: List[str]) -> List[str]:
+def unzip_file_to_directory(path_to_zip_file: str, extract_location: str) -> str:
+    if path_to_zip_file.endswith(".zip"):
+        with zipfile.ZipFile(path_to_zip_file, "r") as zip_ref:
+            zip_ref.extractall(extract_location)
+            extracted_dir = os.path.basename(os.path.splitext(path_to_zip_file)[0])
+            return os.path.join(extract_location, extracted_dir)
+    else:
+        with tarfile.open(path_to_zip_file) as tar_ref:
+            tar_ref.extractall(extract_location)
+            extracted_dir = os.path.basename(path_to_zip_file).replace(".tar.gz", "")
+            return os.path.join(extract_location, extracted_dir)
+
+
+def apply_compatibility_filter(package_set: List[str]) -> List[str]:
     """
     This function takes in a set of paths to python packages. It returns the set filtered by compatibility with the currently running python executable.
     If a package is unsupported by the executable, it will be omitted from the returned list.
@@ -80,7 +93,12 @@ def filter_for_compatibility(package_set: List[str]) -> List[str]:
     running_major_version = Version(".".join([str(v[0]), str(v[1]), str(v[2])]))
 
     for pkg in package_set:
-        spec_set = SpecifierSet(ParsedSetup.from_path(pkg).python_requires)
+        try:
+            spec_set = SpecifierSet(ParsedSetup.from_path(pkg).python_requires)
+        except RuntimeError as e:
+            logging.error(f"Unable to parse metadata for package {pkg}, omitting from build.")
+            continue
+
         pkg_specs_override = TEST_COMPATIBILITY_MAP.get(os.path.basename(pkg), None)
 
         if pkg_specs_override:
@@ -89,12 +107,29 @@ def filter_for_compatibility(package_set: List[str]) -> List[str]:
         if running_major_version in spec_set:
             collected_packages.append(pkg)
 
+    logging.debug("Target packages after applying compatibility filter: {}".format(collected_packages))
+    logging.debug(
+        "Package(s) omitted by compatibility filter: {}".format(generate_difference(package_set, collected_packages))
+    )
+
     return collected_packages
 
 
-def compare_python_version(version_spec: str):
-    current_sys_version = parse(platform.python_version())
-    spec_set = SpecifierSet(version_spec)
+def compare_python_version(version_spec: str) -> bool:
+    """
+    Compares the current running platform version of python against a version spec. Sanitizes
+    the running platform version to just the major version.
+    """
+    platform_version = platform.python_version()
+    parsed_version = re.match(r"[0-9\.]+", platform_version, re.IGNORECASE)
+
+    # we want to be loud if we can't parse out a major version from the version string, not silently
+    # fail and skip running samples on a platform we really should be
+    if parsed_version is None:
+        raise InvalidVersion(f'Unable to parse the platform version. Unparsed value was "{platform_version}".')
+    else:
+        current_sys_version = parse(parsed_version[0])
+        spec_set = SpecifierSet(version_spec)
 
     return current_sys_version in spec_set
 
@@ -113,25 +148,13 @@ def str_to_bool(input_string: str) -> bool:
         return False
 
 
-def discover_targeted_packages(
-    glob_string: str,
-    target_root_dir: str,
-    additional_contains_filter: str = "",
-    filter_type: str = "Build",
-    compatibility_filter: bool = True,
-) -> List[str]:
-    """
-    During build and test, the set of targeted packages may expand or contract depending on the needs of the invocation.
-    This function centralizes business and material requirements and outputs the set of packages that should be targeted.
+def generate_difference(original_packages: List[str], filtered_packages: List[str]):
+    return list(set(original_packages) - set(filtered_packages))
 
-    :param str glob_string: The basic glob used to query packages within the repo. Defaults to "azure-*"
-    :param str target_root_dir: The root directory in which globbing will begin.
-    :param str additional_contains_filter: Additional filter option. Used when needing to provide one-off filtration that doesn't merit an additional filter_type. Defaults to empty string.
-    :param str filter_type: One a string representing a filter function as a set of options. Options [ "Build", "Docs", "Regression", "Omit_management" ] Defaults to "Build".
-    :param bool compatibility_filter: Enables or disables compatibility filtering of found packages. If the invoking python executable does not match a found package's specifiers, the package will be omitted. Defaults to True.
-    """
+
+def glob_packages(glob_string: str, target_root_dir: str) -> List[str]:
     if glob_string:
-        individual_globs = glob_string.split(",")
+        individual_globs = [glob_string.strip() for glob_string in glob_string.split(",")]
     else:
         individual_globs = "azure-*"
     collected_top_level_directories = []
@@ -143,35 +166,76 @@ def discover_targeted_packages(
         collected_top_level_directories.extend([os.path.dirname(p) for p in globbed])
 
     # deduplicate, in case we have double coverage from the glob strings. Example: "azure-mgmt-keyvault,azure-mgmt-*"
-    collected_directories = list(set([p for p in collected_top_level_directories if additional_contains_filter in p]))
-    pkg_set_ci_filtered = collected_directories
+    return list(set(collected_top_level_directories))
 
-    # if we have individually queued this specific package, it's obvious that we want to build it specifically
-    # in this case, do not honor the omission list
-    if len(collected_directories) == 1:
-        if compatibility_filter:
-            pkg_set_ci_filtered = filter_for_compatibility(collected_directories)
 
-    # however, if there are multiple packages being built, we should honor the omission list and NOT build the omitted
-    # packages
-    else:
-        allowed_package_set = remove_omitted_packages(collected_directories)
-        if compatibility_filter:
-            pkg_set_ci_filtered = filter_for_compatibility(allowed_package_set)
+def apply_business_filter(collected_packages: List[str], filter_type: str) -> List[str]:
+    pkg_set_ci_filtered = list(filter(omit_function_dict.get(filter_type, omit_build), collected_packages))
+
+    logging.debug("Target packages after applying business filter: {}".format(pkg_set_ci_filtered))
+    logging.debug(
+        "Package(s) omitted by business filter: {}".format(generate_difference(collected_packages, pkg_set_ci_filtered))
+    )
+
+    return pkg_set_ci_filtered
+
+
+def discover_targeted_packages(
+    glob_string: str,
+    target_root_dir: str,
+    additional_contains_filter: str = "",
+    filter_type: str = "Build",
+    compatibility_filter: bool = True,
+    include_inactive: bool = False,
+) -> List[str]:
+    """
+    During build and test, the set of targeted packages may expand or contract depending on the needs of the invocation.
+    This function centralizes business and material requirements and outputs the set of packages that should be targeted.
+
+    :param str glob_string: The basic glob used to query packages within the repo. Defaults to "azure-*"
+    :param str target_root_dir: The root directory in which globbing will begin.
+    :param str additional_contains_filter: Additional filter option. Used when needing to provide one-off filtration that doesn't merit an additional filter_type. Defaults to empty string.
+    :param str filter_type: One a string representing a filter function as a set of options. Options [ "Build", "Docs", "Regression", "Omit_management" ] Defaults to "Build".
+    :param bool compatibility_filter: Enables or disables compatibility filtering of found packages. If the invoking python executable does not match a found package's specifiers, the package will be omitted. Defaults to True.
+    """
+
+    # glob the starting package set
+    collected_packages = glob_packages(glob_string, target_root_dir)
+
+    # apply the additional contains filter
+    collected_packages = [pkg for pkg in collected_packages if additional_contains_filter in pkg]
+
+    # filter for compatibility, this means excluding a package that doesn't support py36 when we are running a py36 executable
+    if compatibility_filter:
+        collected_packages = apply_compatibility_filter(collected_packages)
+
+    # apply package-specific exclusions only if we have gotten more than one
+    if len(collected_packages) > 1:
+        if not include_inactive:
+            collected_packages = apply_inactive_filter(collected_packages)
 
     # Apply filter based on filter type. for e.g. Docs, Regression, Management
-    pkg_set_ci_filtered = list(filter(omit_function_dict.get(filter_type, omit_build), pkg_set_ci_filtered))
-    logging.info("Target packages after filtering by CI Type: {}".format(pkg_set_ci_filtered))
-    logging.info(
-        "Package(s) omitted by CI filter: {}".format(list(set(collected_directories) - set(pkg_set_ci_filtered)))
-    )
-    return sorted(pkg_set_ci_filtered)
+    collected_packages = apply_business_filter(collected_packages, filter_type)
+
+    return sorted(collected_packages)
 
 
-def remove_omitted_packages(collected_directories):
-    packages = [
-        package_dir for package_dir in collected_directories if os.path.basename(package_dir) not in OMITTED_CI_PACKAGES
-    ]
+def is_package_active(package_path: str):
+    disabled = INACTIVE_CLASSIFIER in ParsedSetup.from_path(package_path).classifiers
+
+    override_value = os.getenv(f"ENABLE_{os.path.basename(package_path).upper().replace('-', '_')}", None)
+
+    if override_value:
+        return str_to_bool(override_value)
+    else:
+        return not disabled
+
+
+def apply_inactive_filter(collected_packages: List[str]) -> List[str]:
+    packages = [pkg for pkg in collected_packages if is_package_active(pkg)]
+
+    logging.debug("Target packages after applying inactive filter: {}".format(collected_packages))
+    logging.debug("Package(s) omitted by inactive filter: {}".format(generate_difference(collected_packages, packages)))
 
     return packages
 
@@ -203,33 +267,60 @@ def is_required_version_on_pypi(package_name, spec):
     return versions
 
 
-def get_version_from_repo(pkg_name: str, repo_root: str = None):
+def get_package_from_repo(pkg_name: str, repo_root: str = None) -> ParsedSetup:
     root_dir = discover_repo_root(repo_root)
 
-    # find version for the package from source. This logic should be revisited to find version from devops feed
     glob_path = os.path.join(root_dir, "sdk", "*", pkg_name, "setup.py")
     paths = glob.glob(glob_path)
+
     if paths:
         setup_py_path = paths[0]
         parsed_setup = ParsedSetup.from_path(setup_py_path)
+        return parsed_setup
 
+    return None
+
+
+def get_package_from_repo_or_folder(req: str, prebuilt_wheel_dir: str = None) -> str:
+    """Takes a package name and a possible prebuilt wheel directory. Attempts to resolve a wheel that matches the package name, and if it can't,
+    attempts to find the package within the repo to install directly from path on disk.
+
+    During a CI build, it is preferred that the package is installed from a prebuilt wheel directory, as multiple CI environments attempting to install the relative
+    req can cause inconsistent installation issues during parallel tox environment execution.
+    """
+
+    local_package = get_package_from_repo(req)
+
+    if prebuilt_wheel_dir and os.path.exists(prebuilt_wheel_dir):
+        prebuilt_package = discover_prebuilt_package(prebuilt_wheel_dir, local_package.setup_filename, "wheel")
+        if prebuilt_package:
+            # return the first package found, there should only be a single one matching given that our prebuilt wheel directory
+            # is populated by the replacement of dev_reqs.txt with the prebuilt wheels
+            # ref tox_harness replace_dev_reqs() calls
+            return os.path.join(prebuilt_wheel_dir, prebuilt_package[0])
+
+    return local_package.folder
+
+
+def get_version_from_repo(pkg_name: str, repo_root: str = None) -> str:
+    pkg_info = get_package_from_repo(pkg_name, repo_root)
+    if pkg_info:
         # Remove dev build part if version for this package is already updated to dev build
         # When building package with dev build version, version for packages in same service is updated to dev build
         # and other packages will not have dev build number
         # strip dev build number so we can check if package exists in PyPI and replace
-
-        version_obj = Version(parsed_setup.version)
+        version_obj = Version(pkg_info.version)
         if version_obj.pre:
             if version_obj.pre[0] == DEV_BUILD_IDENTIFIER:
-                version = version_obj.base_version
+                return version_obj.base_version
 
-        return version
+        return str(version_obj)
     else:
         logging.error("setup.py is not found for package {} to identify current version".format(pkg_name))
         exit(1)
 
 
-def get_base_version(pkg_name):
+def get_base_version(pkg_name: str) -> str:
     root_dir = discover_repo_root()
     # find version for the package from source. This logic should be revisited to find version from devops feed
     glob_path = os.path.join(root_dir, "sdk", "*", pkg_name, "setup.py")
@@ -244,7 +335,7 @@ def get_base_version(pkg_name):
         exit(1)
 
 
-def process_requires(setup_py_path: str):
+def process_requires(setup_py_path: str, is_dev_build: bool = False):
     """
     This method processes a setup.py's package requirements to verify if all required packages are available on PyPI.
     If any azure sdk package is not available on PyPI then requirement will be updated to refer to the sdk "dev_identifier".
@@ -264,7 +355,7 @@ def process_requires(setup_py_path: str):
         pkg_name = req.key
         spec = SpecifierSet(str(req).replace(pkg_name, ""))
 
-        if not is_required_version_on_pypi(pkg_name, spec):
+        if not is_required_version_on_pypi(pkg_name, spec) or is_dev_build:
             old_req = str(req)
             version = get_version_from_repo(pkg_name)
             base_version = get_base_version(pkg_name)
@@ -291,3 +382,240 @@ def process_requires(setup_py_path: str):
         logging.info("Packages not available on PyPI:{}".format(requirement_to_update))
         update_requires(setup_py_path, requirement_to_update)
         logging.info("Package requirement is updated in setup.py")
+
+
+def find_sdist(dist_dir: str, pkg_name: str, pkg_version: str) -> str:
+    """This function attempts to look within a directory (and all subdirs therein) and find a source distribution for the targeted package and version."""
+    # This function will find a sdist for given package name
+    if not os.path.exists(dist_dir):
+        logging.error("dist_dir is incorrect")
+        return
+
+    if pkg_name is None:
+        logging.error("Package name cannot be empty to find sdist")
+        return
+
+    pkg_name_format = f"{pkg_name}-{pkg_version}.tar.gz"
+
+    packages = []
+    for root, dirnames, filenames in os.walk(dist_dir):
+        for filename in fnmatch.filter(filenames, pkg_name_format):
+            packages.append(os.path.join(root, filename))
+
+    packages = [os.path.relpath(w, dist_dir) for w in packages]
+
+    if not packages:
+        logging.error("No sdist is found in directory %s with package name format %s", dist_dir, pkg_name_format)
+        return
+    return packages[0]
+
+
+def pip_install(requirements: List[str], include_dependencies: bool = True, python_executable: str = None) -> bool:
+    """
+    Attempts to invoke an install operation using the invoking python's pip. Empty requirements are auto-success.
+    """
+
+    exe = python_executable or sys.executable
+
+    command = [exe, "-m", "pip", "install"]
+
+    if requirements:
+        command.extend([req.strip() for req in requirements])
+    else:
+        return True
+
+    try:
+        subprocess.check_call(command)
+    except subprocess.CalledProcessError as f:
+        return False
+
+    return True
+
+
+def pip_uninstall(requirements: List[str], python_executable: str) -> bool:
+    """
+    Attempts to invoke an install operation using the invoking python's pip. Empty requirements are auto-success.
+    """
+    exe = python_executable or sys.executable
+    command = [exe, "-m", "pip", "uninstall", "-y"]
+
+    if requirements:
+        command.extend([req.strip() for req in requirements])
+    else:
+        return True
+
+    try:
+        result = subprocess.check_call(command)
+        return True
+    except subprocess.CalledProcessError as f:
+        return False
+
+
+def pip_install_requirements_file(requirements_file: str, python_executable: str = None) -> bool:
+    return pip_install(["-r", requirements_file], True, python_executable)
+
+
+def get_pip_list_output(python_executable: str = None):
+    """Uses the invoking python executable to get the output from pip list."""
+    exe = python_executable or sys.executable
+
+    out = subprocess.Popen(
+        [exe, "-m", "pip", "list", "--disable-pip-version-check", "--format", "freeze"],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+    )
+
+    stdout, stderr = out.communicate()
+
+    collected_output = {}
+
+    if stdout and (stderr is None):
+        # this should be compatible with py27 https://docs.python.org/2.7/library/stdtypes.html#str.decode
+        for line in stdout.decode("utf-8").split(os.linesep)[2:]:
+            if line:
+                package, version = re.split("==", line)
+                collected_output[package] = version
+    else:
+        raise Exception(stderr)
+
+    return collected_output
+
+
+def pytest(args: [], cwd: str = None, python_executable: str = None) -> bool:
+    """
+    Invokes a set of tests, returns true if successful, false otherwise.
+    """
+
+    exe = python_executable or sys.executable
+
+    commands = [
+        exe,
+        "-m",
+        "pytest",
+    ]
+
+    commands.extend(args)
+
+    logging.info(commands)
+    if cwd:
+        result = subprocess.run(commands, cwd=cwd)
+    else:
+        result = subprocess.run(commands)
+
+    return result.returncode == 0
+
+
+def get_interpreter_compatible_tags() -> List[str]:
+    """
+    This function invokes pip from the invoking interpreter and discovers which tags the interpreter is compatible with.
+    """
+
+    commands = [sys.executable, "-m", "pip", "debug", "--verbose"]
+
+    output = subprocess.run(
+        commands,
+        check=True,
+        capture_output=True,
+    ).stdout.decode(encoding="utf-8")
+
+    tag_strings = output.split(os.linesep)
+
+    for index, value in enumerate(tag_strings):
+        if "Compatible tags" in value:
+            break
+
+    tags = tag_strings[index + 1 :]
+
+    return [tag.strip() for tag in tags if tag]
+
+
+def check_whl_against_tags(whl_name: str, tags: List[str]) -> bool:
+    for tag in tags:
+        if tag in whl_name:
+            return True
+    return False
+
+
+def find_whl(whl_dir: str, pkg_name: str, pkg_version: str) -> str:
+    """This function attempts to look within a directory (and all subdirs therein) and find a wheel that matches our targeted name and version AND
+    whose compilation is compatible with the invoking interpreter."""
+    if not os.path.exists(whl_dir):
+        logging.error("whl_dir is incorrect")
+        return
+
+    if pkg_name is None:
+        logging.error("Package name cannot be empty to find whl")
+        return
+
+    pkg_name_format = f"{pkg_name.replace('-', '_')}-{pkg_version}*.whl"
+    whls = []
+
+    # todo: replace with glob, we aren't using py2 anymore!
+    for root, dirnames, filenames in os.walk(whl_dir):
+        for filename in fnmatch.filter(filenames, pkg_name_format):
+            whls.append(os.path.join(root, filename))
+
+    whls = [os.path.relpath(w, whl_dir) for w in whls]
+
+    if not whls:
+        logging.error("No whl is found in directory %s with package name format %s", whl_dir, pkg_name_format)
+        logging.info("List of whls in directory: %s", glob.glob(os.path.join(whl_dir, "*.whl")))
+        return
+
+    compatible_tags = get_interpreter_compatible_tags()
+
+    logging.debug("Dumping visible tags and whls")
+    logging.debug(compatible_tags)
+    logging.debug(whls)
+
+    if whls:
+        # grab the first whl that matches a tag from our compatible_tags list
+        for whl in whls:
+            if check_whl_against_tags(whl, compatible_tags):
+                logging.info(f"Found whl {whl}")
+                return whl
+
+        # if whl is platform independent then there should only be one whl in filtered list
+        if len(whls) > 1:
+            # if we have reached here, that means we have whl specific to platform as well.
+            # for now we are failing the test if platform specific wheels are found. Todo: enhance to find platform specific whl
+            logging.error(f"We were unable to locate a compatible wheel for {pkg_name}")
+            sys.exit(1)
+
+    return None
+
+
+def error_handler_git_access(func, path, exc):
+    """
+    This function exists because the git idx file is written with strange permissions that prevent it from being
+    deleted. Due to this, we need to register an error handler that attempts to fix the file permissions before
+    re-attempting the delete operations.
+    """
+
+    if not os.access(path, os.W_OK):
+        os.chmod(path, stat.S_IWUSR)
+        func(path)
+    else:
+        raise
+
+
+def cleanup_directory(target_directory: str) -> None:
+    """Invokes a directory delete. Specifically handles the case where bad permissions on a git .idx file
+    prevent cleanup of the directory with a generic error.
+    """
+    if os.path.exists(target_directory):
+        shutil.rmtree(target_directory, ignore_errors=False, onerror=error_handler_git_access)
+
+
+def discover_prebuilt_package(dist_directory: str, setup_path: str, package_type: str) -> List[str]:
+    """Discovers a prebuild wheel or sdist for a given setup path."""
+    packages = []
+    pkg = ParsedSetup.from_path(setup_path)
+    if package_type == "wheel":
+        prebuilt_package = find_whl(dist_directory, pkg.name, pkg.version)
+    else:
+        prebuilt_package = find_sdist(dist_directory, pkg.name, pkg.version)
+
+    if prebuilt_package is not None:
+        packages.append(prebuilt_package)
+    return packages

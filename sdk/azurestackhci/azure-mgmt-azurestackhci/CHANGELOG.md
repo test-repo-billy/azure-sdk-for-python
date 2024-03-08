@@ -1,5 +1,191 @@
 # Release History
 
+## 8.0.0b3 (2023-10-23)
+
+### Features Added
+
+  - Added operation GuestAgentsOperations.list
+  - Added operation HybridIdentityMetadataOperations.list
+  - Added operation group GalleryImagesOperations
+  - Added operation group LogicalNetworksOperations
+  - Added operation group MarketplaceGalleryImagesOperations
+  - Added operation group NetworkInterfacesOperations
+  - Added operation group StorageContainersOperations
+  - Added operation group VirtualHardDisksOperations
+  - Added operation group VirtualMachineInstancesOperations
+  - Model HardwareProfileUpdate has a new parameter memory_mb
+  - Model HttpProxyConfiguration has a new parameter http_proxy
+  - Model HttpProxyConfiguration has a new parameter no_proxy
+  - Model HttpProxyConfiguration has a new parameter trusted_ca
+  - Model IPPool has a new parameter name
+  - Model ProxyResource has a new parameter system_data
+  - Model Resource has a new parameter system_data
+  - Model StorageProfileUpdateDataDisksItem has a new parameter id
+  - Model TrackedResource has a new parameter system_data
+
+### Breaking Changes
+
+  - Model GuestAgent no longer has parameter http_proxy_config
+  - Model HardwareProfileUpdate no longer has parameter memory_gb
+  - Model StorageProfileUpdateDataDisksItem no longer has parameter name
+  - Operation GuestAgentOperations.begin_create has a new required parameter resource_uri
+  - Operation GuestAgentOperations.begin_create no longer has parameter name
+  - Operation GuestAgentOperations.begin_create no longer has parameter resource_group_name
+  - Operation GuestAgentOperations.begin_create no longer has parameter virtual_machine_name
+  - Operation GuestAgentOperations.begin_delete has a new required parameter resource_uri
+  - Operation GuestAgentOperations.begin_delete no longer has parameter name
+  - Operation GuestAgentOperations.begin_delete no longer has parameter resource_group_name
+  - Operation GuestAgentOperations.begin_delete no longer has parameter virtual_machine_name
+  - Operation GuestAgentOperations.get has a new required parameter resource_uri
+  - Operation GuestAgentOperations.get no longer has parameter name
+  - Operation GuestAgentOperations.get no longer has parameter resource_group_name
+  - Operation GuestAgentOperations.get no longer has parameter virtual_machine_name
+  - Operation HybridIdentityMetadataOperations.get has a new required parameter resource_uri
+  - Operation HybridIdentityMetadataOperations.get no longer has parameter metadata_name
+  - Operation HybridIdentityMetadataOperations.get no longer has parameter resource_group_name
+  - Operation HybridIdentityMetadataOperations.get no longer has parameter virtual_machine_name
+  - Removed operation GuestAgentsOperations.list_by_virtual_machines
+  - Removed operation HybridIdentityMetadataOperations.create
+  - Removed operation HybridIdentityMetadataOperations.delete
+  - Removed operation HybridIdentityMetadataOperations.list_by_virtual_machines
+  - Removed operation group ArcSettingsOperations
+  - Removed operation group ClustersOperations
+  - Removed operation group ExtensionsOperations
+  - Removed operation group GalleryimagesOperations
+  - Removed operation group MachineExtensionsOperations
+  - Removed operation group MarketplacegalleryimagesOperations
+  - Removed operation group NetworkinterfacesOperations
+  - Removed operation group StoragecontainersOperations
+  - Removed operation group VirtualharddisksOperations
+  - Removed operation group VirtualmachinesOperations
+  - Removed operation group VirtualnetworksOperations
+
+## 8.0.0b2 (2022-12-15)
+
+### Features Added
+
+  - Added operation ClustersOperations.delete
+  - Added operation group GalleryimagesOperations
+  - Added operation group GuestAgentOperations
+  - Added operation group GuestAgentsOperations
+  - Added operation group HybridIdentityMetadataOperations
+  - Added operation group MachineExtensionsOperations
+  - Added operation group MarketplacegalleryimagesOperations
+  - Added operation group NetworkinterfacesOperations
+  - Added operation group StoragecontainersOperations
+  - Added operation group VirtualharddisksOperations
+  - Added operation group VirtualmachinesOperations
+  - Added operation group VirtualnetworksOperations
+  - Model ArcSetting has a new parameter created_at
+  - Model ArcSetting has a new parameter created_by
+  - Model ArcSetting has a new parameter created_by_type
+  - Model ArcSetting has a new parameter last_modified_at
+  - Model ArcSetting has a new parameter last_modified_by
+  - Model ArcSetting has a new parameter last_modified_by_type
+  - Model Cluster has a new parameter created_at
+  - Model Cluster has a new parameter created_by
+  - Model Cluster has a new parameter created_by_type
+  - Model Cluster has a new parameter last_modified_at
+  - Model Cluster has a new parameter last_modified_by
+  - Model Cluster has a new parameter last_modified_by_type
+  - Model Extension has a new parameter created_at
+  - Model Extension has a new parameter created_by
+  - Model Extension has a new parameter created_by_type
+  - Model Extension has a new parameter last_modified_at
+  - Model Extension has a new parameter last_modified_by
+  - Model Extension has a new parameter last_modified_by_type
+
+### Breaking Changes
+
+  - Model ArcSetting no longer has parameter arc_application_client_id
+  - Model ArcSetting no longer has parameter arc_application_object_id
+  - Model ArcSetting no longer has parameter arc_application_tenant_id
+  - Model ArcSetting no longer has parameter arc_service_principal_object_id
+  - Model ArcSetting no longer has parameter connectivity_properties
+  - Model ArcSetting no longer has parameter system_data
+  - Model Cluster no longer has parameter aad_application_object_id
+  - Model Cluster no longer has parameter aad_service_principal_object_id
+  - Model Cluster no longer has parameter principal_id
+  - Model Cluster no longer has parameter service_endpoint
+  - Model Cluster no longer has parameter software_assurance_properties
+  - Model Cluster no longer has parameter system_data
+  - Model Cluster no longer has parameter tenant_id
+  - Model Cluster no longer has parameter type_identity_type
+  - Model Cluster no longer has parameter user_assigned_identities
+  - Model ClusterNode no longer has parameter node_type
+  - Model ClusterNode no longer has parameter os_display_version
+  - Model ClusterPatch no longer has parameter principal_id
+  - Model ClusterPatch no longer has parameter tenant_id
+  - Model ClusterPatch no longer has parameter type
+  - Model ClusterPatch no longer has parameter user_assigned_identities
+  - Model Extension no longer has parameter system_data
+  - Model ProxyResource no longer has parameter system_data
+  - Model Resource no longer has parameter system_data
+  - Model TrackedResource no longer has parameter system_data
+  - Removed operation ArcSettingsOperations.begin_create_identity
+  - Removed operation ArcSettingsOperations.generate_password
+  - Removed operation ArcSettingsOperations.update
+  - Removed operation ClustersOperations.begin_create_identity
+  - Removed operation ClustersOperations.begin_delete
+  - Removed operation ClustersOperations.begin_extend_software_assurance_benefit
+  - Removed operation ClustersOperations.begin_upload_certificate
+  - Removed operation group OffersOperations
+  - Removed operation group PublishersOperations
+  - Removed operation group SkusOperations
+  - Removed operation group UpdateRunsOperations
+  - Removed operation group UpdateSummariesOperations
+  - Removed operation group UpdatesOperations
+
+## 8.0.0b1 (2022-11-25)
+
+### Features Added
+
+  - Added operation ClustersOperations.begin_extend_software_assurance_benefit
+  - Added operation group OffersOperations
+  - Added operation group PublishersOperations
+  - Added operation group SkusOperations
+  - Added operation group UpdateRunsOperations
+  - Added operation group UpdateSummariesOperations
+  - Added operation group UpdatesOperations
+  - Model ArcSetting has a new parameter system_data
+  - Model Cluster has a new parameter principal_id
+  - Model Cluster has a new parameter software_assurance_properties
+  - Model Cluster has a new parameter system_data
+  - Model Cluster has a new parameter tenant_id
+  - Model Cluster has a new parameter type_identity_type
+  - Model Cluster has a new parameter user_assigned_identities
+  - Model ClusterNode has a new parameter node_type
+  - Model ClusterNode has a new parameter os_display_version
+  - Model ClusterPatch has a new parameter principal_id
+  - Model ClusterPatch has a new parameter tenant_id
+  - Model ClusterPatch has a new parameter type
+  - Model ClusterPatch has a new parameter user_assigned_identities
+  - Model Extension has a new parameter system_data
+  - Model ProxyResource has a new parameter system_data
+  - Model Resource has a new parameter system_data
+  - Model TrackedResource has a new parameter system_data
+
+### Breaking Changes
+
+  - Model ArcSetting no longer has parameter created_at
+  - Model ArcSetting no longer has parameter created_by
+  - Model ArcSetting no longer has parameter created_by_type
+  - Model ArcSetting no longer has parameter last_modified_at
+  - Model ArcSetting no longer has parameter last_modified_by
+  - Model ArcSetting no longer has parameter last_modified_by_type
+  - Model Cluster no longer has parameter created_at
+  - Model Cluster no longer has parameter created_by
+  - Model Cluster no longer has parameter created_by_type
+  - Model Cluster no longer has parameter last_modified_at
+  - Model Cluster no longer has parameter last_modified_by
+  - Model Cluster no longer has parameter last_modified_by_type
+  - Model Extension no longer has parameter created_at
+  - Model Extension no longer has parameter created_by
+  - Model Extension no longer has parameter created_by_type
+  - Model Extension no longer has parameter last_modified_at
+  - Model Extension no longer has parameter last_modified_by
+  - Model Extension no longer has parameter last_modified_by_type
+
 ## 7.0.0 (2022-05-26)
 
 **Features**

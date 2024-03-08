@@ -59,10 +59,25 @@ class AggregationFunctionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SUM = "sum"
 
 
+class AlwaysEncryptedEnclaveType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of enclave requested on the elastic pool."""
+
+    DEFAULT = "Default"
+    VBS = "VBS"
+
+
 class AuthenticationName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """AuthenticationName."""
 
     DEFAULT = "Default"
+
+
+class AuthMetadataLookupModes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The managed instance's authentication metadata lookup mode."""
+
+    AZURE_AD = "AzureAD"
+    PAIRED = "Paired"
+    WINDOWS = "Windows"
 
 
 class AutoExecuteStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -141,8 +156,24 @@ class AutomaticTuningServerReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     AUTO_CONFIGURED = "AutoConfigured"
 
 
+class AvailabilityZoneType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies the availability zone the pool's primary replica is pinned to."""
+
+    NO_PREFERENCE = "NoPreference"
+    ONE = "1"
+    TWO = "2"
+    THREE = "3"
+
+
+class BackupStorageAccessTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The BackupStorageAccessTier for the LTR backup."""
+
+    HOT = "Hot"
+    ARCHIVE = "Archive"
+
+
 class BackupStorageRedundancy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The storage redundancy type of the copied backup."""
+    """The storage redundancy type of the backup."""
 
     GEO = "Geo"
     LOCAL = "Local"
@@ -305,6 +336,12 @@ class DatabaseIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     USER_ASSIGNED = "UserAssigned"
 
 
+class DatabaseKeyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The database key type. Only supported value is 'AzureKeyVault'."""
+
+    AZURE_KEY_VAULT = "AzureKeyVault"
+
+
 class DatabaseLicenseType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The license type to apply for this database. ``LicenseIncluded`` if you need a license, or
     ``BasePrice`` if you have a license and are eligible for the Azure Hybrid Benefit.
@@ -408,6 +445,12 @@ class DayOfWeek(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SATURDAY = "Saturday"
 
 
+class DevOpsAuditingSettingsName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """DevOpsAuditingSettingsName."""
+
+    DEFAULT = "Default"
+
+
 class DiffBackupIntervalInHours(int, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The differential backup interval in hours. This is how many interval hours between each
     differential backup will be supported. This is only applicable to live databases but not
@@ -453,11 +496,39 @@ class EncryptionProtectorName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CURRENT = "current"
 
 
+class ExternalGovernanceStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Status of external governance."""
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
+
+
 class FailoverGroupReplicationRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Local replication role of the failover group instance."""
 
     PRIMARY = "Primary"
     SECONDARY = "Secondary"
+
+
+class FreeLimitExhaustionBehavior(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies the behavior when monthly free limits are exhausted for the free database.
+
+    AutoPause: The database will be auto paused upon exhaustion of free limits for remainder of the
+    month.
+
+    BillForUsage: The database will continue to be online upon exhaustion of free limits and any
+    overage will be billed.
+    """
+
+    AUTO_PAUSE = "AutoPause"
+    BILL_OVER_USAGE = "BillOverUsage"
+
+
+class FreemiumType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Weather or not Managed Instance is freemium."""
+
+    REGULAR = "Regular"
+    FREEMIUM = "Freemium"
 
 
 class GeoBackupPolicyName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -471,6 +542,25 @@ class GeoBackupPolicyState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     DISABLED = "Disabled"
     ENABLED = "Enabled"
+
+
+class HybridSecondaryUsage(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Hybrid secondary usage. Possible values are 'Active' (default value) and 'Passive' (customer
+    uses the secondary as Passive DR).
+    """
+
+    ACTIVE = "Active"
+    PASSIVE = "Passive"
+
+
+class HybridSecondaryUsageDetected(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Hybrid secondary usage detected. Possible values are 'Active' (customer does not meet the
+    requirements to use the secondary as Passive DR) and 'Passive' (customer meets the requirements
+    to use the secondary as Passive DR).
+    """
+
+    ACTIVE = "Active"
+    PASSIVE = "Passive"
 
 
 class IdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -642,12 +732,24 @@ class ManagedDatabaseStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     INACCESSIBLE = "Inaccessible"
     RESTORING = "Restoring"
     UPDATING = "Updating"
+    STOPPING = "Stopping"
+    STOPPED = "Stopped"
+    STARTING = "Starting"
+    DB_MOVING = "DbMoving"
+    DB_COPYING = "DbCopying"
 
 
 class ManagedInstanceAdministratorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of the managed instance administrator."""
 
     ACTIVE_DIRECTORY = "ActiveDirectory"
+
+
+class ManagedInstanceDatabaseFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies the internal format of instance databases specific to the SQL engine version."""
+
+    ALWAYS_UP_TO_DATE = "AlwaysUpToDate"
+    SQL_SERVER2022 = "SQLServer2022"
 
 
 class ManagedInstanceLicenseType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -665,32 +767,25 @@ class ManagedInstanceLongTermRetentionPolicyName(str, Enum, metaclass=CaseInsens
     DEFAULT = "default"
 
 
-class ManagedInstancePropertiesProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """ManagedInstancePropertiesProvisioningState."""
-
-    CREATING = "Creating"
-    DELETING = "Deleting"
-    UPDATING = "Updating"
-    UNKNOWN = "Unknown"
-    SUCCEEDED = "Succeeded"
-    FAILED = "Failed"
-    ACCEPTED = "Accepted"
-    CREATED = "Created"
-    DELETED = "Deleted"
-    UNRECOGNIZED = "Unrecognized"
-    RUNNING = "Running"
-    CANCELED = "Canceled"
-    NOT_SPECIFIED = "NotSpecified"
-    REGISTERING = "Registering"
-    TIMED_OUT = "TimedOut"
-
-
 class ManagedInstanceProxyOverride(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Connection type used for connecting to the instance."""
 
     PROXY = "Proxy"
     REDIRECT = "Redirect"
     DEFAULT = "Default"
+
+
+class ManagedLedgerDigestUploadsName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """ManagedLedgerDigestUploadsName."""
+
+    CURRENT = "current"
+
+
+class ManagedLedgerDigestUploadsState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies the state of ledger digest upload."""
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
 
 
 class ManagedServerCreateMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -742,8 +837,18 @@ class MetricType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DTU = "dtu"
 
 
+class MinimalTlsVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Minimal TLS version. Allowed values: 'None', 1.0', '1.1', '1.2', '1.3'."""
+
+    NONE = "None"
+    ONE0 = "1.0"
+    ONE1 = "1.1"
+    ONE2 = "1.2"
+    ONE3 = "1.3"
+
+
 class MoveOperationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The move operation mode."""
+    """Operation mode."""
 
     MOVE = "Move"
     COPY = "Copy"
@@ -919,6 +1024,7 @@ class ReplicationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ASYNC = "Async"
     SYNC = "Sync"
+    ASYNC_ENUM = "Async"
 
 
 class ReplicationRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -995,6 +1101,13 @@ class SampleName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     WIDE_WORLD_IMPORTERS_FULL = "WideWorldImportersFull"
 
 
+class SecondaryInstanceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the geo-secondary instance. Set 'Standby' if the instance is used as a DR option only."""
+
+    GEO = "Geo"
+    STANDBY = "Standby"
+
+
 class SecondaryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The secondary type of the database if it is a secondary.  Valid values are Geo, Named and
     Standby.
@@ -1062,6 +1175,12 @@ class SensitivityLabelUpdateKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     REMOVE = "remove"
 
 
+class ServerConfigurationOptionName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """ServerConfigurationOptionName."""
+
+    ALLOW_POLYBASE_EXPORT = "allowPolybaseExport"
+
+
 class ServerConnectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The server connection type."""
 
@@ -1078,12 +1197,22 @@ class ServerKeyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class ServerNetworkAccessFlag(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Whether or not public endpoint access is allowed for this server.  Value is optional but if
+    """Whether or not to restrict outbound network access for this server.  Value is optional but if
     passed in, must be 'Enabled' or 'Disabled'.
     """
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
+
+
+class ServerPublicNetworkAccessFlag(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Whether or not public endpoint access is allowed for this server.  Value is optional but if
+    passed in, must be 'Enabled' or 'Disabled' or 'SecuredByPerimeter'.
+    """
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
+    SECURED_BY_PERIMETER = "SecuredByPerimeter"
 
 
 class ServerTrustGroupPropertiesTrustScopesItem(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1192,12 +1321,6 @@ class SqlAgentConfigurationPropertiesState(str, Enum, metaclass=CaseInsensitiveE
     DISABLED = "Disabled"
 
 
-class SQLVulnerabilityAssessmentName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """SQLVulnerabilityAssessmentName."""
-
-    DEFAULT = "default"
-
-
 class SqlVulnerabilityAssessmentName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """SqlVulnerabilityAssessmentName."""
 
@@ -1211,6 +1334,12 @@ class SqlVulnerabilityAssessmentState(str, Enum, metaclass=CaseInsensitiveEnumMe
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
+
+
+class StartStopScheduleName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """StartStopScheduleName."""
+
+    DEFAULT = "default"
 
 
 class StorageCapabilityStorageAccountType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

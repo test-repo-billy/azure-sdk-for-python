@@ -1,5 +1,25 @@
 # Release History
 
+## 1.1.0 (2023-11-20)
+
+### Other Changes
+
+  - Fix for first GA
+
+## 1.0.0 (2023-04-20)
+
+### Breaking Changes
+
+  - Client name is changed from `AzureQuotaExtensionAPI` to `QuotaMgmtClient`
+  - First GA
+
+## 1.1.0b3 (2022-11-09)
+
+### Other Changes
+
+  - Added generated samples in github repo
+  - Drop support for python<3.7.0
+
 ## 1.0.0b2 (2021-11-01)
 
 **Features**

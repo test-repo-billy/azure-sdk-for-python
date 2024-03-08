@@ -14,12 +14,16 @@ from azure.ai.ml.operations._code_operations import CodeOperations
 
 @pytest.fixture()
 def mock_datastore_operation(
-    mock_workspace_scope: OperationScope, mock_operation_config: OperationConfig, mock_aml_services_2022_05_01: Mock
+    mock_workspace_scope: OperationScope,
+    mock_operation_config: OperationConfig,
+    mock_aml_services_2023_04_01_preview: Mock,
+    mock_aml_services_2024_01_01_preview: Mock,
 ) -> DatastoreOperations:
     yield DatastoreOperations(
         operation_scope=mock_workspace_scope,
         operation_config=mock_operation_config,
-        serviceclient_2022_05_01=mock_aml_services_2022_05_01,
+        serviceclient_2023_04_01_preview=mock_aml_services_2023_04_01_preview,
+        serviceclient_2024_01_01_preview=mock_aml_services_2024_01_01_preview,
     )
 
 
@@ -39,6 +43,7 @@ def mock_code_operation(
 
 
 @pytest.mark.unittest
+@pytest.mark.core_sdk_test
 class TestCodeOperations:
     def test_create(
         self,

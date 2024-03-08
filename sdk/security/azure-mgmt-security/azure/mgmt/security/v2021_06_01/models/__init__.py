@@ -38,7 +38,7 @@ from ._models_py3 import SettingsList
 from ._security_center_enums import AssessmentStatusCode
 from ._security_center_enums import AssessmentType
 from ._security_center_enums import Categories
-from ._security_center_enums import Enum1
+from ._security_center_enums import Enum12
 from ._security_center_enums import ExpandEnum
 from ._security_center_enums import ImplementationEffort
 from ._security_center_enums import SettingKind
@@ -49,7 +49,7 @@ from ._security_center_enums import Techniques
 from ._security_center_enums import Threats
 from ._security_center_enums import UserImpact
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
@@ -84,7 +84,7 @@ __all__ = [
     "AssessmentStatusCode",
     "AssessmentType",
     "Categories",
-    "Enum1",
+    "Enum12",
     "ExpandEnum",
     "ImplementationEffort",
     "SettingKind",

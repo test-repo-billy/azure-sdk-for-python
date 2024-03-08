@@ -1,13 +1,21 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import Any, Dict, List, Optional
 
-from azure.ai.ml._restclient.v2022_05_01.models import DiagnoseRequestProperties as RestDiagnoseRequestProperties
-from azure.ai.ml._restclient.v2022_05_01.models import DiagnoseResponseResult as RestDiagnoseResponseResult
-from azure.ai.ml._restclient.v2022_05_01.models import DiagnoseResponseResultValue as RestDiagnoseResponseResultValue
-from azure.ai.ml._restclient.v2022_05_01.models import DiagnoseResult as RestDiagnoseResult
-from azure.ai.ml._restclient.v2022_05_01.models import DiagnoseWorkspaceParameters as RestDiagnoseWorkspaceParameters
+import json
+from typing import Any, Dict, Optional, List
+
+from azure.ai.ml._restclient.v2023_08_01_preview.models import (
+    DiagnoseRequestProperties as RestDiagnoseRequestProperties,
+)
+from azure.ai.ml._restclient.v2023_08_01_preview.models import DiagnoseResponseResult as RestDiagnoseResponseResult
+from azure.ai.ml._restclient.v2023_08_01_preview.models import (
+    DiagnoseResponseResultValue as RestDiagnoseResponseResultValue,
+)
+from azure.ai.ml._restclient.v2023_08_01_preview.models import DiagnoseResult as RestDiagnoseResult
+from azure.ai.ml._restclient.v2023_08_01_preview.models import (
+    DiagnoseWorkspaceParameters as RestDiagnoseWorkspaceParameters,
+)
 
 
 class DiagnoseRequestProperties:
@@ -139,6 +147,15 @@ class DiagnoseResponseResultValue:
             other_results=self.other_results,
         )
 
+    def __json__(self):
+        results = self.__dict__.copy()
+        for k, v in results.items():
+            results[k] = [item.__dict__ for item in v]
+        return results
+
+    def __str__(self) -> str:
+        return json.dumps(self, default=lambda o: o.__json__(), indent=2)
+
 
 class DiagnoseResult:
     """Result of Diagnose."""
@@ -146,9 +163,9 @@ class DiagnoseResult:
     def __init__(
         self,
         *,
-        code: str = None,
-        level: str = None,
-        message: str = None,
+        code: Optional[str] = None,
+        level: Optional[str] = None,
+        message: Optional[str] = None,
     ):
         self.code = code
         self.level = level
@@ -184,8 +201,9 @@ class DiagnoseWorkspaceParameters:
     def _from_rest_object(cls, rest_obj: RestDiagnoseWorkspaceParameters) -> "DiagnoseWorkspaceParameters":
         val = None
         if rest_obj.value and isinstance(rest_obj.value, DiagnoseRequestProperties):
+            # TODO: Bug Item number: 2883283
             # pylint: disable=protected-access
-            val = rest_obj.value._from_rest_object()
+            val = rest_obj.value._from_rest_object()  # type: ignore
         return cls(value=val)
 
     def _to_rest_object(self) -> RestDiagnoseWorkspaceParameters:

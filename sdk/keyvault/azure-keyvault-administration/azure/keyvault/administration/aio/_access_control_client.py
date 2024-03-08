@@ -2,22 +2,17 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import TYPE_CHECKING
-from uuid import uuid4
+from typing import Any, Union
+from uuid import UUID, uuid4
 
+from azure.core.async_paging import AsyncItemPaged
 from azure.core.exceptions import ResourceNotFoundError
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
+from .._enums import KeyVaultRoleScope
 from .._models import KeyVaultRoleAssignment, KeyVaultRoleDefinition
 from .._internal import AsyncKeyVaultClientBase
-
-if TYPE_CHECKING:
-    # pylint:disable=ungrouped-imports
-    from typing import Any, Union
-    from uuid import UUID
-    from azure.core.async_paging import AsyncItemPaged
-    from .._enums import KeyVaultRoleScope
 
 
 class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
@@ -28,10 +23,10 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
         See https://aka.ms/azsdk/blog/vault-uri for details.
     :param credential: An object which can provide an access token for the vault, such as a credential from
         :mod:`azure.identity.aio`
-    :type credential: :class:`~azure.core.credentials_async.AsyncTokenCredential`
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
 
     :keyword api_version: Version of the service API to use. Defaults to the most recent.
-    :paramtype api_version: ~azure.keyvault.administration.ApiVersion
+    :paramtype api_version: ~azure.keyvault.administration.ApiVersion or str
     :keyword bool verify_challenge_resource: Whether to verify the authentication challenge resource matches the Key
         Vault or Managed HSM domain. Defaults to True.
     """
@@ -40,7 +35,7 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def create_role_assignment(
-        self, scope: "Union[str, KeyVaultRoleScope]", definition_id: str, principal_id: str, **kwargs: "Any"
+        self, scope: Union[str, KeyVaultRoleScope], definition_id: str, principal_id: str, **kwargs: Any
     ) -> KeyVaultRoleAssignment:
         """Create a role assignment.
 
@@ -50,8 +45,11 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
         :param str definition_id: ID of the role's definition
         :param str principal_id: Azure Active Directory object ID of the principal which will be assigned the role. The
             principal can be a user, service principal, or security group.
+
         :keyword name: a name for the role assignment. Must be a UUID.
-        :paramtype name: str or uuid.UUID
+        :paramtype name: str or uuid.UUID or None
+
+        :returns: The created role assignment.
         :rtype: ~azure.keyvault.administration.KeyVaultRoleAssignment
         """
         name = kwargs.pop("name", None) or uuid4()
@@ -72,7 +70,7 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def delete_role_assignment(
-        self, scope: "Union[str, KeyVaultRoleScope]", name: "Union[str, UUID]", **kwargs: "Any"
+        self, scope: Union[str, KeyVaultRoleScope], name: Union[str, UUID], **kwargs: Any
     ) -> None:
         """Delete a role assignment.
 
@@ -81,7 +79,9 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
         :type scope: str or KeyVaultRoleScope
         :param name: the role assignment's name.
         :type name: str or uuid.UUID
+
         :returns: None
+        :rtype: None
         """
         try:
             await self._client.role_assignments.delete(
@@ -92,7 +92,7 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def get_role_assignment(
-        self, scope: "Union[str, KeyVaultRoleScope]", name: "Union[str, UUID]", **kwargs: "Any"
+        self, scope: Union[str, KeyVaultRoleScope], name: Union[str, UUID], **kwargs: Any
     ) -> KeyVaultRoleAssignment:
         """Get a role assignment.
 
@@ -101,6 +101,8 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
         :type scope: str or KeyVaultRoleScope
         :param name: the role assignment's name.
         :type name: str or uuid.UUID
+
+        :returns: The fetched role assignment.
         :rtype: ~azure.keyvault.administration.KeyVaultRoleAssignment
         """
         assignment = await self._client.role_assignments.get(
@@ -110,13 +112,15 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
 
     @distributed_trace
     def list_role_assignments(
-        self, scope: "Union[str, KeyVaultRoleScope]", **kwargs: "Any"
-    ) -> "AsyncItemPaged[KeyVaultRoleAssignment]":
+        self, scope: Union[str, KeyVaultRoleScope], **kwargs: Any
+    ) -> AsyncItemPaged[KeyVaultRoleAssignment]:
         """List all role assignments for a scope.
 
         :param scope: scope of the role assignments. :class:`KeyVaultRoleScope` defines common broad
             scopes. Specify a narrower scope as a string.
         :type scope: str or KeyVaultRoleScope
+
+        :returns: A paged response containing the role assignments for the specified scope.
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.administration.KeyVaultRoleAssignment]
         """
         return self._client.role_assignments.list_for_scope(
@@ -128,8 +132,8 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def set_role_definition(
-        self, scope: "Union[str, KeyVaultRoleScope]", **kwargs: "Any"
-    ) -> "KeyVaultRoleDefinition":
+        self, scope: Union[str, KeyVaultRoleScope], **kwargs: Any
+    ) -> KeyVaultRoleDefinition:
         """Creates or updates a custom role definition.
 
         To update a role definition, specify the definition's ``name``.
@@ -137,19 +141,23 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
         :param scope: scope of the role definition. :class:`KeyVaultRoleScope` defines common broad scopes.
             Specify a narrower scope as a string. Managed HSM only supports '/', or KeyVaultRoleScope.GLOBAL.
         :type scope: str or KeyVaultRoleScope
+
         :keyword name: the role definition's name, a UUID. When this argument has a value, the client will create a new
             role definition with this name or update an existing role definition, if one exists with the given name.
             When this argument has no value, a new role definition will be created with a generated name.
-        :paramtype name: str or uuid.UUID
-        :keyword str role_name: the role's display name. If unspecified when creating or updating a role definition, the
+        :paramtype name: str or uuid.UUID or None
+        :keyword role_name: the role's display name. If unspecified when creating or updating a role definition, the
             role name will be set to an empty string.
-        :keyword str description: a description of the role definition. If unspecified when creating or updating a role
+        :paramtype role_name: str or None
+        :keyword description: a description of the role definition. If unspecified when creating or updating a role
             definition, the description will be set to an empty string.
+        :paramtype description: str or None
         :keyword permissions: the role definition's permissions. If unspecified when creating or updating a role
             definition, the role definition will have no action permissions.
-        :paramtype permissions: Iterable[KeyVaultPermission]
+        :paramtype permissions: list[KeyVaultPermission] or None
         :keyword assignable_scopes: the scopes for which the role definition can be assigned.
-        :paramtype assignable_scopes: Iterable[str] or Iterable[KeyVaultRoleScope]
+        :paramtype assignable_scopes: list[str] or list[KeyVaultRoleScope] or None
+
         :returns: The created or updated role definition
         :rtype: ~azure.keyvault.administration.KeyVaultRoleDefinition
         """
@@ -182,8 +190,8 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def get_role_definition(
-        self, scope: "Union[str, KeyVaultRoleScope]", name: "Union[str, UUID]", **kwargs: "Any"
-    ) -> "KeyVaultRoleDefinition":
+        self, scope: Union[str, KeyVaultRoleScope], name: Union[str, UUID], **kwargs: Any
+    ) -> KeyVaultRoleDefinition:
         """Get the specified role definition.
 
         :param scope: scope of the role definition. :class:`KeyVaultRoleScope` defines common broad scopes.
@@ -191,6 +199,8 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
         :type scope: str or KeyVaultRoleScope
         :param name: the role definition's name.
         :type name: str or uuid.UUID
+
+        :returns: The fetched role definition.
         :rtype: ~azure.keyvault.administration.KeyVaultRoleDefinition
         """
         definition = await self._client.role_definitions.get(
@@ -200,7 +210,7 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def delete_role_definition(
-        self, scope: "Union[str, KeyVaultRoleScope]", name: "Union[str, UUID]", **kwargs: "Any"
+        self, scope: Union[str, KeyVaultRoleScope], name: Union[str, UUID], **kwargs: Any
     ) -> None:
         """Deletes a custom role definition.
 
@@ -209,7 +219,9 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
         :type scope: str or KeyVaultRoleScope
         :param name: the role definition's name.
         :type name: str or uuid.UUID
+
         :returns: None
+        :rtype: None
         """
         try:
             await self._client.role_definitions.delete(
@@ -220,13 +232,15 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
 
     @distributed_trace
     def list_role_definitions(
-        self, scope: "Union[str, KeyVaultRoleScope]", **kwargs: "Any"
-    ) -> "AsyncItemPaged[KeyVaultRoleDefinition]":
+        self, scope: Union[str, KeyVaultRoleScope], **kwargs: Any
+    ) -> AsyncItemPaged[KeyVaultRoleDefinition]:
         """List all role definitions applicable at and above a scope.
 
         :param scope: scope of the role definitions. :class:`KeyVaultRoleScope` defines common broad
             scopes. Specify a narrower scope as a string.
         :type scope: str or KeyVaultRoleScope
+
+        :returns: A paged response containing the role definitions for the specified scope.
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.administration.KeyVaultRoleDefinition]
         """
         return self._client.role_definitions.list(

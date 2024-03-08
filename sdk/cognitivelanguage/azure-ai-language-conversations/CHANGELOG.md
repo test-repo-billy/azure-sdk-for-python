@@ -1,12 +1,55 @@
 # Release History
 
-## 1.1.0b3 (Unreleased)
+## 1.1.1 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
 
 ### Bugs Fixed
+
+### Other Changes
+
+## 1.1.0 (2023-06-13)
+
+### Features Added
+- Added support for service version 2023-04-01.
+
+### Breaking Changes
+
+> Note: The following changes are only breaking from the previous beta. They are not breaking since version 1.0.0 when those types and members did not exist.
+
+- Removed support for service version 2022-05-15-preview.
+- Removed support for service version 2022-10-01-preview.
+- Removed support for "ConversationalPIITask" analysis with `ConversationAnalysisClient`.
+- Removed support for "ConversationalSentimentTask" with `ConversationAnalysisClient`.
+- Removed the following methods from `ConversationAuthoringClient`:
+  - `begin_assign_deployment_resources`
+  - `get_assign_deployment_resources_status`
+  - `begin_unassign_deployment_resources`
+  - `get_unassign_deployment_resources_status`
+  - `begin_delete_deployment_from_resources`
+  - `get_deployment_delete_from_resources_status`
+  - `list_assigned_resource_deployments`
+  - `list_deployment_resources`
+
+## 1.1.0b3 (2022-11-10)
+
+### Features Added
+- Added support for the "ConversationalSentimentTask" kind with `begin_conversation_analysis`.
+- Added support for "chapterTitle" and "narrative" `summaryAspects` options for ConversationalSummarizationTasks.
+- Added methods to the `ConversationAuthoringClient` to manage deployment resources:
+  - `begin_assign_deployment_resources`
+  - `get_assign_deployment_resources_status`
+  - `begin_unassign_deployment_resources`
+  - `get_unassign_deployment_resources_status`
+  - `begin_delete_deployment_from_resources`
+  - `get_deployment_delete_from_resources_status`
+  - `begin_load_snapshot`
+  - `get_load_snapshot_status`
+  - `list_assigned_resource_deployments`
+  - `list_deployment_resources`
+- Added optional `trained_model_label` keyword argument to `begin_export_project`.
 
 ### Other Changes
 * This version and all future versions will require Python 3.7+. Python 3.6 is no longer supported.

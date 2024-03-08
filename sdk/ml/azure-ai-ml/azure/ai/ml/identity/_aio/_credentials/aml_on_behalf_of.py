@@ -4,7 +4,9 @@
 
 import functools
 import os
+from typing import Any, Optional
 
+from azure.core.credentials import AccessToken
 from azure.core.pipeline.transport import HttpRequest
 
 from .._internal import AsyncContextManager
@@ -13,17 +15,19 @@ from .._internal.managed_identity_client import AsyncManagedIdentityClient
 
 
 class AzureMLOnBehalfOfCredential(AsyncContextManager):
+    # pylint: disable=line-too-long
     """Authenticates a user via the on-behalf-of flow.
 
     This credential can only be used on `Azure Machine Learning Compute.
-    <https://docs.microsoft.com/en-us/azure/machine-learning/concept-compute-target#azure-machine-learning-compute-managed>`_
-    during job execution when user request to run job during its identity.
+    <https://docs.microsoft.com/azure/machine-learning/concept-compute-target#azure-machine-learning-compute-managed>`_ during job execution when user request to
+    run job during its identity.
     """
+    # pylint: enable=line-too-long
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any):
         self._credential = _AzureMLOnBehalfOfCredential(**kwargs)
 
-    async def get_token(self, *scopes, **kwargs):
+    async def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
         """Request an access token for `scopes`.
 
         This method is called automatically by Azure SDK clients.
@@ -36,12 +40,12 @@ class AzureMLOnBehalfOfCredential(AsyncContextManager):
 
         return await self._credential.get_token(*scopes, **kwargs)
 
-    async def __aenter__(self):
+    async def __aenter__(self) -> "AzureMLOnBehalfOfCredential":
         if self._credential:
             await self._credential.__aenter__()
         return self
 
-    async def close(self):
+    async def close(self) -> None:
         """Close the credential's transport session."""
         if self._credential:
             await self._credential.__aexit__()
@@ -75,7 +79,7 @@ def _get_client_args(**kwargs):
 
 
 def _get_request(url, resource):
-    # type: (str, str, dict) -> HttpRequest
+    # type: (str, str) -> HttpRequest
     request = HttpRequest("GET", url)
     request.format_parameters(dict({"resource": resource}))
     return request

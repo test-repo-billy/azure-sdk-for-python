@@ -42,7 +42,7 @@ def get_root_directories_in_sdist(dist_dir: str, version: str) -> List[str]:
     """
     # find sdist zip file
     # extract sdist and find list of directories in sdist
-    path_to_zip = glob.glob(os.path.join(dist_dir, "*{}*.zip".format(version)))[0]
+    path_to_zip = glob.glob(os.path.join(dist_dir, "*{}*.tar.gz".format(version)))[0]
     extract_location = os.path.join(dist_dir, "unzipped")
     # Cleanup any files in unzipped
     cleanup(extract_location)
@@ -97,10 +97,9 @@ def verify_sdist_pytyped(
     if os.path.exists(manifest_location):
         with open(manifest_location, "r") as f:
             lines = f.readlines()
-            result = any([include for include in lines if "py.typed" in include])
-
-            if not result:
+            if not any([include for include in lines if "py.typed" in include]):
                 logging.info("Ensure that the MANIFEST.in includes at least one path that leads to a py.typed file.")
+                result = False
 
     pytyped_file_path = os.path.join(pkg_dir, *namespace.split("."), "py.typed")
     if not os.path.exists(pytyped_file_path):

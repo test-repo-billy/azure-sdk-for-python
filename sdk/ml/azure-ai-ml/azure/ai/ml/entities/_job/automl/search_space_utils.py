@@ -5,7 +5,8 @@
 # pylint: disable=protected-access
 
 import re
-from typing import Union
+from typing import Any, List, Union
+
 from marshmallow import fields
 
 from azure.ai.ml._schema._sweep.search_space import (
@@ -16,6 +17,7 @@ from azure.ai.ml._schema._sweep.search_space import (
     RandintSchema,
     UniformSchema,
 )
+from azure.ai.ml._schema.core.fields import DumpableIntegerField, DumpableStringField, NestedField, UnionField
 from azure.ai.ml._utils.utils import float_to_str
 from azure.ai.ml.constants._job.sweep import SearchSpace
 from azure.ai.ml.entities._job.sweep.search_space import (
@@ -31,19 +33,14 @@ from azure.ai.ml.entities._job.sweep.search_space import (
     SweepDistribution,
     Uniform,
 )
-from azure.ai.ml._schema.core.fields import (
-    DumpableIntegerField,
-    DumpableStringField,
-    NestedField,
-    UnionField,
-)
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 
 def _convert_to_rest_object(sweep_distribution: Union[bool, int, float, str, SweepDistribution]) -> str:
     if isinstance(sweep_distribution, float):
         # Float requires some special handling for small values that get auto-represented with scientific notation.
-        return float_to_str(sweep_distribution)
+        res: str = float_to_str(sweep_distribution)
+        return res
     if not isinstance(sweep_distribution, SweepDistribution):
         # Convert [bool, float, str] types to str
         return str(sweep_distribution)
@@ -103,7 +100,7 @@ def _convert_to_rest_object(sweep_distribution: Union[bool, int, float, str, Swe
             else:
                 sweep_distribution_args.append(str(value))
 
-    sweep_distribution_str = sweep_distribution_type + "("
+    sweep_distribution_str: str = sweep_distribution_type + "("
     sweep_distribution_str += ",".join(sweep_distribution_args)
     sweep_distribution_str += ")"
     return sweep_distribution_str
@@ -142,7 +139,7 @@ def _get_type_inferred_value(value: str) -> Union[bool, int, float, str]:
 
 def _convert_from_rest_object(
     sweep_distribution_str: str,
-) -> Union[bool, int, float, str, SweepDistribution]:
+) -> Any:
     # sweep_distribution_str can be a distribution like "choice('vitb16r224', 'vits16r224')" or
     # a single value like "True", "1", "1.0567", "vitb16r224"
 
@@ -156,7 +153,7 @@ def _convert_from_rest_object(
 
     # Distribution string
     sweep_distribution_type = sweep_distribution_separated[0].strip().lower()
-    sweep_distribution_args = []
+    sweep_distribution_args: List = []
     for value in sweep_distribution_separated[1:]:
         sweep_distribution_args.append(_get_type_inferred_value(value))
 
@@ -175,7 +172,8 @@ def _convert_sweep_dist_dict_to_str_dict(sweep_distribution: dict) -> dict:
 
 
 class ChoicePlusSchema(ChoiceSchema):
-    """ Choice schema that allows boolean values also"""
+    """Choice schema that allows boolean values also"""
+
     values = fields.List(
         UnionField(
             [
@@ -204,23 +202,24 @@ class ChoicePlusSchema(ChoiceSchema):
         )
     )
 
+
 def _convert_sweep_dist_dict_item_to_str(sweep_distribution: Union[bool, int, float, str, dict]) -> str:
     # Convert a Sweep Distribution dict to Sweep Distribution string
     # Eg. {type: 'choice', values: ['vitb16r224','vits16r224']} => "Choice('vitb16r224','vits16r224')"
     if isinstance(sweep_distribution, dict):
         sweep_dist_type = sweep_distribution["type"]
         if sweep_dist_type == SearchSpace.CHOICE:
-            sweep_dist_obj = ChoicePlusSchema().load(sweep_distribution) # pylint: disable=no-member
+            sweep_dist_obj = ChoicePlusSchema().load(sweep_distribution)  # pylint: disable=no-member
         elif sweep_dist_type in SearchSpace.UNIFORM_LOGUNIFORM:
-            sweep_dist_obj = UniformSchema().load(sweep_distribution) # pylint: disable=no-member
+            sweep_dist_obj = UniformSchema().load(sweep_distribution)  # pylint: disable=no-member
         elif sweep_dist_type in SearchSpace.NORMAL_LOGNORMAL:
-            sweep_dist_obj = NormalSchema().load(sweep_distribution) # pylint: disable=no-member
+            sweep_dist_obj = NormalSchema().load(sweep_distribution)  # pylint: disable=no-member
         elif sweep_dist_type in SearchSpace.QUNIFORM_QLOGUNIFORM:
-            sweep_dist_obj = QUniformSchema().load(sweep_distribution) # pylint: disable=no-member
+            sweep_dist_obj = QUniformSchema().load(sweep_distribution)  # pylint: disable=no-member
         elif sweep_dist_type in SearchSpace.QNORMAL_QLOGNORMAL:
-            sweep_dist_obj = QNormalSchema().load(sweep_distribution) # pylint: disable=no-member
+            sweep_dist_obj = QNormalSchema().load(sweep_distribution)  # pylint: disable=no-member
         elif sweep_dist_type in SearchSpace.RANDINT:
-            sweep_dist_obj = RandintSchema().load(sweep_distribution) # pylint: disable=no-member
+            sweep_dist_obj = RandintSchema().load(sweep_distribution)  # pylint: disable=no-member
         else:
             msg = f"Unsupported sweep distribution type {sweep_dist_type}"
             raise ValidationException(
@@ -249,19 +248,20 @@ def _convert_sweep_dist_str_item_to_dict(
     # sweep_distribution_str can be a distribution like "choice('vitb16r224', 'vits16r224')"
     # return type is {type: 'choice', values: ['vitb16r224', 'vits16r224']}
     sweep_dist_obj = _convert_from_rest_object(sweep_distribution_str)
+    sweep_dist: Union[bool, int, float, str, dict] = ""
     if isinstance(sweep_dist_obj, SweepDistribution):
         if isinstance(sweep_dist_obj, Choice):
-            sweep_dist = ChoicePlusSchema().dump(sweep_dist_obj) # pylint: disable=no-member
+            sweep_dist = ChoicePlusSchema().dump(sweep_dist_obj)  # pylint: disable=no-member
         elif isinstance(sweep_dist_obj, (QNormal, QLogNormal)):
-            sweep_dist = QNormalSchema().dump(sweep_dist_obj) # pylint: disable=no-member
+            sweep_dist = QNormalSchema().dump(sweep_dist_obj)  # pylint: disable=no-member
         elif isinstance(sweep_dist_obj, (QUniform, QLogUniform)):
-            sweep_dist = QUniformSchema().dump(sweep_dist_obj) # pylint: disable=no-member
+            sweep_dist = QUniformSchema().dump(sweep_dist_obj)  # pylint: disable=no-member
         elif isinstance(sweep_dist_obj, (Uniform, LogUniform)):
-            sweep_dist = UniformSchema().dump(sweep_dist_obj) # pylint: disable=no-member
+            sweep_dist = UniformSchema().dump(sweep_dist_obj)  # pylint: disable=no-member
         elif isinstance(sweep_dist_obj, (Normal, LogNormal)):
-            sweep_dist = NormalSchema().dump(sweep_dist_obj) # pylint: disable=no-member
+            sweep_dist = NormalSchema().dump(sweep_dist_obj)  # pylint: disable=no-member
         elif isinstance(sweep_dist_obj, Randint):
-            sweep_dist = RandintSchema().dump(sweep_dist_obj) # pylint: disable=no-member
+            sweep_dist = RandintSchema().dump(sweep_dist_obj)  # pylint: disable=no-member
         else:
             msg = "Invalid sweep distribution {}"
             raise ValidationException(

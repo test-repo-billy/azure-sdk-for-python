@@ -8,10 +8,10 @@ from typing import List, Union
 
 from marshmallow import Schema
 
-from azure.ai.ml._internal._schema.component import NodeType
-from azure.ai.ml._internal.entities import Command
-from azure.ai.ml._schema import PathAwareSchema
-from azure.ai.ml.entities import BatchRetrySettings
+from ..._schema import PathAwareSchema
+from ...entities import BatchRetrySettings
+from .._schema.component import NodeType
+from ..entities import Command
 
 
 class Parallel(Command):
@@ -24,13 +24,18 @@ class Parallel(Command):
         self._max_concurrency_per_instance = kwargs.pop("max_concurrency_per_instance", None)
         self._error_threshold = kwargs.pop("error_threshold", None)
         self._mini_batch_size = kwargs.pop("mini_batch_size", None)
+        self._partition_keys = kwargs.pop("partition_keys", None)
         self._logging_level = kwargs.pop("logging_level", None)
         self._retry_settings = kwargs.pop("retry_settings", BatchRetrySettings())
         self._init = False
 
     @property
     def max_concurrency_per_instance(self) -> int:
-        """The max parallellism that each compute instance has."""
+        """The max parallellism that each compute instance has.
+
+        :return: The max concurrence per compute instance
+        :rtype: int
+        """
         return self._max_concurrency_per_instance
 
     @max_concurrency_per_instance.setter
@@ -39,11 +44,15 @@ class Parallel(Command):
 
     @property
     def error_threshold(self) -> int:
-        """The number of record failures for Tabular Dataset
-        and file failures for File Dataset that should be ignored during
-        processing. If the error count goes above this value, then the job will be aborted. Error
-        threshold is for the entire input rather than the individual mini-batch sent to run() method.
-        The range is [-1, int.max]. -1 indicates ignore all failures during processing.
+        """The number of record failures for Tabular Dataset and file failures for File Dataset that should be ignored
+        during processing.
+
+        If the error count goes above this value, then the job will be aborted. Error threshold is for the entire input
+        rather than the individual mini-batch sent to run() method. The range is [-1, int.max]. -1 indicates ignore all
+        failures during processing.
+
+        :return: The error threshold
+        :rtype: int
         """
         return self._error_threshold
 
@@ -53,7 +62,11 @@ class Parallel(Command):
 
     @property
     def mini_batch_size(self) -> int:
-        """The number of records to be sent to run() method for each mini-batch."""
+        """The number of records to be sent to run() method for each mini-batch.
+
+        :return: The batch size
+        :rtype: int
+        """
         return self._mini_batch_size
 
     @mini_batch_size.setter
@@ -62,7 +75,11 @@ class Parallel(Command):
 
     @property
     def logging_level(self) -> str:
-        """A string of the logging level name"""
+        """A string of the logging level name.
+
+        :return: The loggin level
+        :rtype: str
+        """
         return self._logging_level
 
     @logging_level.setter
@@ -71,7 +88,11 @@ class Parallel(Command):
 
     @property
     def retry_settings(self) -> BatchRetrySettings:
-        """parallel job run failed retry"""
+        """Parallel job run failed retry.
+
+        :return: The retry settings
+        :rtype: BatchRetrySettings
+        """
         return self._retry_settings
 
     @retry_settings.setter

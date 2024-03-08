@@ -36,5 +36,11 @@ extends:
       safeName: azurepurviewscanning
     - name: azure-purview-catalog
       safeName: azurepurviewcatalog
+    - name: azure-purview-datamap
+      safeName: azurepurviewdatamap
     - name: azure-purview-administration
       safeName: azurepurviewadministration
+    - name: azure-purview-workflow
+      safeName: azurepurviewworkflow
+    - name: azure-purview-sharing
+      safeNAme: azurepurviewsharing

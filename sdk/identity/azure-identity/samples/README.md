@@ -12,7 +12,7 @@ urlFragment: identity-samples
 
 ## Prerequisites
 
-You must have an [Azure subscription](https://azure.microsoft.com/free) and an
+You must have an [Azure subscription](https://azure.microsoft.com/free/python) and an
 [Azure Key Vault](https://azure.microsoft.com/services/key-vault/) to run
 these samples. You can create a Key Vault in the
 [Azure Portal](https://portal.azure.com/#create/Microsoft.KeyVault) or with the
@@ -37,3 +37,4 @@ pip install azure-identity azure-keyvault-certificates azure-keyvault-secrets
 | custom_credentials.py | demonstrates custom credential implementations using existing access tokens and an MSAL client |
 | key_vault_cert.py | demonstrates authenticating with a Key Vault certificate |
 | user_authentication.py | demonstrates user authentication and token cache persistence API for applications |
+| credential_creation_code_snippets.py | demonstrates how to instantiate various credentials |

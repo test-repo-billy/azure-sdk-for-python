@@ -12,7 +12,7 @@ from typing import Any, Awaitable, TYPE_CHECKING
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
 
-from .. import models
+from .. import models as _models
 from ..._serialization import Deserializer, Serializer
 from ._configuration import SecurityCenterConfiguration
 from .operations import (
@@ -29,6 +29,10 @@ if TYPE_CHECKING:
 class SecurityCenter:  # pylint: disable=client-accepts-api-version-keyword
     """API spec for Microsoft.Security (Azure Security Center) resource provider.
 
+    :ivar sql_vulnerability_assessment_baseline_rules:
+     SqlVulnerabilityAssessmentBaselineRulesOperations operations
+    :vartype sql_vulnerability_assessment_baseline_rules:
+     azure.mgmt.security.v2020_07_01_preview.aio.operations.SqlVulnerabilityAssessmentBaselineRulesOperations
     :ivar sql_vulnerability_assessment_scans: SqlVulnerabilityAssessmentScansOperations operations
     :vartype sql_vulnerability_assessment_scans:
      azure.mgmt.security.v2020_07_01_preview.aio.operations.SqlVulnerabilityAssessmentScansOperations
@@ -36,10 +40,6 @@ class SecurityCenter:  # pylint: disable=client-accepts-api-version-keyword
      SqlVulnerabilityAssessmentScanResultsOperations operations
     :vartype sql_vulnerability_assessment_scan_results:
      azure.mgmt.security.v2020_07_01_preview.aio.operations.SqlVulnerabilityAssessmentScanResultsOperations
-    :ivar sql_vulnerability_assessment_baseline_rules:
-     SqlVulnerabilityAssessmentBaselineRulesOperations operations
-    :vartype sql_vulnerability_assessment_baseline_rules:
-     azure.mgmt.security.v2020_07_01_preview.aio.operations.SqlVulnerabilityAssessmentBaselineRulesOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param base_url: Service URL. Default value is "https://management.azure.com".
@@ -53,20 +53,20 @@ class SecurityCenter:  # pylint: disable=client-accepts-api-version-keyword
         self, credential: "AsyncTokenCredential", base_url: str = "https://management.azure.com", **kwargs: Any
     ) -> None:
         self._config = SecurityCenterConfiguration(credential=credential, **kwargs)
-        self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
+        self.sql_vulnerability_assessment_baseline_rules = SqlVulnerabilityAssessmentBaselineRulesOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2020-07-01-preview"
+        )
         self.sql_vulnerability_assessment_scans = SqlVulnerabilityAssessmentScansOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2020-07-01-preview"
         )
         self.sql_vulnerability_assessment_scan_results = SqlVulnerabilityAssessmentScanResultsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.sql_vulnerability_assessment_baseline_rules = SqlVulnerabilityAssessmentBaselineRulesOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2020-07-01-preview"
         )
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
@@ -98,5 +98,5 @@ class SecurityCenter:  # pylint: disable=client-accepts-api-version-keyword
         await self._client.__aenter__()
         return self
 
-    async def __aexit__(self, *exc_details) -> None:
+    async def __aexit__(self, *exc_details: Any) -> None:
         await self._client.__aexit__(*exc_details)

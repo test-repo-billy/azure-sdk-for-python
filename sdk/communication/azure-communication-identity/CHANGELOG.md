@@ -1,5 +1,47 @@
 # Release History
 
+## 1.5.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+- Python 3.7 is no longer supported. Please use Python version 3.8 or later. For more details, please read our page on [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy).
+
+## 1.5.0 (2024-02-14)
+
+### Features Added
+
+- Added support for a new communication identifier `MicrosoftTeamsAppIdentifier`.
+
+## 1.4.0 (2023-11-30)
+
+### Features Added
+
+- Introduction of new scopes for token generation.
+    - `CHAT_JOIN` (Access to Chat APIs but without the authorization to create, delete or update chat threads)
+    - `CHAT_JOIN_LIMITED` (A more limited version of `CHAT_JOIN` that doesn't allow to add or remove participants)
+    - `VOIP_JOIN` (Access to Calling APIs but without the authorization to start new calls)
+- Added a new API version `ApiVersion.V2023_10_01` that is now the default API version.
+
+### Other Changes
+- The `MicrosoftBotIdentifier` and `MicrosoftBotProperties` have been removed.
+
+## 1.4.0b1 (2023-04-05)
+
+### Features Added
+- Added support for a new communication identifier `MicrosoftBotIdentifier`.
+
+## 1.3.1 (2022-10-28)
+
+### Bug Fixes
+
+- Fixed the logic of `PhoneNumberIdentifier` to always maintain the original phone number string whether it included the leading + sign or not.
+
 ## 1.3.0 (2022-10-13)
 
 ### Features Added
@@ -7,6 +49,7 @@
 - Added support to customize the Communication Identity access token's validity period:
     - `create_user_and_token` and `get_token` methods in both sync and async clients can now accept keyword argument `token_expires_in: ~datetime.timedelta` that provides the ability to create a Communication Identity access token with custom expiration.
 - Added a new API version `ApiVersion.V2022_10_01` that is now the default API version.
+- Added the ability specify the API version by an optional `api_version` keyword parameter.
 
 ## 1.2.0 (2022-08-24)
 

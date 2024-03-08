@@ -1,5 +1,42 @@
 # Release History
 
+## 14.3.0 (2023-09-19)
+
+### Features Added
+
+  - Added operation RedisOperations.begin_flush_cache
+  - Added operation group AccessPolicyAssignmentOperations
+  - Added operation group AccessPolicyOperations
+  - Model RedisCommonProperties has a new parameter update_channel
+  - Model RedisCommonPropertiesRedisConfiguration has a new parameter aad_enabled
+  - Model RedisCreateParameters has a new parameter update_channel
+  - Model RedisCreateProperties has a new parameter update_channel
+  - Model RedisProperties has a new parameter update_channel
+  - Model RedisResource has a new parameter update_channel
+  - Model RedisUpdateParameters has a new parameter update_channel
+  - Model RedisUpdateProperties has a new parameter update_channel
+
+## 14.2.0 (2023-06-16)
+
+### Features Added
+
+  - Model ExportRDBParameters has a new parameter storage_subscription_id
+  - Model ImportRDBParameters has a new parameter storage_subscription_id
+  - Model RedisCommonPropertiesRedisConfiguration has a new parameter storage_subscription_id
+
+## 14.1.0 (2022-10-28)
+
+### Features Added
+
+  - Model RedisLinkedServerCreateParameters has a new parameter geo_replicated_primary_host_name
+  - Model RedisLinkedServerCreateParameters has a new parameter primary_host_name
+  - Model RedisLinkedServerCreateProperties has a new parameter geo_replicated_primary_host_name
+  - Model RedisLinkedServerCreateProperties has a new parameter primary_host_name
+  - Model RedisLinkedServerProperties has a new parameter geo_replicated_primary_host_name
+  - Model RedisLinkedServerProperties has a new parameter primary_host_name
+  - Model RedisLinkedServerWithProperties has a new parameter geo_replicated_primary_host_name
+  - Model RedisLinkedServerWithProperties has a new parameter primary_host_name
+
 ## 14.0.0 (2022-09-05)
 
 ### Features Added

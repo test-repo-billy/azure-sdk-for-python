@@ -8,7 +8,6 @@
 
 from typing import Any, TYPE_CHECKING
 
-from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
 
 from ._version import VERSION
@@ -18,7 +17,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class ArtifactsClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
+class ArtifactsClientConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long
     """Configuration for ArtifactsClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -27,12 +26,11 @@ class ArtifactsClientConfiguration(Configuration):  # pylint: disable=too-many-i
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param endpoint: The workspace development endpoint, for example
-     https://myworkspace.dev.azuresynapse.net. Required.
+     ``https://myworkspace.dev.azuresynapse.net``. Required.
     :type endpoint: str
     """
 
     def __init__(self, credential: "TokenCredential", endpoint: str, **kwargs: Any) -> None:
-        super(ArtifactsClientConfiguration, self).__init__(**kwargs)
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
         if endpoint is None:
@@ -42,12 +40,10 @@ class ArtifactsClientConfiguration(Configuration):  # pylint: disable=too-many-i
         self.endpoint = endpoint
         self.credential_scopes = kwargs.pop("credential_scopes", ["https://dev.azuresynapse.net/.default"])
         kwargs.setdefault("sdk_moniker", "synapse-artifacts/{}".format(VERSION))
+        self.polling_interval = kwargs.get("polling_interval", 30)
         self._configure(**kwargs)
 
-    def _configure(
-        self, **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+    def _configure(self, **kwargs: Any) -> None:
         self.user_agent_policy = kwargs.get("user_agent_policy") or policies.UserAgentPolicy(**kwargs)
         self.headers_policy = kwargs.get("headers_policy") or policies.HeadersPolicy(**kwargs)
         self.proxy_policy = kwargs.get("proxy_policy") or policies.ProxyPolicy(**kwargs)

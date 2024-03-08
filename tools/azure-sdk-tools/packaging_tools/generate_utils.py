@@ -3,16 +3,20 @@ import json
 import logging
 import os
 import re
+from functools import wraps
 
-from azure_devtools.ci_tools.git_tools import get_add_diff_file_list
+from ci_tools.git_tools import get_add_diff_file_list
 from pathlib import Path
-from subprocess import check_call
-from typing import List, Dict, Any
+from subprocess import check_output, CalledProcessError, check_call
+from typing import Dict, Any
 from glob import glob
 import yaml
 
+from . import build_packaging
 from .swaggertosdk.autorest_tools import build_autorest_options, generate_code
 from .swaggertosdk.SwaggerToSdkCore import CONFIG_FILE_DPG, read_config
+from .conf import CONF_NAME
+from jinja2 import Environment, FileSystemLoader
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -22,8 +26,33 @@ DEFAULT_DEST_FOLDER = "./dist"
 _DPG_README = "README.md"
 
 
+def check_api_version_in_subfolder(sdk_code_path: str):
+    folders = glob(f"{sdk_code_path}/**/_configuration.py", recursive=True)
+    configs = [str(Path(f)) for f in folders if re.compile("v\d{4}_\d{2}_\d{2}").search(f)]
+    if configs:
+        result = []
+        for config in configs:
+            with open(config, "r") as file_in:
+                content = file_in.readlines()
+                if "self.api_version = api_version" not in "".join(content):
+                    result.append(config)
+        if result:
+            raise Exception("Found files that do not set api_version: \n" + "\n".join(result))
+
+
 def dpg_relative_folder(spec_folder: str) -> str:
     return ("../" * 4) + spec_folder + "/"
+
+
+def return_origin_path(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        current_path = os.getcwd()
+        result = func(*args, **kwargs)
+        os.chdir(current_path)
+        return result
+
+    return wrapper
 
 
 def get_package_names(sdk_folder):
@@ -33,53 +62,77 @@ def get_package_names(sdk_folder):
     return package_names
 
 
-def init_new_service(package_name, folder_name):
-    setup = Path(folder_name, package_name, "setup.py")
-    if not setup.exists():
-        check_call(
-            f"python -m packaging_tools --build-conf {package_name} -o {folder_name}",
-            shell=True,
-        )
-        ci = Path(folder_name, "ci.yml")
-        if not ci.exists():
-            with open("ci_template.yml", "r") as file_in:
-                content = file_in.readlines()
-            name = package_name.replace("azure-", "").replace("mgmt-", "")
-            content = [line.replace("MyService", name) for line in content]
-            with open(str(ci), "w") as file_out:
-                file_out.writelines(content)
+def call_build_config(package_name: str, folder_name: str):
+    build_packaging(
+        folder_name,
+        os.environ.get("GH_TOKEN", None),
+        packages=[package_name],
+        build_conf=True,
+    )
+    # Replace this check_call by in process equivalent call, for better debugging
+    # check_call(
+    #     f"python -m packaging_tools --build-conf {package_name} -o {folder_name}",
+    #     shell=True,
+    # )
+
+def init_new_service(package_name, folder_name, is_typespec = False):
+    if not is_typespec:
+        setup = Path(folder_name, package_name, "setup.py")
+        if not setup.exists():
+            call_build_config(package_name, folder_name)
+    else:
+        output_path = Path(folder_name) / package_name
+        if not (output_path / CONF_NAME).exists():
+            with open(output_path / CONF_NAME, "w") as file_out:
+                file_out.write("[packaging]\nauto_update = false")
+
+    # add ci.yaml
+    generate_ci(
+        template_path=Path("scripts/quickstart_tooling_dpg/template_ci"),
+        folder_path=Path(folder_name),
+        package_name=package_name
+    )
 
 
 def update_servicemetadata(sdk_folder, data, config, folder_name, package_name, spec_folder, input_readme):
-
-    readme_file = str(Path(spec_folder, input_readme))
-    global_conf = config["meta"]
-    local_conf = config.get("projects", {}).get(readme_file, {})
-
-    if "resource-manager" in input_readme:
-        cmd = ["autorest", input_readme]
+    package_folder = Path(sdk_folder, folder_name, package_name)
+    if not package_folder.exists():
+        _LOGGER.info(f"Fail to save metadata since package folder doesn't exist: {package_folder}")
+        return
+    if not (package_folder / "_meta.json").exists():
+        metadata = {}
     else:
-        # autorest for DPG will be executed in package folder like: sdk/deviceupdate/azure-iot-deviceupdate/swagger
-        cmd = ["autorest", _DPG_README]
-    cmd += build_autorest_options(global_conf, local_conf)
+        with open(str(package_folder / "_meta.json"), "r") as file_in:
+            metadata = json.load(file_in)
 
-    # metadata
-    metadata = {
-        "autorest": global_conf["autorest_options"]["version"],
-        "use": global_conf["autorest_options"]["use"],
+    metadata.update({
         "commit": data["headSha"],
         "repository_url": data["repoHttpsUrl"],
-        "autorest_command": " ".join(cmd),
-        "readme": input_readme,
-    }
+    })
+    if "meta" in config:
+        readme_file = str(Path(spec_folder, input_readme))
+        global_conf = config["meta"]
+        local_conf = config.get("projects", {}).get(readme_file, {})
+
+        if "resource-manager" in input_readme:
+            cmd = ["autorest", input_readme]
+        else:
+            # autorest for DPG will be executed in package folder like: sdk/deviceupdate/azure-iot-deviceupdate/swagger
+            cmd = ["autorest", _DPG_README]
+        cmd += build_autorest_options(global_conf, local_conf)
+
+        # metadata
+        metadata.update({
+            "autorest": global_conf["autorest_options"]["version"],
+            "use": global_conf["autorest_options"]["use"],
+            "autorest_command": " ".join(cmd),
+            "readme": input_readme,
+        })
+    else:
+        metadata["typespec_src"] = input_readme
+        metadata.update(config)
 
     _LOGGER.info("Metadata json:\n {}".format(json.dumps(metadata, indent=2)))
-
-    package_folder = Path(sdk_folder, folder_name, package_name).expanduser()
-    if not os.path.exists(package_folder):
-        _LOGGER.info(f"Package folder doesn't exist: {package_folder}")
-        _LOGGER.info("Failed to save metadata.")
-        return
 
     metadata_file_path = os.path.join(package_folder, "_meta.json")
     with open(metadata_file_path, "w") as writer:
@@ -107,25 +160,11 @@ def update_servicemetadata(sdk_folder, data, config, folder_name, package_name, 
                 f.write("".join(includes))
 
 
-# find all the files of one folder, including files in subdirectory
-def all_files(path: str, files: List[str]):
-    all_folder = os.listdir(path)
-    for item in all_folder:
-        folder = str(Path(f"{path}/{item}"))
-        if os.path.isdir(folder):
-            all_files(folder, files)
-        else:
-            files.append(folder)
-
-
 def judge_tag_preview(path: str) -> bool:
-    files = []
-    all_files(path, files)
+    files = [i for i in Path(path).glob("**/*.py")]
     default_api_version = ""  # for multi-api
     api_version = ""  # for single-api
     for file in files:
-        if ".py" not in file or ".pyc" in file:
-            continue
         try:
             with open(file, "r") as file_in:
                 list_in = file_in.readlines()
@@ -134,10 +173,10 @@ def judge_tag_preview(path: str) -> bool:
             continue
 
         for line in list_in:
-            if line.find("DEFAULT_API_VERSION = ") > -1:
+            if "DEFAULT_API_VERSION = " in line:
                 default_api_version += line.split("=")[-1].strip("\n")  # collect all default api version
-            if default_api_version == "" and line.find("api_version = ") > -1:
-                api_version += line.split("=")[-1].strip("\n")  # collect all single api version
+            if default_api_version == "" and "api_version" in line:
+                api_version += ", ".join(re.findall("\d{4}-\d{2}-\d{2}[-a-z]*", line))  # collect all single api version
     if default_api_version != "":
         _LOGGER.info(f"find default api version:{default_api_version}")
         return "preview" in default_api_version
@@ -322,3 +361,39 @@ def format_samples(sdk_code_path) -> None:
             fw.write(file_content)
 
     _LOGGER.info(f"format generated_samples successfully")
+
+def generate_ci(template_path: Path, folder_path: Path, package_name: str) -> None:
+    ci = Path(folder_path, "ci.yml")
+    service_name = folder_path.name
+    safe_name = package_name.replace("-", "")
+    if not ci.exists():
+        env = Environment(loader=FileSystemLoader(template_path), keep_trailing_newline=True)
+        template = env.get_template('ci.yml')
+        content = template.render(package_name=package_name, service_name=service_name, safe_name=safe_name)
+    else:
+        with open(ci, "r") as file_in:
+            content = file_in.readlines()
+            for line in content:
+                if package_name in line:
+                    return
+            content.append(f'    - name: {package_name}\n')
+            content.append(f'      safeName: {safe_name}\n')
+    with open(ci, "w") as file_out:
+        file_out.writelines(content)
+
+def gen_typespec(typespec_relative_path: str, spec_folder: str, head_sha: str, rest_repo_url: str) -> Dict[str, Any]:
+    typespec_python = "@azure-tools/typespec-python"
+
+    # call scirpt to generate sdk
+    try:
+        check_output(f'pwsh {Path("eng/common/scripts/TypeSpec-Project-Process.ps1")} {(Path(spec_folder) / typespec_relative_path).resolve()} {head_sha} {rest_repo_url}', shell=True)
+    except CalledProcessError as e:
+        _LOGGER.error(f"Failed to generate sdk from typespec: {e.output.decode('utf-8')}")
+        raise e
+
+    # get version of codegen used in generation
+    with open(Path("eng/emitter-package.json"), "r") as file_in:
+        data = json.load(file_in)
+        npm_package_verstion = {typespec_python: data["dependencies"][typespec_python]}
+
+    return npm_package_verstion

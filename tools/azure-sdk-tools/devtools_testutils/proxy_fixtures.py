@@ -15,7 +15,10 @@ from azure.core.exceptions import ResourceNotFoundError
 from azure.core.pipeline.policies import ContentDecodePolicy
 
 # the functions we patch
-from azure.core.pipeline.transport import RequestsTransport
+try:
+    from azure.core.pipeline.transport import RequestsTransport
+except:
+    pass
 
 from .helpers import get_test_id, is_live, is_live_and_not_recording
 from .proxy_testcase import start_record_or_playback, stop_record_or_playback, transform_request
@@ -25,6 +28,13 @@ from .sanitizers import add_general_string_sanitizer
 if TYPE_CHECKING:
     from typing import Any, Callable, Dict, Optional, Tuple
     from pytest import FixtureRequest
+
+# In pytest-asyncio>=0.19.0 async fixtures need to be marked with pytest_asyncio.fixture, not pytest.fixture, by default
+# pytest_asyncio.fixture is only recently available (~0.17.0), so we need to account for an import error
+try:
+    from pytest_asyncio import fixture as async_fixture
+except ImportError:
+    from pytest import fixture as async_fixture
 
 
 _LOGGER = logging.getLogger()
@@ -115,7 +125,7 @@ def environment_variables(test_proxy: None) -> EnvironmentVariableSanitizer:
     return EnvironmentVariableSanitizer()
 
 
-@pytest.fixture
+@async_fixture
 async def recorded_test(test_proxy: None, request: "FixtureRequest") -> "Dict[str, Any]":
     """Fixture that redirects network requests to target the azure-sdk-tools test proxy.
 

@@ -7,6 +7,7 @@ class DistributionType:
     MPI = "mpi"
     TENSORFLOW = "tensorflow"
     PYTORCH = "pytorch"
+    RAY = "ray"
 
 
 class JobType(object):
@@ -19,6 +20,8 @@ class JobType(object):
     PARALLEL = "parallel"
     IMPORT = "import"
     SPARK = "spark"
+    DATA_TRANSFER = "data_transfer"
+    FINE_TUNING = "finetuning"
 
 
 class JobLimitsType(object):
@@ -72,3 +75,90 @@ class RestSparkConfKey:
     DYNAMIC_ALLOCATION_MIN_EXECUTORS = "spark.dynamicAllocation.minExecutors"
     DYNAMIC_ALLOCATION_MAX_EXECUTORS = "spark.dynamicAllocation.maxExecutors"
     DYNAMIC_ALLOCATION_ENABLED = "spark.dynamicAllocation.enabled"
+
+
+class JobServiceTypeNames:
+    class EntityNames:
+        CUSTOM = "custom"
+        TRACKING = "Tracking"
+        STUDIO = "Studio"
+        JUPYTER_LAB = "jupyter_lab"
+        SSH = "ssh"
+        TENSOR_BOARD = "tensor_board"
+        VS_CODE = "vs_code"
+        RAY_DASHBOARD = "RayDashboard"
+
+    class RestNames:
+        CUSTOM = "Custom"
+        TRACKING = "Tracking"
+        STUDIO = "Studio"
+        JUPYTER_LAB = "JupyterLab"
+        SSH = "SSH"
+        TENSOR_BOARD = "TensorBoard"
+        VS_CODE = "VSCode"
+        RAY_DASHBOARD = "RayDashboard"
+
+    ENTITY_TO_REST = {
+        EntityNames.CUSTOM: RestNames.CUSTOM,
+        EntityNames.TRACKING: RestNames.TRACKING,
+        EntityNames.STUDIO: RestNames.STUDIO,
+        EntityNames.JUPYTER_LAB: RestNames.JUPYTER_LAB,
+        EntityNames.SSH: RestNames.SSH,
+        EntityNames.TENSOR_BOARD: RestNames.TENSOR_BOARD,
+        EntityNames.VS_CODE: RestNames.VS_CODE,
+        EntityNames.RAY_DASHBOARD: RestNames.RAY_DASHBOARD,
+    }
+
+    REST_TO_ENTITY = {v: k for k, v in ENTITY_TO_REST.items()}
+
+    NAMES_ALLOWED_FOR_PUBLIC = [EntityNames.JUPYTER_LAB, EntityNames.SSH, EntityNames.TENSOR_BOARD, EntityNames.VS_CODE]
+
+
+class JobTierNames:
+    class EntityNames:
+        Spot = "spot"
+        Basic = "basic"
+        Standard = "standard"
+        Premium = "premium"
+        Null = "null"
+
+    class RestNames:
+        Null = "Null"
+        Spot = "Spot"
+        Basic = "Basic"
+        Standard = "Standard"
+        Premium = "Premium"
+
+    ENTITY_TO_REST = {
+        EntityNames.Null: RestNames.Null,
+        EntityNames.Spot: RestNames.Spot,
+        EntityNames.Basic: RestNames.Basic,
+        EntityNames.Standard: RestNames.Standard,
+        EntityNames.Premium: RestNames.Premium,
+    }
+
+    REST_TO_ENTITY = {v: k for k, v in ENTITY_TO_REST.items()}
+
+    ALLOWED_NAMES = [EntityNames.Spot, EntityNames.Basic, EntityNames.Standard, EntityNames.Premium, EntityNames.Null]
+
+
+class JobPriorityValues:
+    class EntityValues:
+        LOW = "low"
+        MEDIUM = "medium"
+        HIGH = "high"
+
+    class RestValues:
+        LOW = 1
+        MEDIUM = 2
+        HIGH = 3
+
+    ENTITY_TO_REST = {
+        EntityValues.LOW: RestValues.LOW,
+        EntityValues.MEDIUM: RestValues.MEDIUM,
+        EntityValues.HIGH: RestValues.HIGH,
+    }
+
+    REST_TO_ENTITY = {v: k for k, v in ENTITY_TO_REST.items()}
+
+    ALLOWED_VALUES = [EntityValues.LOW, EntityValues.MEDIUM, EntityValues.HIGH]

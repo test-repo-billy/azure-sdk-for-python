@@ -1,16 +1,16 @@
 from typing import Callable
 
 import pytest
-
-from azure.ai.ml import Input, MLClient, Output, load_job, spark, ManagedIdentityConfiguration
-from azure.ai.ml.entities._job.spark_job import SparkJob
-
 from devtools_testutils import AzureRecordedTestCase
+
+from azure.ai.ml import Input, ManagedIdentityConfiguration, MLClient, Output, load_job, spark
+from azure.ai.ml.entities._job.spark_job import SparkJob
 
 
 @pytest.mark.timeout(600)
 @pytest.mark.usefixtures("recorded_test", "mock_asset_name", "mock_code_hash")
 @pytest.mark.skip(reason="user assigned identity not attached to test workspace")
+@pytest.mark.training_experiences_test
 class TestSparkJob(AzureRecordedTestCase):
     @pytest.mark.e2etest
     def test_spark_job(self, randstr: Callable[[], str], client: MLClient) -> None:
@@ -90,7 +90,7 @@ class TestSparkJob(AzureRecordedTestCase):
             args="--input1 ${{inputs.input1}} --output1 ${{outputs.output1}} --my_sample_rate 0.01",
             resources={
                 "instance_type": "Standard_E8S_V3",
-                "runtime_version": "3.1.0",
+                "runtime_version": "3.2.0",
             },
         )
 

@@ -34,7 +34,7 @@ class SecurityCenterConfiguration(Configuration):  # pylint: disable=too-many-in
 
     def __init__(self, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
         super(SecurityCenterConfiguration, self).__init__(**kwargs)
-        api_version = kwargs.pop("api_version", "2020-07-01-preview")  # type: str
+        api_version: str = kwargs.pop("api_version", "2020-07-01-preview")
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")

@@ -1,3 +1,4 @@
+import logging
 import os
 from unittest.mock import Mock, patch
 
@@ -22,14 +23,18 @@ from azure.ai.ml import (
     load_workspace,
     load_workspace_connection,
 )
-from azure.ai.ml._azure_environments import AzureEnvironments
-from azure.ai.ml.constants._common import AZUREML_CLOUD_ENV_NAME
-from azure.identity import DefaultAzureCredential, ClientSecretCredential
-from azure.ai.ml.exceptions import ValidationException
+from azure.ai.ml._azure_environments import AzureEnvironments, _get_default_cloud_name
 from azure.ai.ml._scope_dependent_operations import OperationScope
+from azure.ai.ml._telemetry import get_appinsights_log_handler
+from azure.ai.ml._telemetry.logging_handler import AzureMLSDKLogHandler
+from azure.ai.ml._user_agent import USER_AGENT
+from azure.ai.ml.constants._common import AZUREML_CLOUD_ENV_NAME
+from azure.ai.ml.exceptions import ValidationException
+from azure.identity import ClientSecretCredential, DefaultAzureCredential
 
 
 @pytest.mark.unittest
+@pytest.mark.core_sdk_test
 class TestMachineLearningClient:
     def test_get_workspaces(self, mock_machinelearning_client: MLClient) -> None:
         assert mock_machinelearning_client.workspaces is not None
@@ -77,7 +82,9 @@ class TestMachineLearningClient:
 
     def test_get_sub_and_rg(self) -> None:
         client = MLClient(
-            credential=DefaultAzureCredential(), subscription_id="fake-sub-id", resource_group_name="fake-rg-name"
+            credential=DefaultAzureCredential(),
+            subscription_id="fake-sub-id",
+            resource_group_name="fake-rg-name",
         )
 
         assert "fake-sub-id" == client.subscription_id
@@ -85,7 +92,9 @@ class TestMachineLearningClient:
 
     def test_show_progress(self) -> None:
         client = MLClient(
-            credential=DefaultAzureCredential(), subscription_id="fake-sub-id", resource_group_name="fake-rg-name"
+            credential=DefaultAzureCredential(),
+            subscription_id="fake-sub-id",
+            resource_group_name="fake-rg-name",
         )
 
         assert client.jobs._show_progress  # By default show_progress is True
@@ -109,12 +118,14 @@ class TestMachineLearningClient:
         mock_get_mfe_url_override.return_value = mock_url
 
         ml_client = MLClient(
-            credential=mock_credential, subscription_id=Test_Subscription, resource_group_name=Test_Resource_Group
+            credential=mock_credential,
+            subscription_id=Test_Subscription,
+            resource_group_name=Test_Resource_Group,
         )
 
         assert ml_client.workspaces._operation._client._base_url == mock_url
         assert ml_client.compute._operation._client._base_url == mock_url
-        assert ml_client.jobs._operation_2022_10_preview._client._base_url == mock_url
+        assert ml_client.jobs._operation_2023_02_preview._client._base_url == mock_url
         assert ml_client.jobs._kwargs["enforce_https"] is False
 
     # @patch("azure.ai.ml._ml_client.RegistryOperations", Mock())
@@ -155,7 +166,13 @@ class TestMachineLearningClient:
                 3,
                 "create_or_update",
             ),
-            ([load_model("tests/test_configs/model/model_full.yml")], {}, "models", 1, "create_or_update"),
+            (
+                [load_model("tests/test_configs/model/model_full.yml")],
+                {},
+                "models",
+                1,
+                "create_or_update",
+            ),
             (
                 [load_environment("tests/test_configs/environment/environment_conda.yml")],
                 {},
@@ -163,9 +180,18 @@ class TestMachineLearningClient:
                 1,
                 "create_or_update",
             ),
-            ([load_datastore("tests/test_configs/datastore/blob_store.yml")], {}, "datastores", 1, "create_or_update"),
             (
-                [load_job("tests/test_configs/command_job/simple_train_test.yml"), "soemthing_else"],
+                [load_datastore("tests/test_configs/datastore/blob_store.yml")],
+                {},
+                "datastores",
+                1,
+                "create_or_update",
+            ),
+            (
+                [
+                    load_job("tests/test_configs/command_job/simple_train_test.yml"),
+                    "soemthing_else",
+                ],
                 {},
                 "takes 2 positional arguments but 3 were given",
                 -1,
@@ -223,8 +249,20 @@ class TestMachineLearningClient:
     @pytest.mark.parametrize(
         "args, kwargs, ops_name, call_times, create_method_name",
         [
-            ([load_compute("tests/test_configs/compute/compute-ci.yaml")], {}, "compute", 1, "begin_create_or_update"),
-            ([load_workspace("tests/test_configs/workspace/workspace_full.yaml")], {}, "workspaces", 1, "begin_create"),
+            (
+                [load_compute("tests/test_configs/compute/compute-ci.yaml")],
+                {},
+                "compute",
+                1,
+                "begin_create_or_update",
+            ),
+            (
+                [load_workspace("tests/test_configs/workspace/workspace_full.yaml")],
+                {},
+                "workspaces",
+                1,
+                "begin_create",
+            ),
             (
                 [load_registry("tests/test_configs/registry/registry_valid.yaml")],
                 {},
@@ -420,44 +458,152 @@ class TestMachineLearningClient:
             assert ml_client._kwargs["cloud"] == "SomeInvalidCloudName"
         assert "Unknown cloud environment supplied" in str(e)
 
-
-    def test_ml_client_validation_rg_sub_missing_throws(
-        self, auth: ClientSecretCredential
-    ) -> None:
-        with pytest.raises(ValidationException) as exception:
-            MLClient(
-                credential=auth,
-            )
-        message = exception.value.args[0]
-        assert (
-            message
-            == "Both subscription id and resource group are required for this operation, missing subscription id and resource group"
-        )
-
-
-    def test_ml_client_with_no_rg_sub_for_ws_throws(
+    def test_ml_client_with_both_workspace_registry_names_throws(
         self, e2e_ws_scope: OperationScope, auth: ClientSecretCredential
     ) -> None:
         with pytest.raises(ValidationException) as exception:
             MLClient(
                 credential=auth,
                 workspace_name=e2e_ws_scope.workspace_name,
+                registry_name="testfeed",
             )
         message = exception.value.args[0]
-        assert (
-            message
-            == "Both subscription id and resource group are required for this operation, missing subscription id and resource group"
+        assert message == "Both workspace_name and registry_name cannot be used together, for the ml_client."
+
+    def test_ml_client_with_cli_config(self, mock_credential):
+        # This cloud config should not work and it should NOT overwrite the hardcoded AzureCloud
+        kwargs = {
+            "cloud": "AzureCloud",
+            "cloud_metadata": {
+                "azure_portal": "https://test.portal.azure.com/",
+                "resource_manager": "https://test.management.azure.com/",
+                "active_directory": "https://test.login.microsoftonline.com/",
+                "aml_resource_id": "https://test.ml.azure.com/",
+                "storage_endpoint": "test.core.windows.net",
+                "registry_discovery_endpoint": "https://test.eastus.api.azureml.ms/",
+            },
+        }
+        ml_client = MLClient(
+            credential=mock_credential,
+            subscription_id=Test_Subscription,
+            resource_group_name=Test_Resource_Group,
+            workspace_name="test-ws1",
+            **kwargs,
+        )
+        assert ml_client._cloud == "AzureCloud"
+        assert ml_client._base_url != "https://test.management.azure.com"
+        assert _get_default_cloud_name() == "AzureCloud"
+
+        # This full cloud config should be added fine
+        kwargs = {
+            "cloud": "test_cloud",
+            "cloud_metadata": {
+                "azure_portal": "https://test.portal.azure.com/",
+                "resource_manager": "https://test.management.azure.com/",
+                "active_directory": "https://test.login.microsoftonline.com/",
+                "aml_resource_id": "https://test.ml.azure.com/",
+                "storage_endpoint": "test.core.windows.net",
+                "registry_discovery_endpoint": "https://test.eastus.api.azureml.ms/",
+            },
+        }
+        ml_client = MLClient(
+            credential=mock_credential,
+            subscription_id=Test_Subscription,
+            resource_group_name=Test_Resource_Group,
+            workspace_name="test-ws1",
+            **kwargs,
+        )
+        assert ml_client._cloud == "test_cloud"
+        assert ml_client._base_url == "https://test.management.azure.com"
+        assert _get_default_cloud_name() == "test_cloud"
+
+        # We shouldn't need to add it to the kwargs a second time, just the cloud name
+        kwargs = {"cloud": "test_cloud"}
+        ml_client = MLClient(
+            credential=mock_credential,
+            subscription_id=Test_Subscription,
+            resource_group_name=Test_Resource_Group,
+            workspace_name="test-ws1",
+            **kwargs,
         )
 
-    def test_ml_client_with_both_workspace_registry_names_throws(self, e2e_ws_scope: OperationScope, auth: ClientSecretCredential) -> None:	
-        with pytest.raises(ValidationException) as exception:	
-            MLClient(	
-                credential=auth,	
-                workspace_name=e2e_ws_scope.workspace_name,	
-                registry_name="testfeed",	
-            )	
-        message = exception.value.args[0]	
-        assert (	
-            message	
-            == "Both workspace_name and registry_name cannot be used together, for the ml_client."	
+        assert ml_client._cloud == "test_cloud"
+        assert ml_client._base_url == "https://test.management.azure.com"
+        assert _get_default_cloud_name() == "test_cloud"
+
+    def test_enable_telemetry(self) -> None:
+        subscription_id = "fake-sub-id"
+        resource_group_name = "fake-rg-name"
+
+        client = MLClient(
+            credential=DefaultAzureCredential(),
+            subscription_id=subscription_id,
+            resource_group_name=resource_group_name,
         )
+
+        assert client.jobs._enable_telemetry  # By default enable_telemetry is True
+        assert client.data._enable_telemetry
+        assert client.models._enable_telemetry
+
+        enable_telemetry = client.jobs._enable_telemetry
+
+        # confirm that telemetry is DISABLED when not in jupyter notebook even with enable_telemetry=True
+        with patch("azure.ai.ml._telemetry.logging_handler.in_jupyter_notebook", return_value=False):
+            properties = {
+                "subscription_id": subscription_id,
+                "resource_group_name": resource_group_name,
+            }
+            handler, _ = get_appinsights_log_handler(
+                USER_AGENT, **{"properties": properties}, enable_telemetry=enable_telemetry
+            )
+            assert enable_telemetry
+            assert isinstance(handler, logging.NullHandler)
+
+        # confirm that telemetry is ENABLED when in jupyter notebook and enable_telemetry=True
+        with patch("azure.ai.ml._telemetry.logging_handler.in_jupyter_notebook", return_value=True):
+            properties = {
+                "subscription_id": subscription_id,
+                "resource_group_name": resource_group_name,
+            }
+            handler, _ = get_appinsights_log_handler(
+                USER_AGENT, **{"properties": properties}, enable_telemetry=enable_telemetry
+            )
+            assert enable_telemetry
+            assert isinstance(handler, AzureMLSDKLogHandler)
+
+        client = MLClient(
+            credential=DefaultAzureCredential(),
+            subscription_id="fake-sub-id",
+            resource_group_name="fake-rg-name",
+            enable_telemetry=False,
+        )
+
+        assert not client.jobs._enable_telemetry
+        assert not client.data._enable_telemetry
+        assert not client.models._enable_telemetry
+
+        enable_telemetry = client.jobs._enable_telemetry
+
+        # confirm that telemetry is DISABLED when not in jupyter notebook and enable_telemetry=False
+        with patch("azure.ai.ml._telemetry.logging_handler.in_jupyter_notebook", return_value=False):
+            properties = {
+                "subscription_id": subscription_id,
+                "resource_group_name": resource_group_name,
+            }
+            handler, _ = get_appinsights_log_handler(
+                USER_AGENT, **{"properties": properties}, enable_telemetry=enable_telemetry
+            )
+            assert not enable_telemetry
+            assert isinstance(handler, logging.NullHandler)
+
+        # confirm that telemetry is DISABLED when in jupyter notebook and enable_telemetry=False
+        with patch("azure.ai.ml._telemetry.logging_handler.in_jupyter_notebook", return_value=True):
+            properties = {
+                "subscription_id": subscription_id,
+                "resource_group_name": resource_group_name,
+            }
+            handler, _ = get_appinsights_log_handler(
+                USER_AGENT, **{"properties": properties}, enable_telemetry=enable_telemetry
+            )
+            assert not enable_telemetry
+            assert isinstance(handler, logging.NullHandler)

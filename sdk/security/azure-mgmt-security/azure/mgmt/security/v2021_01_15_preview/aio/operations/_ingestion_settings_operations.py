@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, TypeVar, Union, overload
-from urllib.parse import parse_qs, urljoin, urlparse
+import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import (
@@ -74,8 +74,8 @@ class IngestionSettingsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-01-15-preview"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.IngestionSettingList]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-01-15-preview"))
+        cls: ClsType[_models.IngestionSettingList] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -96,16 +96,23 @@ class IngestionSettingsOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 # make call to next link with the client's api-version
-                _parsed_next_link = urlparse(next_link)
-                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -113,14 +120,15 @@ class IngestionSettingsOperations:
             deserialized = self._deserialize("IngestionSettingList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=False, **kwargs
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -132,7 +140,7 @@ class IngestionSettingsOperations:
 
         return AsyncItemPaged(get_next, extract_data)
 
-    list.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/ingestionSettings"}  # type: ignore
+    list.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/ingestionSettings"}
 
     @distributed_trace_async
     async def get(self, ingestion_setting_name: str, **kwargs: Any) -> _models.IngestionSetting:
@@ -157,8 +165,8 @@ class IngestionSettingsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-01-15-preview"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.IngestionSetting]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-01-15-preview"))
+        cls: ClsType[_models.IngestionSetting] = kwargs.pop("cls", None)
 
         request = build_get_request(
             ingestion_setting_name=ingestion_setting_name,
@@ -169,10 +177,11 @@ class IngestionSettingsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -188,7 +197,9 @@ class IngestionSettingsOperations:
 
         return deserialized
 
-    get.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/ingestionSettings/{ingestionSettingName}"}  # type: ignore
+    get.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/ingestionSettings/{ingestionSettingName}"
+    }
 
     @overload
     async def create(
@@ -249,8 +260,8 @@ class IngestionSettingsOperations:
 
         :param ingestion_setting_name: Name of the ingestion setting. Required.
         :type ingestion_setting_name: str
-        :param ingestion_setting: Ingestion setting object. Is either a model type or a IO type.
-         Required.
+        :param ingestion_setting: Ingestion setting object. Is either a IngestionSetting type or a IO
+         type. Required.
         :type ingestion_setting: ~azure.mgmt.security.v2021_01_15_preview.models.IngestionSetting or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -271,9 +282,9 @@ class IngestionSettingsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-01-15-preview"))  # type: str
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.IngestionSetting]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-01-15-preview"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.IngestionSetting] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -295,10 +306,11 @@ class IngestionSettingsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -314,7 +326,9 @@ class IngestionSettingsOperations:
 
         return deserialized
 
-    create.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/ingestionSettings/{ingestionSettingName}"}  # type: ignore
+    create.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/ingestionSettings/{ingestionSettingName}"
+    }
 
     @distributed_trace_async
     async def delete(  # pylint: disable=inconsistent-return-statements
@@ -340,8 +354,8 @@ class IngestionSettingsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-01-15-preview"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-01-15-preview"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_delete_request(
             ingestion_setting_name=ingestion_setting_name,
@@ -352,10 +366,11 @@ class IngestionSettingsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -367,7 +382,9 @@ class IngestionSettingsOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/ingestionSettings/{ingestionSettingName}"}  # type: ignore
+    delete.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/ingestionSettings/{ingestionSettingName}"
+    }
 
     @distributed_trace_async
     async def list_tokens(self, ingestion_setting_name: str, **kwargs: Any) -> _models.IngestionSettingToken:
@@ -392,8 +409,8 @@ class IngestionSettingsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-01-15-preview"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.IngestionSettingToken]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-01-15-preview"))
+        cls: ClsType[_models.IngestionSettingToken] = kwargs.pop("cls", None)
 
         request = build_list_tokens_request(
             ingestion_setting_name=ingestion_setting_name,
@@ -404,10 +421,11 @@ class IngestionSettingsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -423,7 +441,9 @@ class IngestionSettingsOperations:
 
         return deserialized
 
-    list_tokens.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/ingestionSettings/{ingestionSettingName}/listTokens"}  # type: ignore
+    list_tokens.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/ingestionSettings/{ingestionSettingName}/listTokens"
+    }
 
     @distributed_trace_async
     async def list_connection_strings(self, ingestion_setting_name: str, **kwargs: Any) -> _models.ConnectionStrings:
@@ -447,8 +467,8 @@ class IngestionSettingsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-01-15-preview"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ConnectionStrings]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-01-15-preview"))
+        cls: ClsType[_models.ConnectionStrings] = kwargs.pop("cls", None)
 
         request = build_list_connection_strings_request(
             ingestion_setting_name=ingestion_setting_name,
@@ -459,10 +479,11 @@ class IngestionSettingsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -478,4 +499,6 @@ class IngestionSettingsOperations:
 
         return deserialized
 
-    list_connection_strings.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/ingestionSettings/{ingestionSettingName}/listConnectionStrings"}  # type: ignore
+    list_connection_strings.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/ingestionSettings/{ingestionSettingName}/listConnectionStrings"
+    }

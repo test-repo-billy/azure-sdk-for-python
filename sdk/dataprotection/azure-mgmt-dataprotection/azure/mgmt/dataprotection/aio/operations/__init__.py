@@ -16,8 +16,10 @@ from ._data_protection_operations import DataProtectionOperations
 from ._data_protection_operations_operations import DataProtectionOperationsOperations
 from ._backup_policies_operations import BackupPoliciesOperations
 from ._backup_instances_operations import BackupInstancesOperations
-from ._backup_instances_extension_routing_operations import BackupInstancesExtensionRoutingOperations
 from ._recovery_points_operations import RecoveryPointsOperations
+from ._fetch_secondary_recovery_points_operations import FetchSecondaryRecoveryPointsOperations
+from ._fetch_cross_region_restore_job_operations import FetchCrossRegionRestoreJobOperations
+from ._fetch_cross_region_restore_jobs_operations import FetchCrossRegionRestoreJobsOperations
 from ._jobs_operations import JobsOperations
 from ._restorable_time_ranges_operations import RestorableTimeRangesOperations
 from ._export_jobs_operations import ExportJobsOperations
@@ -27,7 +29,7 @@ from ._resource_guards_operations import ResourceGuardsOperations
 from ._dpp_resource_guard_proxy_operations import DppResourceGuardProxyOperations
 
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
@@ -41,8 +43,10 @@ __all__ = [
     "DataProtectionOperationsOperations",
     "BackupPoliciesOperations",
     "BackupInstancesOperations",
-    "BackupInstancesExtensionRoutingOperations",
     "RecoveryPointsOperations",
+    "FetchSecondaryRecoveryPointsOperations",
+    "FetchCrossRegionRestoreJobOperations",
+    "FetchCrossRegionRestoreJobsOperations",
     "JobsOperations",
     "RestorableTimeRangesOperations",
     "ExportJobsOperations",

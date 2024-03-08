@@ -98,7 +98,6 @@ try:
     from ._models_py3 import JobDisableParameter
     from ._models_py3 import JobEnableOptions
     from ._models_py3 import JobExecutionInformation
-    from ._models_py3 import JobGetAllLifetimeStatisticsOptions
     from ._models_py3 import JobGetOptions
     from ._models_py3 import JobGetTaskCountsOptions
     from ._models_py3 import JobListFromJobScheduleOptions
@@ -136,6 +135,7 @@ try:
     from ._models_py3 import JobUpdateOptions
     from ._models_py3 import JobUpdateParameter
     from ._models_py3 import LinuxUserConfiguration
+    from ._models_py3 import ManagedDisk
     from ._models_py3 import MetadataItem
     from ._models_py3 import MountConfiguration
     from ._models_py3 import MultiInstanceSettings
@@ -168,7 +168,6 @@ try:
     from ._models_py3 import PoolEvaluateAutoScaleOptions
     from ._models_py3 import PoolEvaluateAutoScaleParameter
     from ._models_py3 import PoolExistsOptions
-    from ._models_py3 import PoolGetAllLifetimeStatisticsOptions
     from ._models_py3 import PoolGetOptions
     from ._models_py3 import PoolInformation
     from ._models_py3 import PoolListOptions
@@ -191,6 +190,8 @@ try:
     from ._models_py3 import ResourceFile
     from ._models_py3 import ResourceStatistics
     from ._models_py3 import Schedule
+    from ._models_py3 import SecurityProfile
+    from ._models_py3 import ServiceArtifactReference
     from ._models_py3 import StartTask
     from ._models_py3 import StartTaskInformation
     from ._models_py3 import SubtaskInformation
@@ -221,6 +222,7 @@ try:
     from ._models_py3 import TaskTerminateOptions
     from ._models_py3 import TaskUpdateOptions
     from ._models_py3 import TaskUpdateParameter
+    from ._models_py3 import UefiSettings
     from ._models_py3 import UploadBatchServiceLogsConfiguration
     from ._models_py3 import UploadBatchServiceLogsResult
     from ._models_py3 import UsageStatistics
@@ -322,7 +324,6 @@ except (SyntaxError, ImportError):
     from ._models import JobDisableParameter
     from ._models import JobEnableOptions
     from ._models import JobExecutionInformation
-    from ._models import JobGetAllLifetimeStatisticsOptions
     from ._models import JobGetOptions
     from ._models import JobGetTaskCountsOptions
     from ._models import JobListFromJobScheduleOptions
@@ -360,6 +361,7 @@ except (SyntaxError, ImportError):
     from ._models import JobUpdateOptions
     from ._models import JobUpdateParameter
     from ._models import LinuxUserConfiguration
+    from ._models import ManagedDisk
     from ._models import MetadataItem
     from ._models import MountConfiguration
     from ._models import MultiInstanceSettings
@@ -392,7 +394,6 @@ except (SyntaxError, ImportError):
     from ._models import PoolEvaluateAutoScaleOptions
     from ._models import PoolEvaluateAutoScaleParameter
     from ._models import PoolExistsOptions
-    from ._models import PoolGetAllLifetimeStatisticsOptions
     from ._models import PoolGetOptions
     from ._models import PoolInformation
     from ._models import PoolListOptions
@@ -415,6 +416,8 @@ except (SyntaxError, ImportError):
     from ._models import ResourceFile
     from ._models import ResourceStatistics
     from ._models import Schedule
+    from ._models import SecurityProfile
+    from ._models import ServiceArtifactReference
     from ._models import StartTask
     from ._models import StartTaskInformation
     from ._models import SubtaskInformation
@@ -445,6 +448,7 @@ except (SyntaxError, ImportError):
     from ._models import TaskTerminateOptions
     from ._models import TaskUpdateOptions
     from ._models import TaskUpdateParameter
+    from ._models import UefiSettings
     from ._models import UploadBatchServiceLogsConfiguration
     from ._models import UploadBatchServiceLogsResult
     from ._models import UsageStatistics
@@ -488,13 +492,16 @@ from ._batch_service_client_enums import (
     CertificateVisibility,
     CachingType,
     StorageAccountType,
+    ContainerType,
     DiskEncryptionTarget,
     NodePlacementPolicyType,
     DiffDiskPlacement,
+    SecurityTypes,
     DynamicVNetAssignmentScope,
     InboundEndpointProtocol,
     NetworkSecurityGroupRuleAccess,
     IPAddressProvisioningType,
+    NodeCommunicationMode,
     PoolLifetimeOption,
     OnAllTasksComplete,
     OnTaskFailure,
@@ -504,7 +511,6 @@ from ._batch_service_client_enums import (
     JobPreparationTaskState,
     TaskExecutionResult,
     JobReleaseTaskState,
-    ContainerType,
     StatusLevelTypes,
     PoolState,
     AllocationState,
@@ -611,7 +617,6 @@ __all__ = [
     'JobDisableParameter',
     'JobEnableOptions',
     'JobExecutionInformation',
-    'JobGetAllLifetimeStatisticsOptions',
     'JobGetOptions',
     'JobGetTaskCountsOptions',
     'JobListFromJobScheduleOptions',
@@ -649,6 +654,7 @@ __all__ = [
     'JobUpdateOptions',
     'JobUpdateParameter',
     'LinuxUserConfiguration',
+    'ManagedDisk',
     'MetadataItem',
     'MountConfiguration',
     'MultiInstanceSettings',
@@ -681,7 +687,6 @@ __all__ = [
     'PoolEvaluateAutoScaleOptions',
     'PoolEvaluateAutoScaleParameter',
     'PoolExistsOptions',
-    'PoolGetAllLifetimeStatisticsOptions',
     'PoolGetOptions',
     'PoolInformation',
     'PoolListOptions',
@@ -704,6 +709,8 @@ __all__ = [
     'ResourceFile',
     'ResourceStatistics',
     'Schedule',
+    'SecurityProfile',
+    'ServiceArtifactReference',
     'StartTask',
     'StartTaskInformation',
     'SubtaskInformation',
@@ -734,6 +741,7 @@ __all__ = [
     'TaskTerminateOptions',
     'TaskUpdateOptions',
     'TaskUpdateParameter',
+    'UefiSettings',
     'UploadBatchServiceLogsConfiguration',
     'UploadBatchServiceLogsResult',
     'UsageStatistics',
@@ -751,11 +759,11 @@ __all__ = [
     'CloudPoolPaged',
     'ImageInformationPaged',
     'PoolNodeCountsPaged',
-    'CloudJobPaged',
-    'JobPreparationAndReleaseTaskExecutionInformationPaged',
     'CertificatePaged',
     'NodeFilePaged',
     'CloudJobSchedulePaged',
+    'CloudJobPaged',
+    'JobPreparationAndReleaseTaskExecutionInformationPaged',
     'CloudTaskPaged',
     'ComputeNodePaged',
     'NodeVMExtensionPaged',
@@ -776,13 +784,16 @@ __all__ = [
     'CertificateVisibility',
     'CachingType',
     'StorageAccountType',
+    'ContainerType',
     'DiskEncryptionTarget',
     'NodePlacementPolicyType',
     'DiffDiskPlacement',
+    'SecurityTypes',
     'DynamicVNetAssignmentScope',
     'InboundEndpointProtocol',
     'NetworkSecurityGroupRuleAccess',
     'IPAddressProvisioningType',
+    'NodeCommunicationMode',
     'PoolLifetimeOption',
     'OnAllTasksComplete',
     'OnTaskFailure',
@@ -792,7 +803,6 @@ __all__ = [
     'JobPreparationTaskState',
     'TaskExecutionResult',
     'JobReleaseTaskState',
-    'ContainerType',
     'StatusLevelTypes',
     'PoolState',
     'AllocationState',

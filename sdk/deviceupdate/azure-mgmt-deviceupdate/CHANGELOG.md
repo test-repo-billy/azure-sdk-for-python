@@ -1,5 +1,18 @@
 # Release History
 
+## 1.1.0 (2023-12-18)
+
+### Features Added
+
+  - Model Account has a new parameter encryption
+
+## 1.1.0b1 (2022-12-26)
+
+### Other Changes
+
+  - Added generated samples in github repo
+  - Drop support for python<3.7.0
+
 ## 1.0.0 (2022-08-26)
 
 ### Breaking Changes

@@ -7,11 +7,19 @@ import sys
 
 from unittest import mock
 import pytest
-import six
-from devtools_testutils import test_proxy, add_general_regex_sanitizer, is_live, add_body_key_sanitizer
+from devtools_testutils import (
+    test_proxy,
+    is_live,
+    add_general_regex_sanitizer,
+    add_body_key_sanitizer,
+    add_header_regex_sanitizer,
+    add_remove_header_sanitizer,
+    set_custom_default_matcher,
+)
 from azure.identity._constants import DEVELOPER_SIGN_ON_CLIENT_ID, EnvironmentVariables
 
 RECORD_IMDS = "--record-imds"
+TEST_ID = "00000000-0000-0000-0000-000000000000"
 
 
 def pytest_addoption(parser):
@@ -78,9 +86,9 @@ def get_certificate_parameters(content, password_protected_content, password, ex
     # type: (bytes, bytes, str, str) -> dict
     current_directory = os.path.dirname(__file__)
     parameters = {
-        "cert_bytes": six.ensure_binary(content),
+        "cert_bytes": content,
         "cert_path": os.path.join(current_directory, "certificate." + extension),
-        "cert_with_password_bytes": six.ensure_binary(password_protected_content),
+        "cert_with_password_bytes": password_protected_content,
         "cert_with_password_path": os.path.join(current_directory, "certificate-with-password." + extension),
         "password": password,
     }
@@ -103,7 +111,9 @@ def live_pem_certificate(live_service_principal):
     password = os.environ.get("CERTIFICATE_PASSWORD")
 
     if content and password_protected_content and password:
-        parameters = get_certificate_parameters(content, password_protected_content, password, "pem")
+        parameters = get_certificate_parameters(
+            content.encode("utf-8"), password_protected_content.encode("utf-8"), password, "pem"
+        )
         return dict(live_service_principal, **parameters)
 
     pytest.skip("Missing PEM certificate configuration")
@@ -119,8 +129,8 @@ def live_pfx_certificate(live_service_principal):
     if encoded_content and encoded_password_protected_content and password:
         import base64
 
-        content = base64.b64decode(six.ensure_binary(encoded_content))
-        password_protected_content = base64.b64decode(six.ensure_binary(encoded_password_protected_content))
+        content = base64.b64decode(encoded_content.encode("utf-8"))
+        password_protected_content = base64.b64decode(encoded_password_protected_content.encode("utf-8"))
 
         parameters = get_certificate_parameters(content, password_protected_content, password, "pfx")
         return dict(live_service_principal, **parameters)
@@ -162,8 +172,13 @@ def event_loop():
     yield loop
     loop.close()
 
+
 @pytest.fixture(scope="session", autouse=True)
-def add_sanitizers(test_proxy):
+def add_sanitizers(test_proxy, environment_variables):
+    set_custom_default_matcher(
+        excluded_headers="x-client-current-telemetry,x-client-last-telemetry,x-client-os,"
+        "x-client-sku,x-client-ver,x-client-cpu,x-client-brkrver,x-ms-lib-capability"  # cspell:ignore brkrver
+    )
     if EnvironmentVariables.MSI_ENDPOINT in os.environ:
         url = os.environ.get(EnvironmentVariables.MSI_ENDPOINT)
         PLAYBACK_URL = "https://msi-endpoint/token"
@@ -174,7 +189,8 @@ def add_sanitizers(test_proxy):
         add_general_regex_sanitizer(regex=user_assigned_identity_client_id, value=PLAYBACK_CLIENT_ID)
     if "CAE_ARM_URL" in os.environ and "CAE_TENANT_ID" in os.environ and "CAE_USERNAME" in os.environ:
         try:
-            from six.moves.urllib_parse import urlparse
+            from urllib.parse import urlparse
+
             arm_url = os.environ["CAE_ARM_URL"]
             real = urlparse(arm_url)
             add_general_regex_sanitizer(regex=real.netloc, value="management.azure.com")
@@ -186,6 +202,17 @@ def add_sanitizers(test_proxy):
         add_general_regex_sanitizer(regex=os.environ["OBO_TENANT_ID"], value="tenant")
         add_general_regex_sanitizer(regex=os.environ["OBO_USERNAME"], value="username")
     add_body_key_sanitizer(json_path="$..access_token", value="access_token")
+
+    # Multi-tenant environment variables sanitization
+    sanitization_mapping = {
+        "AZURE_IDENTITY_MULTI_TENANT_TENANT_ID": TEST_ID,
+        "AZURE_IDENTITY_MULTI_TENANT_CLIENT_ID": TEST_ID,
+        "AZURE_IDENTITY_MULTI_TENANT_CLIENT_SECRET": TEST_ID,
+    }
+    environment_variables.sanitize_batch(sanitization_mapping)
+    add_header_regex_sanitizer(key="Set-Cookie", value="[set-cookie;]")
+    add_remove_header_sanitizer(headers="Cookie")
+    add_header_regex_sanitizer(key="client-request-id", value="sanitized")
 
 
 @pytest.fixture(scope="session", autouse=True)

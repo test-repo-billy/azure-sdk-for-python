@@ -1,61 +1,13 @@
 from typing import Callable, Tuple
 
 import pytest
+from devtools_testutils import AzureRecordedTestCase, is_live
 
 from azure.ai.ml import MLClient, load_datastore
 from azure.ai.ml.entities import AzureBlobDatastore, AzureFileDatastore
-from azure.ai.ml.entities._datastore._on_prem import HdfsDatastore
 from azure.ai.ml.entities._credentials import NoneCredentialConfiguration
+from azure.ai.ml.entities._datastore._on_prem import HdfsDatastore
 from azure.ai.ml.entities._datastore.datastore import Datastore
-from azure.core.paging import ItemPaged
-from azure.mgmt.storage import StorageManagementClient
-
-from devtools_testutils import AzureRecordedTestCase, is_live
-
-
-@pytest.fixture
-def blob_store_file() -> str:
-    return "./tests/test_configs/datastore/blob_store.yml"
-
-
-@pytest.fixture
-def blob_store_credential_less_file() -> str:
-    return "./tests/test_configs/datastore/credential_less_blob_store.yml"
-
-
-@pytest.fixture
-def file_store_file() -> str:
-    return "./tests/test_configs/datastore/file_store.yml"
-
-
-@pytest.fixture
-def adls_gen1_file() -> str:
-    return "./tests/test_configs/datastore/adls_gen1.yml"
-
-
-@pytest.fixture
-def adls_gen1_credential_less_file() -> str:
-    return "./tests/test_configs/datastore/credential_less_adls_gen1.yml"
-
-
-@pytest.fixture
-def adls_gen2_file() -> str:
-    return "./tests/test_configs/datastore/adls_gen2.yml"
-
-
-@pytest.fixture
-def adls_gen2_credential_less_file() -> str:
-    return "./tests/test_configs/datastore/credential_less_adls_gen2.yml"
-
-
-@pytest.fixture
-def hdfs_keytab_file() -> str:
-    return "./tests/test_configs/datastore/hdfs_kerberos_keytab.yml"
-
-
-@pytest.fixture
-def hdfs_pw_file() -> str:
-    return "./tests/test_configs/datastore/hdfs_kerberos_pw.yml"
 
 
 def b64read(p):
@@ -67,6 +19,7 @@ def b64read(p):
 
 @pytest.mark.e2etest
 @pytest.mark.usefixtures("recorded_test")
+@pytest.mark.data_experiences_test
 class TestDatastore(AzureRecordedTestCase):
     @pytest.mark.skip(reason="Disable until preview release")
     def test_hdfs_pw(

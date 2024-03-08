@@ -34,32 +34,45 @@ from .._constants import (
 )
 from ._async_utils import get_dict_with_loop_if_needed
 from ._connection_manager_async import get_connection_manager
-from ._transport._uamqp_transport_async import UamqpTransportAsync
+try:
+    from ._transport._uamqp_transport_async import UamqpTransportAsync
+except ImportError:
+    UamqpTransportAsync = None  # type: ignore
+from ._transport._pyamqp_transport_async import PyamqpTransportAsync
 
 if TYPE_CHECKING:
-    from uamqp import (
-        authentication,
-        Message,
-        AMQPClientAsync,
-    )
+    from .._pyamqp.message import Message
+    from .._pyamqp.aio import AMQPClientAsync
+    from .._pyamqp.aio._authentication_async import JWTTokenAuthAsync
+    try:
+        from uamqp import (
+            authentication as uamqp_authentication,
+            Message as uamqp_Message,
+            AMQPClientAsync as uamqp_AMQPClientAsync,
+        )
+        from uamqp.authentication import JWTTokenAsync
+    except ImportError:
+        uamqp_authentication = None
+        uamqp_Message = None
+        uamqp_AMQPClientAsync = None
+        JWTTokenAsync = None
     from azure.core.credentials_async import AsyncTokenCredential
 
-    CredentialTypes = Union[
+    try:
+        from typing_extensions import TypeAlias, Protocol
+    except ImportError:
+        Protocol = object  # type: ignore
+
+    CredentialTypes: TypeAlias = Union[
         "EventHubSharedKeyCredential",
         AsyncTokenCredential,
         AzureSasCredential,
         AzureNamedKeyCredential,
     ]
 
-    try:
-        from typing_extensions import Protocol
-    except ImportError:
-        Protocol = object  # type: ignore
-
     class AbstractConsumerProducer(Protocol):
         @property
-        def _name(self):
-            # type: () -> str
+        def _name(self) -> str:
             """Name of the consumer or producer"""
 
         @_name.setter
@@ -67,8 +80,7 @@ if TYPE_CHECKING:
             pass
 
         @property
-        def _client(self):
-            # type: () -> ClientBaseAsync
+        def _client(self) -> ClientBaseAsync:
             """The instance of EventHubComsumerClient or EventHubProducerClient"""
 
         @_client.setter
@@ -76,13 +88,11 @@ if TYPE_CHECKING:
             pass
 
         @property
-        def _handler(self):
-            # type: () -> AMQPClientAsync
+        def _handler(self) -> Union["uamqp_AMQPClientAsync", AMQPClientAsync]:
             """The instance of SendClientAsync or ReceiveClientAsync"""
 
         @property
-        def _internal_kwargs(self):
-            # type: () -> dict
+        def _internal_kwargs(self) -> Dict[Any, Any]:
             """The dict with an event loop that users may pass in to wrap sync calls to async API.
             It's furthur passed to uamqp APIs
             """
@@ -92,15 +102,14 @@ if TYPE_CHECKING:
             pass
 
         @property
-        def running(self):
-            # type: () -> bool
+        def running(self) -> bool:
             """Whether the consumer or producer is running"""
 
         @running.setter
-        def running(self, value):
+        def running(self, value: bool) -> None:
             pass
 
-        def _create_handler(self, auth: authentication.JWTTokenAsync) -> None:
+        def _create_handler(self, auth: Union["JWTTokenAsync", JWTTokenAuthAsync]) -> None:
             pass
 
     _MIXIN_BASE = AbstractConsumerProducer
@@ -111,7 +120,7 @@ else:
 _LOGGER = logging.getLogger(__name__)
 
 
-class EventHubSharedKeyCredential(object):
+class EventHubSharedKeyCredential:
     """The shared access key credential used for authentication.
 
     :param str policy: The name of the shared access policy.
@@ -124,14 +133,14 @@ class EventHubSharedKeyCredential(object):
         self.token_type = b"servicebus.windows.net:sastoken"
 
     async def get_token(
-        self, *scopes, **kwargs # pylint:disable=unused-argument
+        self, *scopes: str, **kwargs: Any # pylint:disable=unused-argument
     ) -> AccessToken:
         if not scopes:
             raise ValueError("No token scope provided.")
         return _generate_sas_token(scopes[0], self.policy, self.key)
 
 
-class EventHubSASTokenCredential(object):
+class EventHubSASTokenCredential:
     """The shared access token credential used for authentication.
 
     :param str token: The shared access token string
@@ -152,21 +161,24 @@ class EventHubSASTokenCredential(object):
     ) -> AccessToken:
         """
         This method is automatically called when token is about to expire.
+
+        :param str scopes: The list of scopes for which the token has access.
+        :return: The token object
+        :rtype: ~azure.core.credentials.AccessToken
         """
         return AccessToken(self.token, self.expiry)
 
 
-class EventhubAzureNamedKeyTokenCredentialAsync(object):
+class EventhubAzureNamedKeyTokenCredentialAsync: # pylint: disable=name-too-long
     """The named key credential used for authentication.
 
     :param credential: The AzureNamedKeyCredential that should be used.
     :type credential: ~azure.core.credentials.AzureNamedKeyCredential
     """
 
-    def __init__(self, azure_named_key_credential):
-        # type: (AzureNamedKeyCredential) -> None
-        self._credential = azure_named_key_credential
-        self.token_type = b"servicebus.windows.net:sastoken"
+    def __init__(self, azure_named_key_credential: AzureNamedKeyCredential) -> None:
+        self._credential: AzureNamedKeyCredential = azure_named_key_credential
+        self.token_type: bytes = b"servicebus.windows.net:sastoken"
 
     async def get_token(
         self, *scopes, **kwargs # pylint:disable=unused-argument
@@ -177,7 +189,7 @@ class EventhubAzureNamedKeyTokenCredentialAsync(object):
         return _generate_sas_token(scopes[0], name, key)
 
 
-class EventhubAzureSasTokenCredentialAsync(object):
+class EventhubAzureSasTokenCredentialAsync:
     """The shared access token credential used for authentication
     when AzureSasCredential is provided.
 
@@ -194,9 +206,13 @@ class EventhubAzureSasTokenCredentialAsync(object):
     ) -> AccessToken:
         """
         This method is automatically called when token is about to expire.
+
+        :param str scopes: The list of scopes for which the token has access.
+        :return: The access token.
+        :rtype: ~azure.core.credentials.AccessToken
         """
         signature, expiry = parse_sas_credential(self._credential)
-        return AccessToken(signature, expiry)
+        return AccessToken(signature, cast(int, expiry))
 
 
 class ClientBaseAsync(ClientBase):
@@ -208,8 +224,10 @@ class ClientBaseAsync(ClientBase):
         **kwargs: Any
     ) -> None:
         self._internal_kwargs = get_dict_with_loop_if_needed(kwargs.get("loop", None))
-        uamqp_transport = kwargs.pop("uamqp_transport", True)
-        self._amqp_transport = UamqpTransportAsync
+        uamqp_transport = kwargs.get("uamqp_transport", False)
+        if uamqp_transport and UamqpTransportAsync is None:
+            raise ValueError("To use the uAMQP transport, please install `uamqp>=1.6.0,<2.0.0`.")
+        self._amqp_transport = UamqpTransportAsync if uamqp_transport else PyamqpTransportAsync
         if isinstance(credential, AzureSasCredential):
             self._credential = EventhubAzureSasTokenCredentialAsync(credential)  # type: ignore
         elif isinstance(credential, AzureNamedKeyCredential):
@@ -220,13 +238,16 @@ class ClientBaseAsync(ClientBase):
             fully_qualified_namespace=fully_qualified_namespace,
             eventhub_name=eventhub_name,
             credential=self._credential,
-            uamqp_transport=uamqp_transport,
             amqp_transport=self._amqp_transport,
             **kwargs
         )
-        self._conn_manager_async = get_connection_manager(**kwargs)
+        kwargs["custom_endpoint_address"] = self._config.custom_endpoint_address
+        self._conn_manager_async = get_connection_manager(
+            amqp_transport=self._amqp_transport,
+            **kwargs
+        )
 
-    def __enter__(self):
+    def __enter__(self) -> None:
         raise TypeError(
             "Asynchronous client must be opened with async context manager."
         )
@@ -244,10 +265,13 @@ class ClientBaseAsync(ClientBase):
             kwargs["credential"] = EventHubSharedKeyCredential(policy, key)
         return kwargs
 
-    async def _create_auth_async(self) -> authentication.JWTTokenAsync:
+    async def _create_auth_async(self) -> Union[uamqp_authentication.JWTTokenAsync, JWTTokenAuthAsync]:
         """
         Create an ~uamqp.authentication.SASTokenAuthAsync instance to authenticate
         the session.
+
+        :return: A JWTTokenAuthAsync instance to authenticate the session.
+        :rtype: ~uamqp.authentication.JWTTokenAsync or JWTTokenAuthAsync
 
         """
         try:
@@ -305,7 +329,7 @@ class ClientBaseAsync(ClientBase):
             )
             raise last_exception
 
-    async def _management_request_async(self, mgmt_msg: Message, op_type: bytes) -> Any:
+    async def _management_request_async(self, mgmt_msg: Union[Message, uamqp_Message], op_type: bytes) -> Any:
         retried_times = 0
         last_exception = None
         while retried_times <= self._config.max_retries:
@@ -320,10 +344,10 @@ class ClientBaseAsync(ClientBase):
                 await mgmt_client.open_async(connection=conn)
                 while not await mgmt_client.client_ready_async():
                     await asyncio.sleep(0.05)
-                mgmt_msg.application_properties[
+                cast(Dict[Union[str, bytes], Any], mgmt_msg.application_properties)[
                     "security_token"
                 ] = await self._amqp_transport.get_updated_token_async(mgmt_auth)
-                response = await self._amqp_transport.mgmt_client_request_async(
+                status_code, description, response = await self._amqp_transport.mgmt_client_request_async(
                     mgmt_client,
                     mgmt_msg,
                     operation=READ_OPERATION,
@@ -331,10 +355,7 @@ class ClientBaseAsync(ClientBase):
                     status_code_field=MGMT_STATUS_CODE,
                     description_fields=MGMT_STATUS_DESC,
                 )
-                status_code = int(response.application_properties[MGMT_STATUS_CODE])
-                description = response.application_properties.get(
-                    MGMT_STATUS_DESC
-                )  # type: Optional[Union[str, bytes]]
+                status_code = int(status_code)
                 if description and isinstance(description, bytes):
                     description = description.decode("utf-8")
                 if status_code < 400:
@@ -343,7 +364,18 @@ class ClientBaseAsync(ClientBase):
             except asyncio.CancelledError:  # pylint: disable=try-except-raise
                 raise
             except Exception as exception:  # pylint:disable=broad-except
-                last_exception = await self._amqp_transport._handle_exception_async(exception, self)  # pylint: disable=protected-access
+                # If optional dependency is not installed, do not retry.
+                if isinstance(exception, ImportError):
+                    raise exception
+                # is_consumer=True passed in here, ALTHOUGH this method is shared by the producer and consumer.
+                # is_consumer will only be checked if FileNotFoundError is raised by self.mgmt_client.open() due to
+                # invalid/non-existent connection_verify filepath. The producer will encounter the FileNotFoundError
+                # when opening the SendClient, so is_consumer=True will not be passed to amqp_transport.handle_exception
+                # there. This is for uamqp exception parity, which raises FileNotFoundError in the consumer and
+                # EventHubError in the producer. TODO: Remove `is_consumer` kwarg when resolving issue #27128.
+                last_exception = await self._amqp_transport._handle_exception_async(  # pylint: disable=protected-access
+                    exception, self, is_consumer=True
+                )
                 await self._backoff_async(
                     retried_times=retried_times, last_exception=last_exception
                 )
@@ -352,12 +384,12 @@ class ClientBaseAsync(ClientBase):
                     _LOGGER.info(
                         "%r returns an exception %r", self._container_id, last_exception
                     )
-                    raise last_exception
+                    raise last_exception from None
             finally:
                 await mgmt_client.close_async()
 
     async def _get_eventhub_properties_async(self) -> Dict[str, Any]:
-        mgmt_msg = mgmt_msg = self._amqp_transport.build_message(
+        mgmt_msg = self._amqp_transport.build_message(
             application_properties={"name": self.eventhub_name}
         )
         response = await self._management_request_async(
@@ -390,8 +422,8 @@ class ClientBaseAsync(ClientBase):
         response = await self._management_request_async(
             mgmt_msg, op_type=MGMT_PARTITION_OPERATION
         )
-        partition_info = response.value  # type: Dict[bytes, Union[bytes, int]]
-        output = {}  # type: Dict[str, Any]
+        partition_info: Dict[bytes, Union[bytes, int]] = response.value
+        output: Dict[str, Any] = {}
         if partition_info:
             output["eventhub_name"] = cast(bytes, partition_info[b"name"]).decode(
                 "utf-8"
@@ -417,10 +449,10 @@ class ClientBaseAsync(ClientBase):
 
 
 class ConsumerProducerMixin(_MIXIN_BASE):
-    async def __aenter__(self):
+    async def __aenter__(self) -> ConsumerProducerMixin:
         return self
 
-    async def __aexit__(self, exc_type, exc_val, exc_tb):
+    async def __aexit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> None:
         await self.close()
 
     def _check_closed(self) -> None:
@@ -465,11 +497,11 @@ class ConsumerProducerMixin(_MIXIN_BASE):
         await self._close_handler_async()
         await self._client._conn_manager_async.reset_connection_if_broken()  # pylint:disable=protected-access
 
-    async def _handle_exception(self, exception: Exception) -> Exception:
+    async def _handle_exception(self, exception: Exception, *, is_consumer: bool = False) -> Exception:
         # pylint: disable=protected-access
         exception = self._client._amqp_transport.check_timeout_exception(self, exception)
         return await self._client._amqp_transport._handle_exception_async(
-            exception, self
+            exception, self, is_consumer=is_consumer
         )
 
     async def _do_retryable_operation(
@@ -497,6 +529,9 @@ class ConsumerProducerMixin(_MIXIN_BASE):
             except asyncio.CancelledError:  # pylint: disable=try-except-raise
                 raise
             except Exception as exception:  # pylint:disable=broad-except
+                # If optional dependency is not installed, do not retry.
+                if isinstance(exception, ImportError):
+                    raise exception
                 last_exception = await self._handle_exception(exception)
                 await self._client._backoff_async(
                     retried_times=retried_times,
@@ -511,7 +546,7 @@ class ConsumerProducerMixin(_MIXIN_BASE):
                         self._name,
                         last_exception,
                     )
-                    raise last_exception
+                    raise last_exception from None
         return None
 
     async def close(self) -> None:

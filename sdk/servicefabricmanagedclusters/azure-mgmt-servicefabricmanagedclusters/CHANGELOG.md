@@ -1,5 +1,61 @@
 # Release History
 
+## 2.0.0b6 (2024-02-22)
+
+### Features Added
+
+  - Model ManagedCluster has a new parameter enable_http_gateway_exclusive_auth_mode
+  - Model ManagedCluster has a new parameter http_gateway_token_auth_connection_port
+
+## 2.0.0b5 (2024-01-18)
+
+### Features Added
+
+  - Added operation ApplicationsOperations.begin_read_upgrade
+  - Added operation ApplicationsOperations.begin_resume_upgrade
+  - Added operation ApplicationsOperations.begin_start_rollback
+  - Added operation group ManagedApplyMaintenanceWindowOperations
+  - Added operation group ManagedMaintenanceWindowStatusOperations
+  - Model ManagedCluster has a new parameter ddos_protection_plan_id
+  - Model ManagedCluster has a new parameter public_i_pv6_prefix_id
+  - Model ManagedCluster has a new parameter public_ip_prefix_id
+  - Model ManagedCluster has a new parameter upgrade_description
+  - Model NodeType has a new parameter additional_network_interface_configurations
+  - Model NodeType has a new parameter dscp_configuration_id
+  - Model NodeType has a new parameter enable_node_public_i_pv6
+  - Model NodeType has a new parameter nat_gateway_id
+  - Model NodeType has a new parameter service_artifact_reference_id
+  - Model NodeType has a new parameter vm_image_plan
+  - Model VMSSExtension has a new parameter setup_order
+
+## 2.0.0b4 (2023-05-20)
+
+### Features Added
+
+  - Model ManagedCluster has a new parameter use_custom_vnet
+  - Model ManagedCluster has a new parameter zonal_update_mode
+  - Model NodeType has a new parameter enable_node_public_ip
+  - Model NodeType has a new parameter secure_boot_enabled
+  - Model NodeType has a new parameter security_type
+  - Model NodeType has a new parameter subnet_id
+  - Model NodeType has a new parameter vm_setup_actions
+  - Model NodeType has a new parameter vm_shared_gallery_image_id
+  - Model NodeTypeActionParameters has a new parameter update_type
+  - Model ServiceResourceProperties has a new parameter service_dns_name
+  - Model StatefulServiceProperties has a new parameter service_dns_name
+  - Model StatelessServiceProperties has a new parameter service_dns_name
+
+### Breaking Changes
+
+  - Parameter sku of model ManagedCluster is now required
+
+## 2.0.0b3 (2022-12-27)
+
+### Other Changes
+
+  - Added generated samples in github repo
+  - Drop support for python<3.7.0
+
 ## 2.0.0b2 (2022-09-14)
 
 ### Features Added

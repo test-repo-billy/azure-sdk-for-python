@@ -14,6 +14,7 @@ from ._models_py3 import Dimension
 from ._models_py3 import ErrorAdditionalInfo
 from ._models_py3 import ErrorDetail
 from ._models_py3 import ErrorResponse
+from ._models_py3 import IPRule
 from ._models_py3 import LiveTraceCategory
 from ._models_py3 import LiveTraceConfiguration
 from ._models_py3 import LogSpecification
@@ -36,11 +37,14 @@ from ._models_py3 import PrivateLinkResourceList
 from ._models_py3 import PrivateLinkServiceConnectionState
 from ._models_py3 import ProxyResource
 from ._models_py3 import RegenerateKeyParameters
+from ._models_py3 import Replica
+from ._models_py3 import ReplicaList
 from ._models_py3 import Resource
 from ._models_py3 import ResourceLogCategory
 from ._models_py3 import ResourceLogConfiguration
 from ._models_py3 import ResourceReference
 from ._models_py3 import ResourceSku
+from ._models_py3 import ServerlessSettings
 from ._models_py3 import ServerlessUpstreamSettings
 from ._models_py3 import ServiceSpecification
 from ._models_py3 import ShareablePrivateLinkResourceProperties
@@ -66,94 +70,100 @@ from ._models_py3 import UpstreamAuthSettings
 from ._models_py3 import UpstreamTemplate
 from ._models_py3 import UserAssignedIdentityProperty
 
-
-from ._signal_rmanagement_client_enums import (
-    ACLAction,
-    CreatedByType,
-    FeatureFlags,
-    KeyType,
-    ManagedIdentityType,
-    PrivateLinkServiceConnectionStatus,
-    ProvisioningState,
-    ScaleType,
-    ServiceKind,
-    SharedPrivateLinkResourceStatus,
-    SignalRRequestType,
-    SignalRSkuTier,
-    UpstreamAuthType,
-)
+from ._signal_rmanagement_client_enums import ACLAction
+from ._signal_rmanagement_client_enums import CreatedByType
+from ._signal_rmanagement_client_enums import FeatureFlags
+from ._signal_rmanagement_client_enums import KeyType
+from ._signal_rmanagement_client_enums import ManagedIdentityType
+from ._signal_rmanagement_client_enums import PrivateLinkServiceConnectionStatus
+from ._signal_rmanagement_client_enums import ProvisioningState
+from ._signal_rmanagement_client_enums import ScaleType
+from ._signal_rmanagement_client_enums import ServiceKind
+from ._signal_rmanagement_client_enums import SharedPrivateLinkResourceStatus
+from ._signal_rmanagement_client_enums import SignalRRequestType
+from ._signal_rmanagement_client_enums import SignalRSkuTier
+from ._signal_rmanagement_client_enums import UpstreamAuthType
+from ._patch import __all__ as _patch_all
+from ._patch import *  # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'CustomCertificate',
-    'CustomCertificateList',
-    'CustomDomain',
-    'CustomDomainList',
-    'Dimension',
-    'ErrorAdditionalInfo',
-    'ErrorDetail',
-    'ErrorResponse',
-    'LiveTraceCategory',
-    'LiveTraceConfiguration',
-    'LogSpecification',
-    'ManagedIdentity',
-    'ManagedIdentitySettings',
-    'MetricSpecification',
-    'NameAvailability',
-    'NameAvailabilityParameters',
-    'NetworkACL',
-    'Operation',
-    'OperationDisplay',
-    'OperationList',
-    'OperationProperties',
-    'PrivateEndpoint',
-    'PrivateEndpointACL',
-    'PrivateEndpointConnection',
-    'PrivateEndpointConnectionList',
-    'PrivateLinkResource',
-    'PrivateLinkResourceList',
-    'PrivateLinkServiceConnectionState',
-    'ProxyResource',
-    'RegenerateKeyParameters',
-    'Resource',
-    'ResourceLogCategory',
-    'ResourceLogConfiguration',
-    'ResourceReference',
-    'ResourceSku',
-    'ServerlessUpstreamSettings',
-    'ServiceSpecification',
-    'ShareablePrivateLinkResourceProperties',
-    'ShareablePrivateLinkResourceType',
-    'SharedPrivateLinkResource',
-    'SharedPrivateLinkResourceList',
-    'SignalRCorsSettings',
-    'SignalRFeature',
-    'SignalRKeys',
-    'SignalRNetworkACLs',
-    'SignalRResource',
-    'SignalRResourceList',
-    'SignalRTlsSettings',
-    'SignalRUsage',
-    'SignalRUsageList',
-    'SignalRUsageName',
-    'Sku',
-    'SkuCapacity',
-    'SkuList',
-    'SystemData',
-    'TrackedResource',
-    'UpstreamAuthSettings',
-    'UpstreamTemplate',
-    'UserAssignedIdentityProperty',
-    'ACLAction',
-    'CreatedByType',
-    'FeatureFlags',
-    'KeyType',
-    'ManagedIdentityType',
-    'PrivateLinkServiceConnectionStatus',
-    'ProvisioningState',
-    'ScaleType',
-    'ServiceKind',
-    'SharedPrivateLinkResourceStatus',
-    'SignalRRequestType',
-    'SignalRSkuTier',
-    'UpstreamAuthType',
+    "CustomCertificate",
+    "CustomCertificateList",
+    "CustomDomain",
+    "CustomDomainList",
+    "Dimension",
+    "ErrorAdditionalInfo",
+    "ErrorDetail",
+    "ErrorResponse",
+    "IPRule",
+    "LiveTraceCategory",
+    "LiveTraceConfiguration",
+    "LogSpecification",
+    "ManagedIdentity",
+    "ManagedIdentitySettings",
+    "MetricSpecification",
+    "NameAvailability",
+    "NameAvailabilityParameters",
+    "NetworkACL",
+    "Operation",
+    "OperationDisplay",
+    "OperationList",
+    "OperationProperties",
+    "PrivateEndpoint",
+    "PrivateEndpointACL",
+    "PrivateEndpointConnection",
+    "PrivateEndpointConnectionList",
+    "PrivateLinkResource",
+    "PrivateLinkResourceList",
+    "PrivateLinkServiceConnectionState",
+    "ProxyResource",
+    "RegenerateKeyParameters",
+    "Replica",
+    "ReplicaList",
+    "Resource",
+    "ResourceLogCategory",
+    "ResourceLogConfiguration",
+    "ResourceReference",
+    "ResourceSku",
+    "ServerlessSettings",
+    "ServerlessUpstreamSettings",
+    "ServiceSpecification",
+    "ShareablePrivateLinkResourceProperties",
+    "ShareablePrivateLinkResourceType",
+    "SharedPrivateLinkResource",
+    "SharedPrivateLinkResourceList",
+    "SignalRCorsSettings",
+    "SignalRFeature",
+    "SignalRKeys",
+    "SignalRNetworkACLs",
+    "SignalRResource",
+    "SignalRResourceList",
+    "SignalRTlsSettings",
+    "SignalRUsage",
+    "SignalRUsageList",
+    "SignalRUsageName",
+    "Sku",
+    "SkuCapacity",
+    "SkuList",
+    "SystemData",
+    "TrackedResource",
+    "UpstreamAuthSettings",
+    "UpstreamTemplate",
+    "UserAssignedIdentityProperty",
+    "ACLAction",
+    "CreatedByType",
+    "FeatureFlags",
+    "KeyType",
+    "ManagedIdentityType",
+    "PrivateLinkServiceConnectionStatus",
+    "ProvisioningState",
+    "ScaleType",
+    "ServiceKind",
+    "SharedPrivateLinkResourceStatus",
+    "SignalRRequestType",
+    "SignalRSkuTier",
+    "UpstreamAuthType",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

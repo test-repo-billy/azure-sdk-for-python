@@ -1,9 +1,17 @@
 import os
 import ast
 import textwrap
-import sys
 import re
-from typing import Dict, List, Tuple
+import fnmatch
+
+try:
+    # py 311 adds this library natively
+    import tomllib as toml
+except:
+    # otherwise fall back to pypi package tomli
+    import tomli as toml
+
+from typing import Dict, List, Tuple, Any
 
 # Assumes the presence of setuptools
 from pkg_resources import (
@@ -16,6 +24,7 @@ from pkg_resources import (
 
 # this assumes the presence of "packaging"
 from packaging.specifiers import SpecifierSet
+from setuptools import Extension
 
 
 NEW_REQ_PACKAGES = ["azure-core", "azure-mgmt-core"]
@@ -30,23 +39,33 @@ class ParsedSetup:
         self,
         name: str,
         version: str,
-        python_requires: List[str],
+        python_requires: str,
         requires: List[str],
         is_new_sdk: bool,
         setup_filename: str,
         name_space: str,
-        package_data: Dict,
+        package_data: Dict[str, Any],
         include_package_data: bool,
+        classifiers: List[str],
+        keywords: List[str],
+        ext_package: str,
+        ext_modules: List[Extension],
     ):
         self.name: str = name
         self.version: str = version
-        self.python_requires: List[str] = python_requires
+        self.python_requires: str = python_requires
         self.requires: List[str] = requires
         self.is_new_sdk: bool = is_new_sdk
         self.setup_filename: str = setup_filename
-        self.namespace = name_space
-        self.package_data = package_data
-        self.include_package_data = include_package_data
+        self.namespace: str = name_space
+        self.package_data: Dict[str, Any] = package_data
+        self.include_package_data: bool = include_package_data
+        self.classifiers: List[str] = classifiers
+        self.keywords: List[str] = keywords
+        self.ext_package = ext_package
+        self.ext_modules = ext_modules
+
+        self.folder = os.path.dirname(self.setup_filename)
 
     @classmethod
     def from_path(cls, parse_directory_or_file: str):
@@ -60,6 +79,10 @@ class ParsedSetup:
             name_space,
             package_data,
             include_package_data,
+            classifiers,
+            keywords,
+            ext_package,
+            ext_modules,
         ) = parse_setup(parse_directory_or_file)
 
         return cls(
@@ -72,7 +95,92 @@ class ParsedSetup:
             name_space,
             package_data,
             include_package_data,
+            classifiers,
+            keywords,
+            ext_package,
+            ext_modules,
         )
+
+    def get_build_config(self) -> Dict[str, Any]:
+        return get_build_config(self.folder)
+
+    def get_config_setting(self, setting: str, default: Any = True) -> Any:
+        return get_config_setting(self.folder, setting, default)
+
+    def is_reporting_suppressed(self, setting: str) -> bool:
+        return compare_string_to_glob_array(setting, self.get_config_setting("suppressed_skip_warnings", []))
+
+
+def update_build_config(package_path: str, new_build_config: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Attempts to update a pyproject.toml's [tools.azure-sdk-tools] section with a new check configuration.
+
+    This function can only append or override existing check values. It cannot delete them.
+    """
+    if os.path.isfile(package_path):
+        package_path = os.path.dirname(package_path)
+
+    toml_file = os.path.join(package_path, "pyproject.toml")
+
+    if os.path.exists(toml_file):
+        with open(toml_file, "rb") as f:
+            toml_dict = toml.load(f)
+            if "tool" in toml_dict:
+                tool_configs = toml_dict["tool"]
+                if "azure-sdk-build" in tool_configs:
+                    tool_configs["azure-sdk-build"] = new_build_config
+    else:
+        toml_dict = {"tool": {"azure-sdk-build": new_build_config}}
+
+    with open(toml_file, "wb") as f:
+        import tomli_w
+
+        tomli_w.dump(toml_dict, f)
+
+    return new_build_config
+
+
+def get_config_setting(package_path: str, setting: str, default: Any = True) -> Any:
+    """
+    Attempts to retrieve a specific setting within the [tools.azure-sdk-tools] section of a discovered
+    pyproject.toml. If the input 'setting' does NOT exist, the provided default value will be returned.
+    """
+    # we should always take the override if one is present
+    override_value = os.getenv(f"{os.path.basename(package_path).upper()}_{setting.upper()}", None)
+    if override_value:
+        return override_value
+
+    # if no override, check for the config setting in the pyproject.toml
+    config = get_build_config(package_path)
+
+    if config:
+        if setting.lower() in config:
+            return config[setting.lower()]
+
+    return default
+
+
+def get_build_config(package_path: str) -> Dict[str, Any]:
+    """
+    Attempts to retrieve all values within [tools.azure-sdk-build] section of a pyproject.toml.
+
+    If passed an actual file in package_path arg, the pyproject.toml will be found alongside the targeted file.
+    """
+    if os.path.isfile(package_path):
+        package_path = os.path.dirname(package_path)
+
+    toml_file = os.path.join(package_path, "pyproject.toml")
+
+    if os.path.exists(toml_file):
+        try:
+            with open(toml_file, "rb") as f:
+                toml_dict = toml.load(f)
+                if "tool" in toml_dict:
+                    tool_configs = toml_dict["tool"]
+                    if "azure-sdk-build" in tool_configs:
+                        return tool_configs["azure-sdk-build"]
+        except:
+            return {}
 
 
 def read_setup_py_content(setup_filename: str) -> str:
@@ -84,7 +192,9 @@ def read_setup_py_content(setup_filename: str) -> str:
         return content
 
 
-def parse_setup(setup_filename: str) -> Tuple[str, str, List[str], List[str], bool, str]:
+def parse_setup(
+    setup_filename: str,
+) -> Tuple[str, str, str, List[str], bool, str, str, Dict[str, Any], bool, List[str], str, List[Extension]]:
     """
     Used to evaluate a setup.py (or a directory containing a setup.py) and return a tuple containing:
     (
@@ -96,7 +206,11 @@ def parse_setup(setup_filename: str) -> Tuple[str, str, List[str], List[str], bo
         <parsed setup.py location>,
         <namespace>,
         <package_data dict>,
-        <include_package_data bool>
+        <include_package_data bool>,
+        <classifiers>,
+        <keywords>,
+        <ext_packages>,
+        <ext_modules>
     )
     """
     if not setup_filename.endswith("setup.py"):
@@ -144,28 +258,24 @@ def parse_setup(setup_filename: str) -> Tuple[str, str, List[str], List[str], bo
     except KeyError as e:
         python_requires = ">=2.7"
 
-    version = kwargs["version"]
-    name = kwargs["name"]
+    version = kwargs.get("version")
+    name = kwargs.get("name")
     name_space = name.replace("-", ".")
+    packages = kwargs.get("packages", [])
 
-    if "packages" in kwargs.keys():
-        packages = kwargs["packages"]
-        if packages:
-            name_space = packages[0]
+    if packages:
+        name_space = packages[0]
 
-    requires = []
-    if "install_requires" in kwargs:
-        requires = kwargs["install_requires"]
-
-    package_data = None
-    if "package_data" in kwargs:
-        package_data = kwargs["package_data"]
-
-    include_package_data = None
-    if "include_package_data" in kwargs:
-        include_package_data = kwargs["include_package_data"]
+    requires = kwargs.get("install_requires", [])
+    package_data = kwargs.get("package_data", None)
+    include_package_data = kwargs.get("include_package_data", None)
+    classifiers = kwargs.get("classifiers", [])
+    keywords = kwargs.get("keywords", [])
 
     is_new_sdk = name in NEW_REQ_PACKAGES or any(map(lambda x: (parse_require(x)[0] in NEW_REQ_PACKAGES), requires))
+
+    ext_package = kwargs.get("ext_package", None)
+    ext_modules = kwargs.get("ext_modules", [])
 
     return (
         name,
@@ -177,6 +287,10 @@ def parse_setup(setup_filename: str) -> Tuple[str, str, List[str], List[str], bo
         name_space,
         package_data,
         include_package_data,
+        classifiers,
+        keywords,
+        ext_package,
+        ext_modules,
     )
 
 
@@ -195,18 +309,18 @@ def parse_require(req: str) -> Tuple[str, SpecifierSet]:
     """
     req_object = Requirement.parse(req.split(";")[0].lower())
     pkg_name = req_object.key
-    spec_object_str = str(req_object)
 
     # we were not passed a full requirement. Instead we were passed a value of "readme-renderer" or another string without a version.
     if not req_object.specifier:
         return [pkg_name, None]
 
-    isolated_spec = str(req_object).replace(pkg_name, "")
+    # regex details ripped from https://peps.python.org/pep-0508/
+    isolated_spec = re.sub(r"^([a-zA-Z0-9\-\_\.]+)(\[[a-zA-Z0-9\-\_\.\,]*\])?", "", str(req_object))
     spec = SpecifierSet(isolated_spec)
     return (pkg_name, spec)
 
 
-def parse_requirements_file(file_location: str) -> Dict[str, str]:
+def parse_freeze_output(file_location: str) -> Dict[str, str]:
     """
     Takes a python requirements file and returns a dictionary representing the contents.
     """
@@ -223,3 +337,10 @@ def get_name_from_specifier(version: str) -> str:
     "azure-core<2.0.0,>=1.11.0" -> azure-core
     """
     return re.split(r"[><=]", version)[0]
+
+
+def compare_string_to_glob_array(string: str, glob_array: List[str]) -> bool:
+    """
+    This function is used to easily compare a string to a set of glob strings, if it matches any of them, returns True.
+    """
+    return any([fnmatch.fnmatch(string, glob) for glob in glob_array])

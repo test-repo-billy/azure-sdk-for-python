@@ -19,25 +19,24 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class DevCenterClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
-    """Configuration for DevCenterClient.
+class DevCenterMgmtClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
+    """Configuration for DevCenterMgmtClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param subscription_id: Unique identifier of the Azure subscription. This is a GUID-formatted
-     string (e.g. 00000000-0000-0000-0000-000000000000). Required.
+    :param subscription_id: The ID of the target subscription. Required.
     :type subscription_id: str
-    :keyword api_version: Api Version. Default value is "2022-09-01-preview". Note that overriding
+    :keyword api_version: Api Version. Default value is "2023-10-01-preview". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, credential: "TokenCredential", subscription_id: str, **kwargs: Any) -> None:
-        super(DevCenterClientConfiguration, self).__init__(**kwargs)
-        api_version = kwargs.pop("api_version", "2022-09-01-preview")  # type: str
+        super(DevCenterMgmtClientConfiguration, self).__init__(**kwargs)
+        api_version: str = kwargs.pop("api_version", "2023-10-01-preview")
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
@@ -51,10 +50,7 @@ class DevCenterClientConfiguration(Configuration):  # pylint: disable=too-many-i
         kwargs.setdefault("sdk_moniker", "mgmt-devcenter/{}".format(VERSION))
         self._configure(**kwargs)
 
-    def _configure(
-        self, **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+    def _configure(self, **kwargs: Any) -> None:
         self.user_agent_policy = kwargs.get("user_agent_policy") or policies.UserAgentPolicy(**kwargs)
         self.headers_policy = kwargs.get("headers_policy") or policies.HeadersPolicy(**kwargs)
         self.proxy_policy = kwargs.get("proxy_policy") or policies.ProxyPolicy(**kwargs)

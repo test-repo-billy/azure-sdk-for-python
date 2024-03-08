@@ -7,7 +7,7 @@
 import logging
 from os import PathLike
 from pathlib import Path
-from typing import Any, Dict, Union
+from typing import Any, Dict, Optional, Union
 
 from azure.ai.ml._restclient.v2022_05_01.models import BatchDeploymentData
 from azure.ai.ml._restclient.v2022_05_01.models import BatchDeploymentDetails as RestBatchDeployment
@@ -21,8 +21,9 @@ from azure.ai.ml.constants._deployment import BatchDeploymentOutputAction
 from azure.ai.ml.entities._assets import Environment, Model
 from azure.ai.ml.entities._deployment.deployment_settings import BatchRetrySettings
 from azure.ai.ml.entities._job.resource_configuration import ResourceConfiguration
+from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import load_from_dict
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 from .code_configuration import CodeConfiguration
 from .deployment import Deployment
@@ -30,23 +31,23 @@ from .deployment import Deployment
 module_logger = logging.getLogger(__name__)
 
 
-class BatchDeployment(Deployment):
+class BatchDeployment(Deployment):  # pylint: disable=too-many-instance-attributes
     """Batch endpoint deployment entity.
 
     :param name: the name of the batch deployment
     :type name: str
     :param description: Description of the resource.
-    :type description: str, optional
+    :type description: str
     :param tags: Tag dictionary. Tags can be added, removed, and updated.
     :type tags: dict[str, str]
     :param properties: The asset property dictionary.
     :type properties: dict[str, str]
     :param model: Model entity for the endpoint deployment, defaults to None
-    :type model: Union[str, Model], optional
+    :type model: Union[str, Model]
     :param code_configuration: defaults to None
-    :type code_configuration: CodeConfiguration, optional
+    :type code_configuration: CodeConfiguration
     :param environment: Environment entity for the endpoint deployment., defaults to None
-    :type environment: Union[str, Environment], optional
+    :type environment: Union[str, Environment]
     :param compute: Compute target for batch inference operation.
     :type compute: str
     :param output_action: Indicates how the output will be organized. Possible values include:
@@ -62,23 +63,23 @@ class BatchDeployment(Deployment):
         -1 value indicates, ignore all failures during batch inference
         For FileDataset count of file failures
         For TabularDataset, this is the count of record failures, defaults to -1
-    :type error_threshold: int, optional
+    :type error_threshold: int
     :param retry_settings: Retry settings for a batch inference operation, defaults to None
-    :type retry_settings: BatchRetrySettings, optional
+    :type retry_settings: BatchRetrySettings
     :param resources: Indicates compute configuration for the job.
     :type resources: ~azure.mgmt.machinelearningservices.models.ResourceConfiguration
     :param logging_level: Logging level for batch inference operation, defaults to "info"
-    :type logging_level: str, optional
+    :type logging_level: str
     :param mini_batch_size: Size of the mini-batch passed to each batch invocation, defaults to 10
-    :type mini_batch_size: int, optional
+    :type mini_batch_size: int
     :param environment_variables: Environment variables that will be set in deployment.
-    :type environment_variables: dict, optional
+    :type environment_variables: dict
     :param code_path: Folder path to local code assets. Equivalent to code_configuration.code.
-    :type code_path: Union[str, PathLike], optional
+    :type code_path: Union[str, PathLike]
     :param scoring_script: Scoring script name. Equivalent to code_configuration.code.scoring_script.
-    :type scoring_script: Union[str, PathLike], optional
+    :type scoring_script: Union[str, PathLike]
     :param instance_count: Number of instances the interfering will run on. Equivalent to resources.instance_count.
-    :type instance_count: int, optional
+    :type instance_count: int
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if BatchDeployment cannot be successfully validated.
         Details will be provided in the error message.
     """
@@ -87,28 +88,31 @@ class BatchDeployment(Deployment):
         self,
         *,
         name: str,
-        endpoint_name: str = None,
-        description: str = None,
-        tags: Dict[str, Any] = None,
-        properties: Dict[str, str] = None,
-        model: Union[str, Model] = None,
-        code_configuration: CodeConfiguration = None,
-        environment: Union[str, Environment] = None,
-        compute: str = None,
-        resources: ResourceConfiguration = None,
-        output_file_name: str = None,
-        output_action: BatchDeploymentOutputAction = None,
-        error_threshold: int = None,
-        retry_settings: BatchRetrySettings = None,
-        logging_level: str = None,
-        mini_batch_size: int = None,
-        max_concurrency_per_instance: int = None,
-        environment_variables: Dict[str, str] = None,
-        code_path: Union[str, PathLike] = None,  # promoted property from code_configuration.code
-        scoring_script: Union[str, PathLike] = None,  # promoted property from code_configuration.scoring_script
-        instance_count: int = None,  # promoted property from resources.instance_count
-        **kwargs,
+        endpoint_name: Optional[str] = None,
+        description: Optional[str] = None,
+        tags: Optional[Dict[str, Any]] = None,
+        properties: Optional[Dict[str, str]] = None,
+        model: Optional[Union[str, Model]] = None,
+        code_configuration: Optional[CodeConfiguration] = None,
+        environment: Optional[Union[str, Environment]] = None,
+        compute: Optional[str] = None,
+        resources: Optional[ResourceConfiguration] = None,
+        output_file_name: Optional[str] = None,
+        output_action: Optional[Union[BatchDeploymentOutputAction, str]] = None,
+        error_threshold: Optional[int] = None,
+        retry_settings: Optional[BatchRetrySettings] = None,
+        logging_level: Optional[str] = None,
+        mini_batch_size: Optional[int] = None,
+        max_concurrency_per_instance: Optional[int] = None,
+        environment_variables: Optional[Dict[str, str]] = None,
+        code_path: Optional[Union[str, PathLike]] = None,  # promoted property from code_configuration.code
+        scoring_script: Optional[
+            Union[str, PathLike]
+        ] = None,  # promoted property from code_configuration.scoring_script
+        instance_count: Optional[int] = None,  # promoted property from resources.instance_count
+        **kwargs: Any,
     ) -> None:
+        self._provisioning_state: Optional[str] = kwargs.pop("provisioning_state", None)
 
         super(BatchDeployment, self).__init__(
             name=name,
@@ -142,13 +146,14 @@ class BatchDeployment(Deployment):
                 target=ErrorTarget.BATCH_DEPLOYMENT,
                 no_personal_data_message=msg,
                 error_category=ErrorCategory.USER_ERROR,
+                error_type=ValidationErrorType.INVALID_VALUE,
             )
 
         if not self.resources and instance_count:
             self.resources = ResourceConfiguration(instance_count=instance_count)
 
     @property
-    def instance_count(self) -> int:
+    def instance_count(self) -> Optional[int]:
         return self.resources.instance_count if self.resources else None
 
     @instance_count.setter
@@ -158,8 +163,18 @@ class BatchDeployment(Deployment):
 
         self.resources.instance_count = value
 
+    @property
+    def provisioning_state(self) -> Optional[str]:
+        """Batch deployment provisioning state, readonly.
+
+        :return: Batch deployment provisioning state.
+        :rtype: Optional[str]
+        """
+        return self._provisioning_state
+
     def _to_dict(self) -> Dict:
-        return BatchDeploymentSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)  # pylint: disable=no-member
+        res: dict = BatchDeploymentSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)  # pylint: disable=no-member
+        return res
 
     @classmethod
     def _rest_output_action_to_yaml_output_action(cls, rest_output_action: str) -> str:
@@ -171,8 +186,7 @@ class BatchDeployment(Deployment):
         return output_switcher.get(rest_output_action, rest_output_action)
 
     @classmethod
-    def _yaml_output_action_to_rest_output_action(cls, yaml_output_action: str) -> str:
-
+    def _yaml_output_action_to_rest_output_action(cls, yaml_output_action: Any) -> str:
         output_switcher = {
             BatchDeploymentOutputAction.APPEND_ROW: BatchOutputAction.APPEND_ROW,
             BatchDeploymentOutputAction.SUMMARY_ONLY: BatchOutputAction.SUMMARY_ONLY,
@@ -180,7 +194,8 @@ class BatchDeployment(Deployment):
 
         return output_switcher.get(yaml_output_action, yaml_output_action)
 
-    def _to_rest_object(self, location: str) -> BatchDeploymentData:  # pylint: disable=arguments-differ
+    # pylint: disable=arguments-differ
+    def _to_rest_object(self, location: str) -> BatchDeploymentData:  # type: ignore
         self._validate()
         code_config = (
             RestCodeConfiguration(
@@ -193,35 +208,57 @@ class BatchDeployment(Deployment):
         model = IdAssetReference(asset_id=self.model) if self.model else None
         environment = self.environment
 
-        batch_deployment = RestBatchDeployment(
-            compute=self.compute,
-            description=self.description,
-            resources=self.resources._to_rest_object() if self.resources else None,
-            code_configuration=code_config,
-            environment_id=environment,
-            model=model,
-            output_file_name=self.output_file_name,
-            output_action=BatchDeployment._yaml_output_action_to_rest_output_action(self.output_action),
-            error_threshold=self.error_threshold,
-            retry_settings=self.retry_settings._to_rest_object() if self.retry_settings else None,
-            logging_level=self.logging_level,
-            mini_batch_size=self.mini_batch_size,
-            max_concurrency_per_instance=self.max_concurrency_per_instance,
-            environment_variables=self.environment_variables,
-        )
+        batch_deployment: RestBatchDeployment = None
+        if isinstance(self.output_action, str):
+            batch_deployment = RestBatchDeployment(
+                compute=self.compute,
+                description=self.description,
+                resources=self.resources._to_rest_object() if self.resources else None,
+                code_configuration=code_config,
+                environment_id=environment,
+                model=model,
+                output_file_name=self.output_file_name,
+                output_action=BatchDeployment._yaml_output_action_to_rest_output_action(self.output_action),
+                error_threshold=self.error_threshold,
+                retry_settings=self.retry_settings._to_rest_object() if self.retry_settings else None,
+                logging_level=self.logging_level,
+                mini_batch_size=self.mini_batch_size,
+                max_concurrency_per_instance=self.max_concurrency_per_instance,
+                environment_variables=self.environment_variables,
+                properties=self.properties,
+            )
+        else:
+            batch_deployment = RestBatchDeployment(
+                compute=self.compute,
+                description=self.description,
+                resources=self.resources._to_rest_object() if self.resources else None,
+                code_configuration=code_config,
+                environment_id=environment,
+                model=model,
+                output_file_name=self.output_file_name,
+                output_action=None,
+                error_threshold=self.error_threshold,
+                retry_settings=self.retry_settings._to_rest_object() if self.retry_settings else None,
+                logging_level=self.logging_level,
+                mini_batch_size=self.mini_batch_size,
+                max_concurrency_per_instance=self.max_concurrency_per_instance,
+                environment_variables=self.environment_variables,
+                properties=self.properties,
+            )
 
         return BatchDeploymentData(location=location, properties=batch_deployment, tags=self.tags)
 
     @classmethod
-    def _from_rest_object(cls, deployment: BatchDeploymentData):  # pylint: disable=arguments-renamed
-
+    def _from_rest_object(  # pylint: disable=arguments-renamed
+        cls, deployment: BatchDeploymentData
+    ) -> BatchDeploymentData:
         modelId = deployment.properties.model.asset_id if deployment.properties.model else None
         code_configuration = (
             CodeConfiguration._from_rest_code_configuration(deployment.properties.code_configuration)
             if deployment.properties.code_configuration
             else None
         )
-        return BatchDeployment(
+        deployment = BatchDeployment(
             name=deployment.name,
             description=deployment.properties.description,
             id=deployment.id,
@@ -243,15 +280,20 @@ class BatchDeployment(Deployment):
             environment_variables=deployment.properties.environment_variables,
             max_concurrency_per_instance=deployment.properties.max_concurrency_per_instance,
             endpoint_name=_parse_endpoint_name_from_deployment_id(deployment.id),
+            properties=deployment.properties.properties,
+            creation_context=SystemData._from_rest_object(deployment.system_data),
+            provisioning_state=deployment.properties.provisioning_state,
         )
+
+        return deployment
 
     @classmethod
     def _load(
         cls,
-        data: Dict = None,
-        yaml_path: Union[PathLike, str] = None,
-        params_override: list = None,
-        **kwargs,
+        data: Optional[Dict] = None,
+        yaml_path: Optional[Union[PathLike, str]] = None,
+        params_override: Optional[list] = None,
+        **kwargs: Any,
     ) -> "BatchDeployment":
         data = data or {}
         params_override = params_override or []
@@ -261,13 +303,14 @@ class BatchDeployment(Deployment):
             BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path.cwd(),
             PARAMS_OVERRIDE_KEY: params_override,
         }
-        return load_from_dict(BatchDeploymentSchema, data, context, **kwargs)
+        res: BatchDeployment = load_from_dict(BatchDeploymentSchema, data, context, **kwargs)
+        return res
 
     def _validate(self) -> None:
         self._validate_output_action()
 
     @classmethod
-    def _update_params(cls, params_override) -> None:
+    def _update_params(cls, params_override: Any) -> None:
         for param in params_override:
             endpoint_name = param.get("endpoint_name")
             if isinstance(endpoint_name, str):
@@ -286,4 +329,5 @@ class BatchDeployment(Deployment):
                 target=ErrorTarget.BATCH_DEPLOYMENT,
                 no_personal_data_message=msg,
                 error_category=ErrorCategory.USER_ERROR,
+                error_type=ValidationErrorType.INVALID_VALUE,
             )

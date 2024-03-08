@@ -4,15 +4,15 @@
 
 # pylint: disable=protected-access,no-member
 
-from typing import Dict, Union
+from typing import Any, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import AutoMLJob as RestAutoMLJob
-from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase
-from azure.ai.ml._restclient.v2022_10_01_preview.models import Regression as RestRegression
-from azure.ai.ml._restclient.v2022_10_01_preview.models import RegressionPrimaryMetrics, TaskType
+from azure.ai.ml._restclient.v2023_04_01_preview.models import AutoMLJob as RestAutoMLJob
+from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase
+from azure.ai.ml._restclient.v2023_04_01_preview.models import Regression as RestRegression
+from azure.ai.ml._restclient.v2023_04_01_preview.models import RegressionPrimaryMetrics, TaskType
 from azure.ai.ml._utils.utils import camel_to_snake, is_data_binding_expression
-from azure.ai.ml.constants._job.automl import AutoMLConstants
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
+from azure.ai.ml.constants._job.automl import AutoMLConstants
 from azure.ai.ml.entities._credentials import _BaseJobIdentityConfiguration
 from azure.ai.ml.entities._job._input_output_helpers import from_rest_data_outputs, to_rest_data_outputs
 from azure.ai.ml.entities._job.automl.tabular import AutoMLTabular, TabularFeaturizationSettings, TabularLimitSettings
@@ -28,13 +28,13 @@ class RegressionJob(AutoMLTabular):
     def __init__(
         self,
         *,
-        primary_metric: str = None,
-        **kwargs,
+        primary_metric: Optional[str] = None,
+        **kwargs: Any,
     ) -> None:
         """Initialize a new AutoML Regression task.
 
         :param primary_metric: The primary metric to use for optimization
-        :type primary_metric: str, optional
+        :type primary_metric: str
         :param kwargs: Job-specific arguments
         :type kwargs: dict
         """
@@ -54,11 +54,11 @@ class RegressionJob(AutoMLTabular):
         self.primary_metric = primary_metric or RegressionJob._DEFAULT_PRIMARY_METRIC
 
     @property
-    def primary_metric(self):
+    def primary_metric(self) -> Union[str, RegressionPrimaryMetrics]:
         return self._primary_metric
 
     @primary_metric.setter
-    def primary_metric(self, value: Union[str, RegressionPrimaryMetrics]):
+    def primary_metric(self, value: Union[str, RegressionPrimaryMetrics]) -> None:
         # TODO: better way to do this
         if is_data_binding_expression(str(value), ["parent"]):
             self._primary_metric = value
@@ -72,6 +72,10 @@ class RegressionJob(AutoMLTabular):
     @property
     def training(self) -> RegressionTrainingSettings:
         return self._training or RegressionTrainingSettings()
+
+    @training.setter
+    def training(self, value: Union[Dict, RegressionTrainingSettings]) -> None:  # pylint: disable=unused-argument
+        ...
 
     def _to_rest_object(self) -> JobBase:
         regression_task = RestRegression(
@@ -107,6 +111,7 @@ class RegressionJob(AutoMLTabular):
             resources=self.resources,
             task_details=regression_task,
             identity=self.identity._to_job_rest_object() if self.identity else None,
+            queue_settings=self.queue_settings,
         )
 
         result = JobBase(properties=properties)
@@ -132,8 +137,10 @@ class RegressionJob(AutoMLTabular):
             "compute": properties.compute_id,
             "outputs": from_rest_data_outputs(properties.outputs),
             "resources": properties.resources,
-            "identity": _BaseJobIdentityConfiguration._from_rest_object(
-                properties.identity) if properties.identity else None,
+            "identity": _BaseJobIdentityConfiguration._from_rest_object(properties.identity)
+            if properties.identity
+            else None,
+            "queue_settings": properties.queue_settings,
         }
 
         regression_job = cls(
@@ -171,7 +178,7 @@ class RegressionJob(AutoMLTabular):
         data: Dict,
         context: Dict,
         additional_message: str,
-        **kwargs,
+        **kwargs: Any,
     ) -> "RegressionJob":
         from azure.ai.ml._schema.automl.table_vertical.regression import AutoMLRegressionSchema
         from azure.ai.ml._schema.pipeline.automl_node import AutoMLRegressionNodeSchema
@@ -201,10 +208,11 @@ class RegressionJob(AutoMLTabular):
         job.set_data(**data_settings)
         return job
 
-    def _to_dict(self, inside_pipeline=False) -> Dict:  # pylint: disable=arguments-differ
+    def _to_dict(self, inside_pipeline: bool = False) -> Dict:  # pylint: disable=arguments-differ
         from azure.ai.ml._schema.automl.table_vertical.regression import AutoMLRegressionSchema
         from azure.ai.ml._schema.pipeline.automl_node import AutoMLRegressionNodeSchema
 
+        schema_dict: dict = {}
         if inside_pipeline:
             schema_dict = AutoMLRegressionNodeSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
         else:
@@ -212,7 +220,7 @@ class RegressionJob(AutoMLTabular):
 
         return schema_dict
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         if not isinstance(other, RegressionJob):
             return NotImplemented
 
@@ -221,5 +229,5 @@ class RegressionJob(AutoMLTabular):
 
         return self.primary_metric == other.primary_metric
 
-    def __ne__(self, other):
+    def __ne__(self, other: object) -> bool:
         return not self.__eq__(other)

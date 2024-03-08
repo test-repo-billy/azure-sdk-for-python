@@ -18,7 +18,10 @@ def _validate_input(documents, hint, whole_input_hint):
     basis.
 
     :param list documents: The input documents.
+    :param str hint: the type of hint -- country_hint or language
+    :param str whole_input_hint: client or method level hint provided
     :return: A list of DetectLanguageInput or TextDocumentInput
+    :rtype: list
     """
     if not documents:
         raise ValueError("Input documents can not be empty or None")
@@ -97,4 +100,8 @@ def _determine_action_type(action):  # pylint: disable=too-many-return-statement
         return _AnalyzeActionsType.MULTI_LABEL_CLASSIFY
     if action.__class__.__name__ == "HealthcareLROTask":
         return _AnalyzeActionsType.ANALYZE_HEALTHCARE_ENTITIES
+    if action.__class__.__name__ == "ExtractiveSummarizationLROTask":
+        return _AnalyzeActionsType.EXTRACT_SUMMARY
+    if action.__class__.__name__ == "AbstractiveSummarizationLROTask":
+        return _AnalyzeActionsType.ABSTRACT_SUMMARY
     return _AnalyzeActionsType.EXTRACT_KEY_PHRASES

@@ -2,7 +2,11 @@
 
 Azure Communication Identity client package is intended to be used to setup the basics for opening a way to use Azure Communication Service offerings. This package helps to create identity user tokens to be used by other client packages such as chat, calling, sms.
 
-[Source code](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/communication/azure-communication-identity) | [Package (Pypi)](https://pypi.org/project/azure-communication-identity/) | [API reference documentation](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/communication/azure-communication-identity) | [Product documentation](https://docs.microsoft.com/azure/communication-services/quickstarts/access-tokens?pivots=programming-language-python)
+[Source code](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/communication/azure-communication-identity)
+| [Package (Pypi)](https://pypi.org/project/azure-communication-identity/)
+| [Package (Conda)](https://anaconda.org/microsoft/azure-communication/)
+| [API reference documentation](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/communication/azure-communication-identity)
+| [Product documentation](https://docs.microsoft.com/azure/communication-services/quickstarts/access-tokens?pivots=programming-language-python)
 
 ## _Disclaimer_
 
@@ -10,7 +14,7 @@ _Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For
 
 # Getting started
 ### Prerequisites
-- Python 3.7 or later is required to use this package.
+- Python 3.8 or later is required to use this package.
 - You must have an [Azure subscription](https://azure.microsoft.com/free/)
 - A deployed Communication Services resource. You can use the [Azure Portal](https://docs.microsoft.com/azure/communication-services/quickstarts/create-communication-resource?tabs=windows&pivots=platform-azp) or the [Azure PowerShell](https://docs.microsoft.com/powershell/module/az.communication/new-azcommunicationservice) to set it up.
 ### Install the package
@@ -55,7 +59,7 @@ The following section provides several code snippets covering some of the most c
 - [Creating a user and a token in a single request](#creating-a-user-and-a-token-in-a-single-request)
 - [Revoking a user's access tokens](#revoking-a-users-access-tokens)
 - [Deleting a user](#deleting-a-user)
-- [Exchanging Azure AD access token of a Teams User for a Communication Identity access token](#exchanging-aad-access-token-of-a-teams-user-for-a-communication-identity-access-token)
+- [Exchanging Azure AD access token of a Teams User for a Communication Identity access token](#exchanging-azure-ad-access-token-of-a-teams-user-for-a-communication-identity-access-token)
 
 ### Creating a new user
 
@@ -69,8 +73,11 @@ print("User created with id:" + user.properties['id'])
 
 Use the `get_token` method to issue or refresh a scoped access token for the user. \
 Pass in the user object as a parameter, and a list of `CommunicationTokenScope`. Scope options are:
-- `CHAT` (Chat)
-- `VOIP` (VoIP)
+- `CHAT` (Use this for full access to Chat APIs)
+- `VOIP` (Use this for full access to Calling APIs)
+- `CHAT_JOIN` (Access to Chat APIs but without the authorization to create, delete or update chat threads)
+- `CHAT_JOIN_LIMITED` (A more limited version of CHAT_JOIN that doesn't allow to add or remove participants)
+- `VOIP_JOIN` (Access to Calling APIs but without the authorization to start new calls)
 
 ```python
 tokenresponse = identity_client.get_token(user, scopes=[CommunicationTokenScope.CHAT])

@@ -1,7 +1,26 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+# cSpell:disable
+
+from opentelemetry.semconv.metrics import MetricInstruments
+
+# Environment variables
+
+_APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL = "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL"
+_APPLICATIONINSIGHTS_OPENTELEMETRY_RESOURCE_METRIC_DISABLED = \
+    "APPLICATIONINSIGHTS_OPENTELEMETRY_RESOURCE_METRIC_DISABLED"
+_APPLICATIONINSIGHTS_METRIC_NAMESPACE_OPT_IN = "APPLICATIONINSIGHTS_METRIC_NAMESPACE_OPT_IN"
+_WEBSITE_SITE_NAME = "WEBSITE_SITE_NAME"
+_WEBSITE_HOME_STAMPNAME = "WEBSITE_HOME_STAMPNAME"
+_WEBSITE_HOSTNAME = "WEBSITE_HOSTNAME"
+_FUNCTIONS_WORKER_RUNTIME = "FUNCTIONS_WORKER_RUNTIME"
+_AKS_ARM_NAMESPACE_ID = "AKS_ARM_NAMESPACE_ID"
 
 # Network
+
+_INVALID_STATUS_CODES = (
+    400, # Invalid Instrumentation Key/data
+)
 
 _REDIRECT_STATUS_CODES = (
     307,  # Temporary redirect
@@ -27,17 +46,29 @@ _THROTTLE_STATUS_CODES = (
 
 _REACHED_INGESTION_STATUS_CODES = (200, 206, 402, 408, 429, 439, 500)
 
+# Envelope constants
+
+_METRIC_ENVELOPE_NAME = "Microsoft.ApplicationInsights.Metric"
+_EXCEPTION_ENVELOPE_NAME = "Microsoft.ApplicationInsights.Exception"
+_MESSAGE_ENVELOPE_NAME = "Microsoft.ApplicationInsights.Message"
+_REQUEST_ENVELOPE_NAME = "Microsoft.ApplicationInsights.Request"
+_REMOTE_DEPENDENCY_ENVELOPE_NAME = "Microsoft.ApplicationInsights.RemoteDependency"
+
+# Feature constants
+_APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE = "APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE"
+_AZURE_MONITOR_DISTRO_VERSION_ARG = "distro_version"
+
 # Statsbeat
 
 # (OpenTelemetry metric name, Statsbeat metric name)
 _ATTACH_METRIC_NAME = ("attach", "Attach")
 _FEATURE_METRIC_NAME = ("feature", "Feature")
-_REQ_EXCEPTION_NAME = ("statsbeat_exception_count", "Exception Count")
-_REQ_DURATION_NAME = ("statsbeat_duration", "Request Duration")
-_REQ_FAILURE_NAME = ("statsbeat_failure_count", "Request Failure Count")
-_REQ_RETRY_NAME = ("statsbeat_retry_count", "Retry Count")
-_REQ_SUCCESS_NAME = ("statsbeat_success_count", "Request Success Count")
-_REQ_THROTTLE_NAME = ("statsbeat_throttle_count", "Throttle Count")
+_REQ_EXCEPTION_NAME = ("statsbeat_exception_count", "Exception_Count")
+_REQ_DURATION_NAME = ("statsbeat_duration", "Request_Duration")
+_REQ_FAILURE_NAME = ("statsbeat_failure_count", "Request_Failure_Count")
+_REQ_RETRY_NAME = ("statsbeat_retry_count", "Retry_Count")
+_REQ_SUCCESS_NAME = ("statsbeat_success_count", "Request_Success_Count")
+_REQ_THROTTLE_NAME = ("statsbeat_throttle_count", "Throttle_Count")
 
 _STATSBEAT_METRIC_NAME_MAPPINGS = dict(
     [
@@ -54,8 +85,12 @@ _STATSBEAT_METRIC_NAME_MAPPINGS = dict(
 
 # Instrumentations
 
+# Special constant for azure-sdk opentelemetry instrumentation
+_AZURE_SDK_OPENTELEMETRY_NAME = "azure-sdk-opentelemetry"
+_AZURE_SDK_NAMESPACE_NAME = "az.namespace"
+
 _BASE = 2
-# cSpell:disable
+
 _INSTRUMENTATIONS_LIST = [
     "django",
     "flask",
@@ -95,10 +130,44 @@ _INSTRUMENTATIONS_LIST = [
     "tornado",
     "urllib",
     "urllib3",
+    _AZURE_SDK_OPENTELEMETRY_NAME,
+    "cassandra",
+    "tortoiseorm",
 ]
-# cSpell:enable
+
 _INSTRUMENTATIONS_BIT_MAP = {_INSTRUMENTATIONS_LIST[i]: _BASE**i for i in range(len(_INSTRUMENTATIONS_LIST))}
+
+# Standard metrics
+
+# List of metric instrument names that are autocollected from instrumentations
+_AUTOCOLLECTED_INSTRUMENT_NAMES = (
+    MetricInstruments.HTTP_SERVER_DURATION,
+    MetricInstruments.HTTP_SERVER_REQUEST_SIZE,
+    MetricInstruments.HTTP_SERVER_RESPONSE_SIZE,
+    MetricInstruments.HTTP_SERVER_ACTIVE_REQUESTS,
+    MetricInstruments.HTTP_CLIENT_DURATION,
+    MetricInstruments.HTTP_CLIENT_REQUEST_SIZE,
+    MetricInstruments.HTTP_CLIENT_RESPONSE_SIZE,
+)
+
+# Temporary solution for checking which instrumentations support metric collection
+_INSTRUMENTATION_SUPPORTING_METRICS_LIST = (
+    "opentelemetry.instrumentation.django",
+    "opentelemetry.instrumentation.falcon",
+    "opentelemetry.instrumentation.fastapi",
+    "opentelemetry.instrumentation.flask",
+    "opentelemetry.instrumentation.pyramid",
+    "opentelemetry.instrumentation.requests",
+    "opentelemetry-instrumentation-sqlalchemy",
+    "opentelemetry.instrumentation.starlette",
+    "opentelemetry-instrumentation-tornado",
+    "opentelemetry-instrumentation-urllib",
+    "opentelemetry.instrumentation.urllib3",
+    "opentelemetry.instrumentation.wsgi",
+)
 
 # sampleRate
 
 _SAMPLE_RATE_KEY = "_MS.sampleRate"
+
+# cSpell:disable

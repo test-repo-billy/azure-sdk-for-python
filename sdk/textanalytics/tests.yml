@@ -1,12 +1,13 @@
 trigger: none
 
-stages:
-  - template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
+extends:
+    template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
       BuildTargetingString: azure-ai-textanalytics
       ServiceDirectory: textanalytics
       CloudConfig:
         Public:
+          Location: eastus
           SubscriptionConfigurations:
             - $(sub-config-azure-cloud-test-resources)
             - $(sub-config-text-analytics-azure-cloud-test-resources)

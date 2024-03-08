@@ -12,16 +12,18 @@ from typing import Any, Awaitable, TYPE_CHECKING
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
 
-from .. import models
+from .. import models as _models
 from .._serialization import Deserializer, Serializer
 from ._configuration import ServiceFabricManagedClustersManagementClientConfiguration
 from .operations import (
     ApplicationTypeVersionsOperations,
     ApplicationTypesOperations,
     ApplicationsOperations,
+    ManagedApplyMaintenanceWindowOperations,
     ManagedAzResiliencyStatusOperations,
     ManagedClusterVersionOperations,
     ManagedClustersOperations,
+    ManagedMaintenanceWindowStatusOperations,
     ManagedUnsupportedVMSizesOperations,
     NodeTypeSkusOperations,
     NodeTypesOperations,
@@ -56,6 +58,12 @@ class ServiceFabricManagedClustersManagementClient:  # pylint: disable=client-ac
     :ivar managed_az_resiliency_status: ManagedAzResiliencyStatusOperations operations
     :vartype managed_az_resiliency_status:
      azure.mgmt.servicefabricmanagedclusters.aio.operations.ManagedAzResiliencyStatusOperations
+    :ivar managed_maintenance_window_status: ManagedMaintenanceWindowStatusOperations operations
+    :vartype managed_maintenance_window_status:
+     azure.mgmt.servicefabricmanagedclusters.aio.operations.ManagedMaintenanceWindowStatusOperations
+    :ivar managed_apply_maintenance_window: ManagedApplyMaintenanceWindowOperations operations
+    :vartype managed_apply_maintenance_window:
+     azure.mgmt.servicefabricmanagedclusters.aio.operations.ManagedApplyMaintenanceWindowOperations
     :ivar managed_cluster_version: ManagedClusterVersionOperations operations
     :vartype managed_cluster_version:
      azure.mgmt.servicefabricmanagedclusters.aio.operations.ManagedClusterVersionOperations
@@ -81,7 +89,7 @@ class ServiceFabricManagedClustersManagementClient:  # pylint: disable=client-ac
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2022-08-01-preview". Note that overriding
+    :keyword api_version: Api Version. Default value is "2023-12-01-preview". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -98,9 +106,9 @@ class ServiceFabricManagedClustersManagementClient:  # pylint: disable=client-ac
         self._config = ServiceFabricManagedClustersManagementClientConfiguration(
             credential=credential, subscription_id=subscription_id, **kwargs
         )
-        self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
@@ -116,6 +124,12 @@ class ServiceFabricManagedClustersManagementClient:  # pylint: disable=client-ac
             self._client, self._config, self._serialize, self._deserialize
         )
         self.managed_az_resiliency_status = ManagedAzResiliencyStatusOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.managed_maintenance_window_status = ManagedMaintenanceWindowStatusOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.managed_apply_maintenance_window = ManagedApplyMaintenanceWindowOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.managed_cluster_version = ManagedClusterVersionOperations(
@@ -163,5 +177,5 @@ class ServiceFabricManagedClustersManagementClient:  # pylint: disable=client-ac
         await self._client.__aenter__()
         return self
 
-    async def __aexit__(self, *exc_details) -> None:
+    async def __aexit__(self, *exc_details: Any) -> None:
         await self._client.__aexit__(*exc_details)

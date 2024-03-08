@@ -1,6 +1,8 @@
+import sys
 from pathlib import Path
 from typing import Callable, Union
 
+import pydash
 import pytest
 from marshmallow import ValidationError
 
@@ -10,7 +12,7 @@ from azure.ai.ml.entities._builders import Command
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput, PipelineOutput
 from azure.ai.ml.entities._job.pipeline._load_component import _generate_component_function
-from azure.ai.ml.exceptions import UnexpectedKeywordError, ValidationException, UnexpectedAttributeError
+from azure.ai.ml.exceptions import UnexpectedAttributeError, UnexpectedKeywordError, ValidationException
 
 from .._util import _DSL_TIMEOUT_SECOND
 
@@ -20,7 +22,12 @@ components_dir = tests_root_dir / "test_configs/components/"
 
 @pytest.mark.timeout(_DSL_TIMEOUT_SECOND)
 @pytest.mark.unittest
+@pytest.mark.pipeline_test
 class TestComponentFunc:
+    @pytest.mark.skipif(
+        sys.version_info[1] == 11,
+        reason=f"This test is not compatible with Python 3.11, skip in CI.",
+    )
     def test_generate_component_function(self) -> None:
         component_func = load_component(source="./tests/test_configs/components/helloworld_component.yml")
         component = component_func()
@@ -42,9 +49,9 @@ class TestComponentFunc:
         }
 
         # positional args is not allowed
-        with pytest.raises(Exception) as error_info:
+        with pytest.raises(ValidationException) as error_info:
             component_func(10, "fake_path")
-        assert "[component] CommandComponentBasic() takes 0 positional arguments but 2 were given" in str(error_info)
+        assert "Component function doesn't support positional arguments" in str(error_info)
 
         # wrong kwargs is not allowed
         with pytest.raises(UnexpectedKeywordError) as error_info:
@@ -54,6 +61,16 @@ class TestComponentFunc:
             "[component] CommandComponentBasic() got an unexpected keyword argument 'wrong_kwarg', "
             "valid keywords: 'component_in_number', 'component_in_path'." in str(error_info)
         )
+
+        params_override = [{"inputs": {}}]
+        new_func = load_component(
+            source="./tests/test_configs/components/helloworld_component.yml", params_override=params_override
+        )
+
+        # hint user when component func don't take any parameters.
+        with pytest.raises(ValidationException) as error_info:
+            new_func(10)
+        assert ("Component function doesn't has any parameters") in str(error_info.value)
 
     def test_required_component_inputs_missing(self):
         component_func = load_component(source="./tests/test_configs/components/helloworld_component.yml")
@@ -101,7 +118,8 @@ class TestComponentFunc:
         assert component2._build_inputs() == {
             "component_in_number": 10,
             "component_in_path": Input(
-                path="${{parent.jobs.microsoftsamplesCommandComponentBasic.outputs.component_out_path}}",
+                # component's name changed to lower case when setting it
+                path="${{parent.jobs.microsoftsamplescommandcomponentbasic.outputs.component_out_path}}",
                 type="uri_folder",
                 mode=None,
             ),
@@ -165,9 +183,8 @@ class TestComponentFunc:
 
         # non-existent output
         with pytest.raises(
-                UnexpectedAttributeError,
-                match="Got an unexpected attribute 'component_out_path_non', "
-                      "valid attributes: 'component_out_path'."
+            UnexpectedAttributeError,
+            match="Got an unexpected attribute 'component_out_path_non', " "valid attributes: 'component_out_path'.",
         ):
             component.outputs["component_out_path_non"].path = test_output_path
 
@@ -178,7 +195,9 @@ class TestComponentFunc:
         assert component._build_outputs() == {"component_out_path": output_data}
 
         # set output via output binding
-        component.outputs.component_out_path._data = PipelineOutput(name="pipeline_output", owner="pipeline", meta=None)
+        component.outputs.component_out_path._data = PipelineOutput(
+            port_name="pipeline_output", owner="pipeline", meta=None
+        )
         assert component._build_outputs() == {
             "component_out_path": Output(path="${{parent.outputs.pipeline_output}}", type="uri_folder", mode=None)
         }
@@ -221,7 +240,7 @@ class TestComponentFunc:
 
         component: Command = component_func()
         # unprovided inputs won't be in str
-        assert "inputs: {}" in str(component)
+        assert "inputs: {" not in str(component)
 
     def test_component_static_dynamic_fields(self):
         component_entity = load_component(source="./tests/test_configs/components/helloworld_component.yml")
@@ -249,8 +268,6 @@ class TestComponentFunc:
         assert component._to_rest_object() == {
             "_source": "YAML.COMPONENT",
             "componentId": "fake_arm_id",
-            "computeId": None,
-            "display_name": None,
             "type": "command",
             "distribution": {"distribution_type": "PyTorch", "process_count_per_instance": 2},
             "environment_variables": {"key": "val"},
@@ -260,12 +277,7 @@ class TestComponentFunc:
                 "component_in_number": {"job_input_type": "literal", "value": "10"},
                 "component_in_path": {"job_input_type": "literal", "value": "${{parent.inputs.pipeline_input}}"},
             },
-            "limits": None,
-            "name": None,
-            "outputs": {},
-            "resources": {"instance_count": 2, "properties": {}},
-            "tags": {},
-            "properties": {},
+            "resources": {"instance_count": 2},
         }
 
     def test_component_func_dict_distribution(self):
@@ -295,7 +307,7 @@ class TestComponentFunc:
             "distribution_type": "Mpi",
             "process_count_per_instance": 1,
         }
-        assert mpi_node._to_rest_object()["resources"] == {"instance_count": 2, "properties": {}}
+        assert mpi_node._to_rest_object()["resources"] == {"instance_count": 2}
 
         pytorch_func = load_component(source=str(components_dir / "helloworld_component_pytorch.yml"))
         pytorch_node = pytorch_func(component_in_number=10, component_in_path=pipeline_input)
@@ -303,7 +315,7 @@ class TestComponentFunc:
             "distribution_type": "PyTorch",
             "process_count_per_instance": 4,
         }
-        assert pytorch_node._to_rest_object()["resources"] == {"instance_count": 2, "properties": {}}
+        assert pytorch_node._to_rest_object()["resources"] == {"instance_count": 2}
 
         tensorflow_func = load_component(source=str(components_dir / "helloworld_component_tensorflow.yml"))
         tensorflow_node = tensorflow_func(component_in_number=10, component_in_path=pipeline_input)
@@ -312,7 +324,7 @@ class TestComponentFunc:
             "parameter_server_count": 1,
             "worker_count": 2,
         }
-        assert tensorflow_node._to_rest_object()["resources"] == {"instance_count": 2, "properties": {}}
+        assert tensorflow_node._to_rest_object()["resources"] == {"instance_count": 2}
 
     def test_component_invalid_convert(self):
         component = load_component(source="./tests/test_configs/components/helloworld_component.yml")
@@ -324,4 +336,6 @@ class TestComponentFunc:
         base_dict["name"] = invalid_name
         base_rest_obj.name, base_rest_obj.properties.component_spec["name"] = invalid_name, invalid_name
         assert cmp_dict == base_dict
-        assert cmp_rest_obj.as_dict() == base_rest_obj.as_dict()
+        cmp_rest_obj = pydash.omit(cmp_rest_obj.as_dict(), "properties.properties.client_component_hash")
+        base_rest_obj = pydash.omit(base_rest_obj.as_dict(), "properties.properties.client_component_hash")
+        assert cmp_rest_obj == base_rest_obj

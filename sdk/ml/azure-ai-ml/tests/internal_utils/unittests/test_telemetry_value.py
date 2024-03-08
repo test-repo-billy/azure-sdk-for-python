@@ -15,6 +15,7 @@ from .._util import _UTILS_TIMEOUT_SECOND
 
 @pytest.mark.timeout(_UTILS_TIMEOUT_SECOND)
 @pytest.mark.unittest
+@pytest.mark.core_sdk_test
 class TestTelemetryValue:
     def test_component_node_telemetry_value(self):
         # From yaml
@@ -43,7 +44,7 @@ class TestTelemetryValue:
             outputs={"component_out_path": {"type": "uri_folder"}},
             command="echo Hello World",
             code=code,
-            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
         )
         v = component._get_telemetry_values()
         assert v["type"] == "command"

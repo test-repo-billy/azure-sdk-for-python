@@ -4,8 +4,9 @@
 
 import logging
 import sys
+from typing import Dict
 
-# from azure.ai.ml._telemetry import AML_INTERNAL_LOGGER_NAMESPACE
+from azure.ai.ml._telemetry.logging_handler import AML_INTERNAL_LOGGER_NAMESPACE
 
 
 def initialize_logger_info(module_logger: logging.Logger, terminator="\n") -> None:
@@ -20,11 +21,14 @@ def initialize_logger_info(module_logger: logging.Logger, terminator="\n") -> No
 
 class OpsLogger:
     def __init__(self, name: str):
-        # self.logger: logging.Logger = logging.getLogger(AML_INTERNAL_LOGGER_NAMESPACE + name)
-        # self.logger.propagate = False
+        self.package_logger: logging.Logger = logging.getLogger(AML_INTERNAL_LOGGER_NAMESPACE + name)
+        self.package_logger.propagate = False
+        self.package_tracer = None
         self.module_logger = logging.getLogger(name)
         self.custom_dimensions = {}
 
-    # def update_info(self, data: dict) -> None:
-    #     if "app_insights_handler" in data:
-    #         self.logger.addHandler(data.pop("app_insights_handler"))
+    def update_info(self, data: Dict) -> None:
+        if "app_insights_handler" in data:
+            logger, tracer = data.pop("app_insights_handler")
+            self.package_logger.addHandler(logger)
+            self.package_tracer = tracer

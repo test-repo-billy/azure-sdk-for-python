@@ -4,28 +4,25 @@
 
 import abc
 import time
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Callable, Optional
 
-import six
+import isodate
 from msal import TokenCache
 
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError, DecodeError
+from azure.core.pipeline import Pipeline
 from azure.core.pipeline.policies import ContentDecodePolicy
 
 from .._internal import _scopes_to_resource
 from .._internal.pipeline import build_pipeline
 
-try:
-    ABC = abc.ABC
-except AttributeError:  # Python 2.7, abc exists, but not ABC
-    ABC = abc.ABCMeta("ABC", (object,), {"__slots__": ()})  # type: ignore
+ABC = abc.ABC
 
 if TYPE_CHECKING:
     # pylint:disable=ungrouped-imports
     from typing import Union
 
-    from azure.core.pipeline import PipelineResponse
     from azure.core.pipeline.policies import HTTPPolicy, SansIOHTTPPolicy
     from azure.core.pipeline.transport import HttpRequest
 
@@ -33,16 +30,16 @@ if TYPE_CHECKING:
 
 
 class ManagedIdentityClientBase(ABC):
+    from azure.core.pipeline import PipelineResponse
+
     # pylint:disable=missing-client-constructor-parameter-credential
-    def __init__(self, request_factory, **kwargs):
-        # type: (Callable[[str, dict], HttpRequest], Optional[str], Optional[Dict], **Any) -> None
+    def __init__(self, request_factory: Callable, **kwargs: Any) -> None:
         self._cache = kwargs.pop("_cache", None) or TokenCache()
         self._content_callback = kwargs.pop("_content_callback", None)
         self._pipeline = self._build_pipeline(**kwargs)
         self._request_factory = request_factory
 
-    def _process_response(self, response, request_time):
-        # type: (PipelineResponse, int) -> AccessToken
+    def _process_response(self, response: PipelineResponse, request_time: int, resource: str) -> AccessToken:
 
         content = response.context.get(ContentDecodePolicy.CONTEXT_NAME)
         if not content:
@@ -55,17 +52,18 @@ class ManagedIdentityClientBase(ABC):
                     message = "Failed to deserialize JSON from response"
                 else:
                     message = 'Unexpected content type "{}"'.format(response.http_response.content_type)
-                six.raise_from(
-                    ClientAuthenticationError(message=message, response=response.http_response),
-                    ex,
-                )
+                raise ClientAuthenticationError(message=message, response=response.http_response) from ex
 
         if not content:
             raise ClientAuthenticationError(message="No token received.", response=response.http_response)
 
-        if "access_token" not in content or not ("expires_in" in content or "expires_on" in content):
+        if not ("access_token" in content or "token" in content) or not (
+            "expires_in" in content or "expires_on" in content or "expiresOn" in content
+        ):
             if content and "access_token" in content:
                 content["access_token"] = "****"
+            if content and "token" in content:
+                content["token"] = "****"
             raise ClientAuthenticationError(
                 message='Unexpected response "{}"'.format(content),
                 response=response.http_response,
@@ -74,21 +72,24 @@ class ManagedIdentityClientBase(ABC):
         if self._content_callback:
             self._content_callback(content)
 
-        expires_on = int(content.get("expires_on") or int(content["expires_in"]) + request_time)
+        if "expires_in" in content or "expires_on" in content:
+            expires_on = int(content.get("expires_on") or int(content["expires_in"]) + request_time)
+        else:
+            expires_on = int(isodate.parse_datetime(content["expiresOn"]).timestamp())
         content["expires_on"] = expires_on
 
-        token = AccessToken(content["access_token"], content["expires_on"])
+        access_token = content.get("access_token") or content["token"]
+        token = AccessToken(access_token, content["expires_on"])
 
         # caching is the final step because TokenCache.add mutates its "event"
         self._cache.add(
-            event={"response": content, "scope": [content["resource"]]},
+            event={"response": content, "scope": [content.get("resource") or resource]},
             now=request_time,
         )
 
         return token
 
-    def get_cached_token(self, *scopes):
-        # type: (*str) -> Optional[AccessToken]
+    def get_cached_token(self, *scopes: str) -> Optional[AccessToken]:
         resource = _scopes_to_resource(*scopes)
         tokens = self._cache.find(TokenCache.CredentialType.ACCESS_TOKEN, target=[resource])
         for token in tokens:
@@ -98,34 +99,32 @@ class ManagedIdentityClientBase(ABC):
         return None
 
     @abc.abstractmethod
-    def request_token(self, *scopes, **kwargs):
+    def request_token(self, *scopes: Any, **kwargs: Any) -> AccessToken:
         pass
 
     @abc.abstractmethod
-    def _build_pipeline(self, **kwargs):
+    def _build_pipeline(self, **kwargs: Any) -> Pipeline:
         pass
 
 
 class ManagedIdentityClient(ManagedIdentityClientBase):
-    def __enter__(self):
+    def __enter__(self) -> "ManagedIdentityClient":
         self._pipeline.__enter__()
         return self
 
-    def __exit__(self, *args):
+    def __exit__(self, *args: Any) -> None:
         self._pipeline.__exit__(*args)
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         self.__exit__()
 
-    def request_token(self, *scopes, **kwargs):
-        # type: (*str, **Any) -> AccessToken
+    def request_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
         resource = _scopes_to_resource(*scopes)
         request = self._request_factory(resource)
         request_time = int(time.time())
         response = self._pipeline.run(request, retry_on_methods=[request.method], **kwargs)
-        token = self._process_response(response, request_time)
+        token = self._process_response(response=response, request_time=request_time, resource=resource)
         return token
 
-    def _build_pipeline(self, **kwargs):
+    def _build_pipeline(self, **kwargs: Any) -> Pipeline:
         return build_pipeline(**kwargs)

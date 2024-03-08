@@ -11,6 +11,9 @@
     "description": {
         "value": ""
     },
+    "kind": {
+        "value": "Default"
+    },
     "friendlyName": {
         "value": ""
     },
@@ -39,6 +42,12 @@
         "value": "new"
     },
     "applicationInsightsName": {
+        "value": ""
+    },
+    "logAnalyticsName": {
+        "value": "none"
+    },
+    "logAnalyticsArmId": {
         "value": ""
     },
     "applicationInsightsResourceGroupName": {
@@ -115,5 +124,80 @@
     },
     "primaryUserAssignedIdentity": {
         "value": ""
+    },
+    "managedNetwork": {
+        "value": {}
+    },
+    "spark_runtime_version" : {
+        "value": null
+    },
+    "offlineStoreStorageAccountOption": {
+        "value": null
+    },
+    "offline_store_storage_account_name": {
+        "value": null
+    },
+    "offline_store_container_name" : {
+        "value": null
+    },
+    "offline_store_resource_group_name" : {
+        "value": null
+    },
+    "offline_store_subscription_id" : {
+        "value": null
+    },
+    "offline_store_connection_name" : {
+        "value": null
+    },
+    "online_store_resource_id" : {
+        "value": null
+    },
+    "online_store_resource_group_name" : {
+        "value": null
+    },
+    "online_store_subscription_id" : {
+        "value": null
+    },
+    "online_store_connection_name" : {
+        "value": null
+    },
+    "grant_materialization_permissions" : {
+        "value": "true"
+    },
+    "materializationIdentityOption": {
+        "value": null
+    },
+    "materialization_identity_name": {
+        "value": null
+    },
+    "materialization_identity_resource_group_name": {
+        "value": null
+    },
+    "materialization_identity_subscription_id": {
+        "value": null
+    },
+    "workspace_hub_config" : {
+        "value": {}
+    },
+    "existing_workspaces" : {
+        "value": []
+    },
+    "workspace_hub" : {
+        "value": ""
+    },
+    "enable_data_isolation": {
+        "value": "false"
+    },
+    "serverless_compute_settings": {
+        "value": {}
+    },
+    "endpoint_resource_id": {
+        "value": "null"
+    },
+    "endpoint_kind": {
+        "value": "AIServices"
+    },
+    "endpoint_option": {
+        "value": "new"
     }
 }

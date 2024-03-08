@@ -6,11 +6,12 @@
 
 import logging
 from abc import abstractmethod
+from typing import Any, Optional
 
-from azure.ai.ml._restclient.v2022_02_01_preview.models import DefaultScaleSettings as RestDefaultScaleSettings
-from azure.ai.ml._restclient.v2022_02_01_preview.models import OnlineScaleSettings as RestOnlineScaleSettings
-from azure.ai.ml._restclient.v2022_02_01_preview.models import ScaleType
-from azure.ai.ml._restclient.v2022_02_01_preview.models import (
+from azure.ai.ml._restclient.v2023_04_01_preview.models import DefaultScaleSettings as RestDefaultScaleSettings
+from azure.ai.ml._restclient.v2023_04_01_preview.models import OnlineScaleSettings as RestOnlineScaleSettings
+from azure.ai.ml._restclient.v2023_04_01_preview.models import ScaleType
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     TargetUtilizationScaleSettings as RestTargetUtilizationScaleSettings,
 )
 from azure.ai.ml._utils.utils import camel_to_snake, from_iso_duration_format, to_iso_duration_format
@@ -29,8 +30,10 @@ class OnlineScaleSettings(RestTranslatableMixin):
 
     def __init__(
         self,
-        type: str, # pylint: disable=redefined-builtin
-        **kwargs, # pylint: disable=unused-argument
+        # pylint: disable=redefined-builtin
+        type: str,
+        # pylint: disable=unused-argument
+        **kwargs: Any,
     ):
         self.type = camel_to_snake(type)
 
@@ -38,7 +41,7 @@ class OnlineScaleSettings(RestTranslatableMixin):
     def _to_rest_object(self) -> RestOnlineScaleSettings:
         pass
 
-    def _merge_with(self, other: "OnlineScaleSettings") -> None:
+    def _merge_with(self, other: Any) -> None:
         if other:
             self.type = other.type or self.type
 
@@ -46,9 +49,9 @@ class OnlineScaleSettings(RestTranslatableMixin):
     def _from_rest_object(  # pylint: disable=arguments-renamed
         cls, settings: RestOnlineScaleSettings
     ) -> "OnlineScaleSettings":
-        if isinstance(settings, RestDefaultScaleSettings):
+        if settings.scale_type == "Default":
             return DefaultScaleSettings._from_rest_object(settings)
-        if isinstance(settings, RestTargetUtilizationScaleSettings):
+        if settings.scale_type == "TargetUtilization":
             return TargetUtilizationScaleSettings._from_rest_object(settings)
 
         msg = f"Unsupported online scale setting type {settings.type}."
@@ -67,7 +70,7 @@ class DefaultScaleSettings(OnlineScaleSettings):
     :vartype type: str
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any):
         super(DefaultScaleSettings, self).__init__(
             type=ScaleType.DEFAULT.value,  # pylint: disable=no-member
         )
@@ -85,7 +88,8 @@ class DefaultScaleSettings(OnlineScaleSettings):
         if not other:
             return False
         # only compare mutable fields
-        return self.type.lower() == other.type.lower()
+        res: bool = self.type.lower() == other.type.lower()
+        return res
 
     def __ne__(self, other: object) -> bool:
         return not self.__eq__(other)
@@ -95,9 +99,9 @@ class TargetUtilizationScaleSettings(OnlineScaleSettings):
     """Auto scale settings.
 
     :param min_instances: Minimum number of the instances
-    :type min_instances: int, optional
+    :type min_instances: int
     :param max_instances: Maximum number of the instances
-    :type max_instances: int, optional
+    :type max_instances: int
     :param polling_interval: The polling interval in ISO 8691 format. Only supports duration with
      precision as low as Seconds.
     :type polling_interval: str
@@ -110,11 +114,11 @@ class TargetUtilizationScaleSettings(OnlineScaleSettings):
     def __init__(
         self,
         *,
-        min_instances: int = None,
-        max_instances: int = None,
-        polling_interval: int = None,
-        target_utilization_percentage: int = None,
-        **kwargs,
+        min_instances: Optional[int] = None,
+        max_instances: Optional[int] = None,
+        polling_interval: Optional[int] = None,
+        target_utilization_percentage: Optional[int] = None,
+        **kwargs: Any,
     ):
         super(TargetUtilizationScaleSettings, self).__init__(
             type=ScaleType.TARGET_UTILIZATION.value,  # pylint: disable=no-member
@@ -132,7 +136,7 @@ class TargetUtilizationScaleSettings(OnlineScaleSettings):
             target_utilization_percentage=self.target_utilization_percentage,
         )
 
-    def _merge_with(self, other: "TargetUtilizationScaleSettings") -> None:
+    def _merge_with(self, other: Optional["TargetUtilizationScaleSettings"]) -> None:
         if other:
             super()._merge_with(other)
             self.min_instances = other.min_instances or self.min_instances

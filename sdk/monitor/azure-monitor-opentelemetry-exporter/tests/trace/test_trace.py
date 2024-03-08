@@ -12,6 +12,7 @@ from unittest import mock
 # pylint: disable=import-error
 from opentelemetry.sdk import trace, resources
 from opentelemetry.sdk.trace.export import SpanExportResult
+from opentelemetry.sdk.util.instrumentation import InstrumentationScope
 from opentelemetry.semconv.trace import SpanAttributes
 from opentelemetry.trace import Link, SpanContext, SpanKind
 from opentelemetry.trace.status import Status, StatusCode
@@ -22,6 +23,11 @@ from azure.monitor.opentelemetry.exporter.export.trace._exporter import (
     _check_instrumentation_span,
     _get_trace_export_result,
 )
+from azure.monitor.opentelemetry.exporter._constants import (
+    _AZURE_SDK_NAMESPACE_NAME,
+    _AZURE_SDK_OPENTELEMETRY_NAME,
+)
+from azure.monitor.opentelemetry.exporter._generated.models import ContextTagKeys
 from azure.monitor.opentelemetry.exporter._utils import azure_monitor_context
 
 
@@ -43,6 +49,7 @@ class TestAzureTraceExporter(unittest.TestCase):
             "APPINSIGHTS_INSTRUMENTATIONKEY"
         ] = "1234abcd-5678-4efa-8abc-1234567890ab"
         os.environ["APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL"] = "true"
+        os.environ["APPLICATIONINSIGHTS_OPENTELEMETRY_RESOURCE_METRIC_DISABLED"] = "true"
         cls._exporter = AzureMonitorTraceExporter()
 
     @classmethod
@@ -183,18 +190,18 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertEqual(envelope.instrumentation_key,
                          "1234abcd-5678-4efa-8abc-1234567890ab")
         self.assertIsNotNone(envelope.tags)
-        self.assertEqual(envelope.tags.get("ai.device.id"), azure_monitor_context["ai.device.id"])
-        self.assertEqual(envelope.tags.get("ai.device.locale"), azure_monitor_context["ai.device.locale"])
-        self.assertEqual(envelope.tags.get("ai.device.osVersion"), azure_monitor_context["ai.device.osVersion"])
-        self.assertEqual(envelope.tags.get("ai.device.type"), azure_monitor_context["ai.device.type"])
-        self.assertEqual(envelope.tags.get("ai.internal.sdkVersion"), azure_monitor_context["ai.internal.sdkVersion"])
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_DEVICE_ID), azure_monitor_context[ContextTagKeys.AI_DEVICE_ID])
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_DEVICE_LOCALE), azure_monitor_context[ContextTagKeys.AI_DEVICE_LOCALE])
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_DEVICE_OS_VERSION), azure_monitor_context[ContextTagKeys.AI_DEVICE_OS_VERSION])
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_DEVICE_TYPE), azure_monitor_context[ContextTagKeys.AI_DEVICE_TYPE])
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_INTERNAL_SDK_VERSION), azure_monitor_context[ContextTagKeys.AI_INTERNAL_SDK_VERSION])
 
-        self.assertEqual(envelope.tags.get("ai.cloud.role"), "testServiceNamespace.testServiceName")
-        self.assertEqual(envelope.tags.get("ai.cloud.roleInstance"), "testServiceInstanceId")
-        self.assertEqual(envelope.tags.get("ai.internal.nodeName"), "testServiceInstanceId")
-        self.assertEqual(envelope.tags.get("ai.operation.id"), "{:032x}".format(context.trace_id))
-        self.assertEqual(envelope.tags.get("ai.user.id"), "testId")
-        self.assertEqual(envelope.tags.get("ai.operation.parentId"), "{:016x}".format(context.span_id))
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_CLOUD_ROLE), "testServiceNamespace.testServiceName")
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_CLOUD_ROLE_INSTANCE), "testServiceInstanceId")
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_INTERNAL_NODE_NAME), "testServiceInstanceId")
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_OPERATION_ID), "{:032x}".format(context.trace_id))
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_USER_ID), "testId")
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_OPERATION_PARENT_ID), "{:016x}".format(context.span_id))
 
     def test_span_to_envelope_partA_default(self):
         exporter = self._exporter
@@ -213,9 +220,9 @@ class TestAzureTraceExporter(unittest.TestCase):
         test_span.start()
         test_span.end()
         envelope = exporter._span_to_envelope(test_span)
-        self.assertEqual(envelope.tags.get("ai.cloud.role"), "testServiceName")
-        self.assertEqual(envelope.tags.get("ai.cloud.roleInstance"), platform.node())
-        self.assertEqual(envelope.tags.get("ai.internal.nodeName"), envelope.tags.get("ai.cloud.roleInstance"))
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_CLOUD_ROLE), "testServiceName")
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_CLOUD_ROLE_INSTANCE), platform.node())
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_INTERNAL_NODE_NAME), envelope.tags.get(ContextTagKeys.AI_CLOUD_ROLE_INSTANCE))
 
     def test_span_to_envelope_client_http(self):
         exporter = self._exporter
@@ -756,7 +763,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertEqual(
             envelope.name, "Microsoft.ApplicationInsights.Request"
         )
-        self.assertEqual(envelope.tags["ai.operation.name"], "test")
+        self.assertEqual(envelope.tags[ContextTagKeys.AI_OPERATION_NAME], "test")
         self.assertEqual(envelope.data.base_type, "RequestData")
         self.assertEqual(envelope.data.base_data.name, "test")
         self.assertEqual(envelope.data.base_data.id, "a6f5d48acb4d31d9")
@@ -836,20 +843,29 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.response_code, "200")
         self.assertTrue(envelope.data.base_data.success)
 
-        self.assertEqual(envelope.tags["ai.operation.name"], "GET /wiki/Rabbit")
+        self.assertEqual(envelope.tags[ContextTagKeys.AI_OPERATION_NAME], "GET /wiki/Rabbit")
         self.assertEqual(envelope.tags["ai.user.userAgent"], "agent")
-        self.assertEqual(envelope.tags["ai.location.ip"], "client_ip")
+        self.assertEqual(envelope.tags[ContextTagKeys.AI_LOCATION_IP], "client_ip")
         self.assertEqual(envelope.data.base_data.url, "https://www.wikipedia.org/wiki/Rabbit")
         self.assertEqual(len(envelope.data.base_data.properties), 0)
         
-        
+        # success
+        span._attributes = {
+            "http.method": "GET",
+            "net.peer.ip": "peer_ip",
+            "http.status_code": 400,
+        }
+        envelope = exporter._span_to_envelope(span)
+        self.assertFalse(envelope.data.base_data.success)
+
+
         # location
         span._attributes = {
             "http.method": "GET",
             "net.peer.ip": "peer_ip"
         }
         envelope = exporter._span_to_envelope(span)
-        self.assertEqual(envelope.tags["ai.location.ip"], "peer_ip")
+        self.assertEqual(envelope.tags[ContextTagKeys.AI_LOCATION_IP], "peer_ip")
 
         # url
         span._attributes = {
@@ -887,14 +903,14 @@ class TestAzureTraceExporter(unittest.TestCase):
             "http.url": "https://www.wikipedia.org/wiki/Rabbit/test",
         }
         envelope = exporter._span_to_envelope(span)
-        self.assertEqual(envelope.tags["ai.operation.name"], "GET /wiki/Rabbit/test")
+        self.assertEqual(envelope.tags[ContextTagKeys.AI_OPERATION_NAME], "GET /wiki/Rabbit/test")
         self.assertEqual(envelope.data.base_data.name, "GET /wiki/Rabbit/test")
 
         span._attributes = {
             "http.method": "GET",
         }
         envelope = exporter._span_to_envelope(span)
-        self.assertEqual(envelope.tags["ai.operation.name"], "test")
+        self.assertEqual(envelope.tags[ContextTagKeys.AI_OPERATION_NAME], "test")
         self.assertEqual(envelope.data.base_data.name, "test")
 
     def test_span_envelope_server_messaging(self):
@@ -922,14 +938,14 @@ class TestAzureTraceExporter(unittest.TestCase):
         span.start(start_time=start_time)
         span.end(end_time=end_time)
         envelope = exporter._span_to_envelope(span)
-        self.assertEqual(envelope.tags["ai.operation.name"], "test")
+        self.assertEqual(envelope.tags[ContextTagKeys.AI_OPERATION_NAME], "test")
         self.assertEqual(envelope.data.base_type, "RequestData")
         self.assertEqual(envelope.data.base_data.name, "test")
         self.assertEqual(envelope.data.base_data.id, "a6f5d48acb4d31d9")
         self.assertEqual(envelope.data.base_data.duration, "0.00:00:01.001")
         self.assertTrue(envelope.data.base_data.success)
         
-        self.assertEqual(envelope.tags["ai.location.ip"], "127.0.0.1")
+        self.assertEqual(envelope.tags[ContextTagKeys.AI_LOCATION_IP], "127.0.0.1")
         self.assertEqual(envelope.data.base_data.source, "test name/celery")
         self.assertEqual(len(envelope.data.base_data.properties), 0)
 
@@ -1073,6 +1089,33 @@ class TestAzureTraceExporter(unittest.TestCase):
         )[0]
         self.assertEqual(json_dict["id"], "a6f5d48acb4d31da")
 
+    def test_span_to_envelope_properties_std_metrics(self):
+        exporter = self._exporter
+        start_time = 1575494316027613500
+        end_time = start_time + 1001000000
+
+        span = trace._Span(
+            name="test",
+            context=SpanContext(
+                trace_id=36873507687745823477771305566750195431,
+                span_id=12030755672171557337,
+                is_remote=False,
+            ),
+            attributes={
+                "http.method": "GET",
+                "http.url": "https://www.wikipedia.org/wiki/Rabbit",
+                "http.status_code": 200,
+            },
+            kind=SpanKind.CLIENT,
+            instrumentation_scope=InstrumentationScope("opentelemetry.instrumentation.requests")
+        )
+        span._status = Status(status_code=StatusCode.OK)
+        span.start(start_time=start_time)
+        span.end(end_time=end_time)
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(len(envelope.data.base_data.properties), 1)
+        self.assertEqual(envelope.data.base_data.properties["_MS.ProcessedByMetricExtractors"], "True")
+
     def test_span_events_to_envelopes_exception(self):
         exporter = self._exporter
         time = 1575494316027613500
@@ -1111,13 +1154,13 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertEqual(envelope.instrumentation_key,
                          "1234abcd-5678-4efa-8abc-1234567890ab")
         self.assertIsNotNone(envelope.tags)
-        self.assertEqual(envelope.tags.get("ai.device.id"), azure_monitor_context["ai.device.id"])
-        self.assertEqual(envelope.tags.get("ai.device.locale"), azure_monitor_context["ai.device.locale"])
-        self.assertEqual(envelope.tags.get("ai.device.osVersion"), azure_monitor_context["ai.device.osVersion"])
-        self.assertEqual(envelope.tags.get("ai.device.type"), azure_monitor_context["ai.device.type"])
-        self.assertEqual(envelope.tags.get("ai.internal.sdkVersion"), azure_monitor_context["ai.internal.sdkVersion"])
-        self.assertEqual(envelope.tags.get("ai.operation.id"), "{:032x}".format(span.context.trace_id))
-        self.assertEqual(envelope.tags.get("ai.operation.parentId"), "{:016x}".format(span.context.span_id))
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_DEVICE_ID), azure_monitor_context[ContextTagKeys.AI_DEVICE_ID])
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_DEVICE_LOCALE), azure_monitor_context[ContextTagKeys.AI_DEVICE_LOCALE])
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_DEVICE_OS_VERSION), azure_monitor_context[ContextTagKeys.AI_DEVICE_OS_VERSION])
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_DEVICE_TYPE), azure_monitor_context[ContextTagKeys.AI_DEVICE_TYPE])
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_INTERNAL_SDK_VERSION), azure_monitor_context[ContextTagKeys.AI_INTERNAL_SDK_VERSION])
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_OPERATION_ID), "{:032x}".format(span.context.trace_id))
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_OPERATION_PARENT_ID), "{:016x}".format(span.context.span_id))
         self.assertEqual(envelope.time, "2019-12-04T21:18:36.027613Z")
         self.assertEqual(len(envelope.data.base_data.properties), 0)
         self.assertEqual(len(envelope.data.base_data.exceptions), 1)
@@ -1162,18 +1205,140 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertEqual(envelope.instrumentation_key,
                          "1234abcd-5678-4efa-8abc-1234567890ab")
         self.assertIsNotNone(envelope.tags)
-        self.assertEqual(envelope.tags.get("ai.device.id"), azure_monitor_context["ai.device.id"])
-        self.assertEqual(envelope.tags.get("ai.device.locale"), azure_monitor_context["ai.device.locale"])
-        self.assertEqual(envelope.tags.get("ai.device.osVersion"), azure_monitor_context["ai.device.osVersion"])
-        self.assertEqual(envelope.tags.get("ai.device.type"), azure_monitor_context["ai.device.type"])
-        self.assertEqual(envelope.tags.get("ai.internal.sdkVersion"), azure_monitor_context["ai.internal.sdkVersion"])
-        self.assertEqual(envelope.tags.get("ai.operation.id"), "{:032x}".format(span.context.trace_id))
-        self.assertEqual(envelope.tags.get("ai.operation.parentId"), "{:016x}".format(span.context.span_id))
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_DEVICE_ID), azure_monitor_context[ContextTagKeys.AI_DEVICE_ID])
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_DEVICE_LOCALE), azure_monitor_context[ContextTagKeys.AI_DEVICE_LOCALE])
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_DEVICE_OS_VERSION), azure_monitor_context[ContextTagKeys.AI_DEVICE_OS_VERSION])
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_DEVICE_TYPE), azure_monitor_context[ContextTagKeys.AI_DEVICE_TYPE])
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_INTERNAL_SDK_VERSION), azure_monitor_context[ContextTagKeys.AI_INTERNAL_SDK_VERSION])
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_OPERATION_ID), "{:032x}".format(span.context.trace_id))
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_OPERATION_PARENT_ID), "{:016x}".format(span.context.span_id))
         self.assertEqual(envelope.time, "2019-12-04T21:18:36.027613Z")
         self.assertEqual(len(envelope.data.base_data.properties), 1)
         self.assertEqual(envelope.data.base_data.properties["test"], "asd")
         self.assertEqual(envelope.data.base_data.message, "test event")
         self.assertEqual(envelope.data.base_type, "MessageData")
+
+    def test_span_events_to_envelopes_sample_rate(self):
+        exporter = self._exporter
+        time = 1575494316027613500
+
+        span = trace._Span(
+            name="test",
+            context=SpanContext(
+                trace_id=36873507687745823477771305566750195431,
+                span_id=12030755672171557337,
+                is_remote=False,
+            ),
+            parent=SpanContext(
+                trace_id=36873507687745823477771305566750195432,
+                span_id=12030755672171557338,
+                is_remote=False,
+            ),
+            kind=SpanKind.CLIENT,
+            attributes={
+                "_MS.sampleRate": 50,
+            }
+        )
+        attributes = {
+            "test": "asd",
+            "_MS.sampleRate": 75,
+        }
+        span.add_event("test event", attributes, time)
+        span.start()
+        span.end()
+        span._status = Status(status_code=StatusCode.OK)
+        envelopes = exporter._span_events_to_envelopes(span)
+  
+        self.assertEqual(len(envelopes), 1)
+        envelope = envelopes[0]
+        self.assertEqual(
+            envelope.name, "Microsoft.ApplicationInsights.Message"
+        )
+        self.assertEqual(envelope.sample_rate, 50)
+        self.assertEqual(envelope.instrumentation_key,
+                         "1234abcd-5678-4efa-8abc-1234567890ab")
+        self.assertIsNotNone(envelope.tags)
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_DEVICE_ID), azure_monitor_context[ContextTagKeys.AI_DEVICE_ID])
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_DEVICE_LOCALE), azure_monitor_context[ContextTagKeys.AI_DEVICE_LOCALE])
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_DEVICE_OS_VERSION), azure_monitor_context[ContextTagKeys.AI_DEVICE_OS_VERSION])
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_DEVICE_TYPE), azure_monitor_context[ContextTagKeys.AI_DEVICE_TYPE])
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_INTERNAL_SDK_VERSION), azure_monitor_context[ContextTagKeys.AI_INTERNAL_SDK_VERSION])
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_OPERATION_ID), "{:032x}".format(span.context.trace_id))
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_OPERATION_PARENT_ID), "{:016x}".format(span.context.span_id))
+        self.assertEqual(envelope.time, "2019-12-04T21:18:36.027613Z")
+        self.assertEqual(len(envelope.data.base_data.properties), 1)
+        self.assertEqual(envelope.data.base_data.properties["test"], "asd")
+        self.assertEqual(envelope.data.base_data.message, "test event")
+        self.assertEqual(envelope.data.base_type, "MessageData")
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export.trace._exporter.get_tracer_provider")
+    def test_export_otel_resource_metric(self, mock_get_tracer_provider):
+        del os.environ["APPLICATIONINSIGHTS_OPENTELEMETRY_RESOURCE_METRIC_DISABLED"]
+        mock_tracer_provider = mock.Mock()
+        mock_get_tracer_provider.return_value = mock_tracer_provider
+        exporter = self._exporter
+        test_resource = resources.Resource(
+            attributes={
+                "string_test_key": "string_value",
+                "int_test_key": -1,
+                "bool_test_key": False,
+                "float_test_key": 0.5,
+                "sequence_test_key": ["a", "b"],
+            }
+        )
+        mock_tracer_provider.resource = test_resource
+        test_span = trace._Span(
+            name="test",
+            context=SpanContext(
+                trace_id=36873507687745823477771305566750195431,
+                span_id=12030755672171557338,
+                is_remote=False,
+            ),
+        )
+        test_span.start()
+        test_span.end()
+        with mock.patch(
+            "azure.monitor.opentelemetry.exporter.AzureMonitorTraceExporter._transmit"
+        ) as transmit:  # noqa: E501
+            transmit.return_value = ExportResult.SUCCESS
+            with mock.patch(
+                "azure.monitor.opentelemetry.exporter.AzureMonitorTraceExporter._get_otel_resource_envelope"
+            ) as mock_get_otel_resource_envelope:  # noqa: E501
+                mock_get_otel_resource_envelope.return_value = "test_envelope"
+                result = exporter.export([test_span])
+                self.assertEqual(result, SpanExportResult.SUCCESS)
+                mock_get_otel_resource_envelope.assert_called_once_with(test_resource)
+                envelopes = [
+                    "test_envelope",
+                    exporter._span_to_envelope(test_span)
+                ]
+                transmit.assert_called_once_with(envelopes)
+
+    def test_get_otel_resource_envelope(self):
+        exporter = self._exporter
+        test_resource = resources.Resource(
+            attributes={
+                "string_test_key": "string_value",
+                "int_test_key": -1,
+                "bool_test_key": False,
+                "float_test_key": 0.5,
+                "sequence_test_key": ["a", "b"],
+            }
+        )
+        envelope = exporter._get_otel_resource_envelope(test_resource)
+        metric_name = envelope.name
+        self.assertEqual(metric_name, "Microsoft.ApplicationInsights.Metric")
+        instrumentation_key = envelope.instrumentation_key
+        self.assertEqual(instrumentation_key, exporter._instrumentation_key)
+        
+        monitor_base = envelope.data
+        self.assertEqual(monitor_base.base_type, "MetricData")
+        metrics_data = monitor_base.base_data
+        resource_attributes = metrics_data.properties
+        self.assertEqual(resource_attributes, test_resource.attributes)
+        metrics = metrics_data.metrics
+        self.assertEqual(len(metrics), 1)
+        self.assertEqual(metrics[0].name, "_OTELRESOURCE_")
 
 
 class TestAzureTraceExporterUtils(unittest.TestCase):
@@ -1190,10 +1355,14 @@ class TestAzureTraceExporterUtils(unittest.TestCase):
             _get_trace_export_result(ExportResult.FAILED_RETRYABLE),
             SpanExportResult.FAILURE,
         )
-        self.assertEqual(_get_trace_export_result(None), None)
+        self.assertEqual(
+            _get_trace_export_result(None),
+            SpanExportResult.FAILURE,
+        )
 
     def test_check_instrumentation_span(self):
         span = mock.Mock()
+        span.attributes = {}
         span.instrumentation_scope.name = "opentelemetry.instrumentation.test"
         with mock.patch(
             "azure.monitor.opentelemetry.exporter._utils.add_instrumentation"
@@ -1203,9 +1372,20 @@ class TestAzureTraceExporterUtils(unittest.TestCase):
 
     def test_check_instrumentation_span_not_instrumentation(self):
         span = mock.Mock()
+        span.attributes = {}
         span.instrumentation_scope.name = "__main__"
         with mock.patch(
             "azure.monitor.opentelemetry.exporter._utils.add_instrumentation"
         ) as add:
             _check_instrumentation_span(span)
             add.assert_not_called()
+
+    def test_check_instrumentation_span_azure_sdk(self):
+        span = mock.Mock()
+        span.attributes = {_AZURE_SDK_NAMESPACE_NAME: "Microsoft.EventHub"}
+        span.instrumentation_scope.name = "__main__"
+        with mock.patch(
+            "azure.monitor.opentelemetry.exporter._utils.add_instrumentation"
+        ) as add:
+            _check_instrumentation_span(span)
+            add.assert_called_once_with(_AZURE_SDK_OPENTELEMETRY_NAME)

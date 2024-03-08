@@ -4,6 +4,7 @@ from unittest.mock import Mock, patch
 
 import pytest
 
+from azure.core.exceptions import ServiceRequestError
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml._utils._data_utils import read_local_mltable_metadata_contents, read_remote_mltable_metadata_contents
 from azure.ai.ml._utils._http_utils import HttpPipeline
@@ -13,12 +14,16 @@ from azure.ai.ml.operations._code_operations import CodeOperations
 
 @pytest.fixture
 def mock_datastore_operations(
-    mock_workspace_scope: OperationScope, mock_operation_config: OperationConfig, mock_aml_services_2022_05_01: Mock
+    mock_workspace_scope: OperationScope,
+    mock_operation_config: OperationConfig,
+    mock_aml_services_2023_04_01_preview: Mock,
+    mock_aml_services_2024_01_01_preview: Mock,
 ) -> CodeOperations:
     yield DatastoreOperations(
         operation_scope=mock_workspace_scope,
         operation_config=mock_operation_config,
-        serviceclient_2022_05_01=mock_aml_services_2022_05_01,
+        serviceclient_2023_04_01_preview=mock_aml_services_2023_04_01_preview,
+        serviceclient_2024_01_01_preview=mock_aml_services_2024_01_01_preview,
     )
 
 
@@ -28,6 +33,7 @@ def mock_requests_pipeline(mock_machinelearning_client) -> HttpPipeline:
 
 
 @pytest.mark.unittest
+@pytest.mark.data_experiences_test
 class TestDataUtils:
     @patch("azure.ai.ml._utils._data_utils.get_datastore_info")
     @patch("azure.ai.ml._utils._data_utils.get_storage_client")
@@ -59,25 +65,24 @@ class TestDataUtils:
         ):
             contents = read_remote_mltable_metadata_contents(
                 datastore_operations=mock_datastore_operations,
-                path="https://fake.localhost/file.yaml",
+                base_uri="https://fake.localhost/file.yaml",
                 requests_pipeline=mock_requests_pipeline,
             )
             assert contents["paths"] == [OrderedDict([("file", "./tmp_file.csv")])]
 
         # remote https inaccessible
-        with pytest.raises(Exception) as ex:
+        with pytest.raises(ServiceRequestError) as ex:
             contents = read_remote_mltable_metadata_contents(
                 datastore_operations=mock_datastore_operations,
-                path="https://fake.localhost/file.yaml",
+                base_uri="https://fake.localhost/file.yaml",
                 requests_pipeline=mock_requests_pipeline,
             )
-        assert "Invalid URL" in str(ex)
 
         # remote azureml accessible
         with patch("azure.ai.ml._utils._data_utils.TemporaryDirectory", return_value=mltable_folder):
             contents = read_remote_mltable_metadata_contents(
                 datastore_operations=mock_datastore_operations,
-                path="azureml://datastores/mydatastore/paths/images/dogs",
+                base_uri="azureml://datastores/mydatastore/paths/images/dogs",
                 requests_pipeline=mock_requests_pipeline,
             )
             assert contents["paths"] == [OrderedDict([("file", "./tmp_file.csv")])]
@@ -86,7 +91,7 @@ class TestDataUtils:
         with pytest.raises(Exception) as ex:
             contents = read_remote_mltable_metadata_contents(
                 datastore_operations=mock_datastore_operations,
-                path="azureml://datastores/mydatastore/paths/images/dogs",
+                base_uri="azureml://datastores/mydatastore/paths/images/dogs",
                 requests_pipeline=mock_requests_pipeline,
             )
         assert "No such file or directory" in str(ex)
